@@ -68,13 +68,7 @@
   git merge origin/<rama de trabajo>
   ```
 
-- Dar nombre al commit con el cambio
-  
-  ```txt
-  git commit -m "Merge origin/<rama de trabajo>"
-  ```
-
-- Publicar los cambios
+- Publicar los cambios conjuntos
   
   ```txt
   git push -u origin main
