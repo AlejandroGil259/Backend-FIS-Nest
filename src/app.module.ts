@@ -4,6 +4,8 @@ import { ConfigModule } from '@nestjs/config';
 import { JoiValidationSchema } from './config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProyectosModule } from './proyectos/proyectos.module';
+import { ArchivosModule } from './archivos/archivos.module';
+import { SolicitudesModule } from './solicitudes/solicitudes.module';
 
 @Module( {
     imports: [
@@ -27,6 +29,10 @@ import { ProyectosModule } from './proyectos/proyectos.module';
         UsuariosModule,
 
         ProyectosModule,
+
+        ArchivosModule,
+
+        SolicitudesModule,
     ],
 } )
 export class AppModule { }
