@@ -73,3 +73,9 @@
   ```txt
   git push -u origin main
   ```
+
+## Paquetes instalados
+
+```txt
+$: npm i bcrypt class-validator class-transformer joi passport-jwt pg passport typeorm uuid @nestjs/config @nestjs/passport @nestjs/typeorm @nestjs/swagger @nestjs/jwt @nestjs/mapped-types@*
+```
