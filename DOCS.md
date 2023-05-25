@@ -28,12 +28,6 @@
   git merge origin/main
   ```
 
-- Dar nombre al commit con el cambio
-  
-  ```txt
-  git commit -m "Merge origin/main"
-  ```
-
 - Publicar los cambios
   
   ```txt
