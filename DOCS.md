@@ -28,12 +28,6 @@
   git merge origin/main
   ```
 
-- Dar nombre al commit con el cambio
-  
-  ```txt
-  git commit -m "Merge origin/main"
-  ```
-
 - Publicar los cambios
   
   ```txt
@@ -73,3 +67,9 @@
   ```txt
   git push -u origin main
   ```
+
+## Paquetes instalados
+
+```txt
+$: npm i bcrypt class-validator class-transformer joi passport-jwt pg passport typeorm uuid @nestjs/config @nestjs/passport @nestjs/typeorm @nestjs/swagger @nestjs/jwt @nestjs/mapped-types@*
+```
