@@ -4,82 +4,82 @@ import { Column, Entity } from 'typeorm';
 import { BaseEntity } from '../../commons/entities/base-entity.entity';
 import { ROLES } from '../constants';
 
-@Entity('usuarios')
+@Entity( 'usuarios' )
 export class Usuario extends BaseEntity {
-  @ApiProperty({ uniqueItems: true })
-  @Column({
-    primary: true,
-    type: 'integer',
-  })
-  documento: number;
+    @ApiProperty( { uniqueItems: true } )
+    @Column( {
+        primary: true,
+        type: 'integer',
+    } )
+    documento: number;
 
-  @ApiProperty({
-    example: 2251184,
-    type: Number,
-    description: 'Código del programa para el estudiante',
-  })
-  @Column({
-    type: 'integer',
-    nullable: true,
-  })
-  codigo?: number;
+    @ApiProperty( {
+        example: 2251184,
+        type: Number,
+        description: 'Código del programa para el estudiante',
+    } )
+    @Column( {
+        type: 'integer',
+        nullable: true,
+    } )
+    codigo?: number;
 
-  @ApiProperty({ enum: ROLES })
-  @Column({
-    type: 'varchar',
-    enum: ROLES,
-  })
-  rol: ROLES;
+    @ApiProperty( { enum: ROLES } )
+    @Column( {
+        type: 'varchar',
+        enum: ROLES,
+    } )
+    rol: ROLES;
 
-  @ApiProperty({ example: 'N.N' })
-  @Column()
-  nombres: string;
+    @ApiProperty( { example: 'N.N' } )
+    @Column()
+    nombres: string;
 
-  @ApiProperty({ example: 'Rodriguez' })
-  @Column()
-  apellidos: string;
+    @ApiProperty( { example: 'Rodriguez' } )
+    @Column()
+    apellidos: string;
 
-  @ApiProperty({ example: 'example@usantoto.edu.co' })
-  @Column()
-  correo: string;
+    @ApiProperty( { example: 'example@usantoto.edu.co' } )
+    @Column()
+    correo: string;
 
-  @ApiProperty({ example: 'max-10' })
-  @Column()
-  contrasena: string;
+    @ApiProperty( { example: 'max-10' } )
+    @Column()
+    contrasena: string;
 
-  @ApiProperty({
-    example: 20181,
-    type: Number,
-  })
-  @Column({ type: 'integer', name: 'periodo_ingreso', nullable: true })
-  periodoIngreso?: number;
+    @ApiProperty( {
+        example: 20181,
+        type: Number,
+    } )
+    @Column( { type: 'integer', nullable: true } )
+    periodoIngreso?: number;
 
-  @ApiProperty({
-    description: 'Estado del usuario en la plataforma',
-    default: true,
-  })
-  @Column({
-    type: 'bool',
-    default: true,
-  })
-  estado: boolean;
+    @ApiProperty( {
+        description: 'Estado del usuario en la plataforma',
+        default: true,
+    } )
+    @Column( {
+        type: 'bool',
+        default: true,
+    } )
+    estado: boolean;
 
-  @ApiProperty({
-    example: 3126650202,
-    type: Number,
-  })
-  @Column({ type: 'integer', name: 'telefono', nullable: true })
-  telefono?: number;
+    @ApiProperty( {
+        example: 3126650202,
+        type: Number,
+    } )
+    @Column( { type: 'integer', nullable: true } )
+    telefono?: number;
 
-  @ApiProperty({
-    description: 'Estado del docente en el comite y en la plataforma',
-    default: true,
-  })
-  @Column({
-    type: 'bool',
-    default: true,
-  })
-  comite: boolean;
+    @ApiProperty( {
+        description: 'Estado del docente en el comite y en la plataforma',
+        default: true,
+    } )
+    @Column( {
+        type: 'bool',
+        default: true,
+    } )
+    comite: boolean;
 }
 
 // @ApiProperty es para documentar las propiedades en Swagger, no tiene afectación en la DB

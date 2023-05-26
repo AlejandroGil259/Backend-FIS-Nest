@@ -71,5 +71,5 @@
 ## Paquetes instalados
 
 ```txt
-$: npm i bcrypt class-validator class-transformer joi passport-jwt pg passport typeorm uuid @nestjs/config @nestjs/passport @nestjs/typeorm @nestjs/swagger @nestjs/jwt @nestjs/mapped-types@*
+$: npm i bcrypt class-validator class-transformer joi passport-jwt pg passport typeorm typeorm-naming-strategies uuid @nestjs/config @nestjs/passport @nestjs/typeorm @nestjs/swagger @nestjs/jwt @nestjs/mapped-types@*
 ```
