@@ -6,10 +6,14 @@ import { ROLES } from '../constants';
 
 @Entity( 'usuarios' )
 export class Usuario extends BaseEntity {
-    @ApiProperty( { uniqueItems: true } )
+    @ApiProperty( {
+        uniqueItems: true,
+        example: 123456789
+    } )
     @Column( {
         primary: true,
-        type: 'integer',
+        type: 'int8',
+        unique: true
     } )
     documento: number;
 
@@ -19,15 +23,20 @@ export class Usuario extends BaseEntity {
         description: 'Código del programa para el estudiante',
     } )
     @Column( {
-        type: 'integer',
+        type: 'int8',
         nullable: true,
+        unique: true
     } )
     codigo?: number;
 
-    @ApiProperty( { enum: ROLES } )
+    @ApiProperty( {
+        enum: ROLES,
+        default: ROLES.ESTUDIANTE
+    } )
     @Column( {
         type: 'varchar',
         enum: ROLES,
+        default: ROLES.ESTUDIANTE
     } )
     rol: ROLES;
 
@@ -68,7 +77,7 @@ export class Usuario extends BaseEntity {
         example: 3126650202,
         type: Number,
     } )
-    @Column( { type: 'integer', nullable: true } )
+    @Column( { type: 'int8', nullable: true } )
     telefono?: number;
 
     @ApiProperty( {
@@ -77,7 +86,7 @@ export class Usuario extends BaseEntity {
     } )
     @Column( {
         type: 'bool',
-        default: true,
+        default: false,
     } )
     comite: boolean;
 }
