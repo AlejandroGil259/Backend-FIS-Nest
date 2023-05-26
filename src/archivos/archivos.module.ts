@@ -1,9 +1,16 @@
 import { Module } from '@nestjs/common';
-import { ArchivosService } from './archivos.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { ArchivosController } from './archivos.controller';
+import { ArchivosService } from './archivos.service';
+import { Archivo } from './entities/archivo.entity';
 
-@Module({
-  controllers: [ArchivosController],
-  providers: [ArchivosService]
-})
-export class ArchivosModule {}
+@Module( {
+    imports: [
+        TypeOrmModule.forFeature( [
+            Archivo
+        ] )
+    ],
+    controllers: [ ArchivosController ],
+    providers: [ ArchivosService ]
+} )
+export class ArchivosModule { }
