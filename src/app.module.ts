@@ -1,9 +1,13 @@
 import { Module } from '@nestjs/common';
-import { UsuariosModule } from './usuarios/usuarios.module';
 import { ConfigModule } from '@nestjs/config';
-import { JoiValidationSchema } from './config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
+
+import { ArchivosModule } from './archivos/archivos.module';
+import { JoiValidationSchema } from './config';
 import { ProyectosModule } from './proyectos/proyectos.module';
+import { SolicitudesModule } from './solicitudes/solicitudes.module';
+import { UsuariosModule } from './usuarios/usuarios.module';
 
 @Module( {
     imports: [
@@ -21,12 +25,17 @@ import { ProyectosModule } from './proyectos/proyectos.module';
             username: process.env.DB_USER,
             password: process.env.DB_PASSWORD,
             autoLoadEntities: true,
-            synchronize: true
+            synchronize: true,
+            namingStrategy: new SnakeNamingStrategy()
         } ),
 
         UsuariosModule,
 
         ProyectosModule,
+
+        ArchivosModule,
+
+        SolicitudesModule,
     ],
 } )
 export class AppModule { }
