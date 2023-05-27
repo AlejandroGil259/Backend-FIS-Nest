@@ -29,7 +29,7 @@
   ```
 
 - Publicar los cambios
-  
+
   ```txt
   git push -u origin <rama de trabajo>
   ```
@@ -50,7 +50,7 @@
   git checkout main
   ```
 
-- Hacer fetch de los cambios que existen en la rama en la que estamos desarrollando (`carlos-dev`, `SergioG`, `Jairo`)
+- Hacer fetch de los cambios que existen en la rama en la que estamos desarrollando (`carlos-dev`, `SergioG`, `JairoG`)
 
   ```txt
   git fetch origin <rama de trabajo>
@@ -63,7 +63,7 @@
   ```
 
 - Publicar los cambios conjuntos
-  
+
   ```txt
   git push -u origin main
   ```
