@@ -8,6 +8,8 @@ import { JoiValidationSchema } from './config';
 import { ProyectosModule } from './proyectos/proyectos.module';
 import { SolicitudesModule } from './solicitudes/solicitudes.module';
 import { UsuariosModule } from './usuarios/usuarios.module';
+import { NotificacionesModule } from './notificaciones/notificaciones.module';
+import { NovedadesModule } from './novedades/novedades.module';
 
 @Module( {
     imports: [
@@ -36,6 +38,10 @@ import { UsuariosModule } from './usuarios/usuarios.module';
         ArchivosModule,
 
         SolicitudesModule,
+
+        NotificacionesModule,
+
+        NovedadesModule,
     ],
 } )
 export class AppModule { }

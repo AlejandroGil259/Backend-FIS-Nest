@@ -1,5 +1,5 @@
 export enum ROLES {
-    ESTUDIANTE = 'estudiante',
-    DOCENTE = 'docente',
-    COMITE = 'comite'
+  ESTUDIANTE = 'Estudiante',
+  DOCENTE = 'Docente',
+  COMITE = 'Comite',
 }
