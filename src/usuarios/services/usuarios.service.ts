@@ -14,9 +14,6 @@ export class UsuariosService {
         try {
             const { contrasena, ...usuario } = createUserDto;
 
-            delete usuario.estado;
-            delete usuario.comite;
-
             const user = this.usuarioRepo.create( {
                 ...usuario,
                 contrasena: bcrypt.hashSync( contrasena, 10 )
