@@ -1,29 +1,81 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
+import { ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { CreateSolicitudesDto } from './dto/create-solicitudes.dto';
+import { UpdateSolicitudesDto } from './dto/update-solicitudes.dto';
 import { SolicitudesService } from './solicitudes.service';
-import { CreateSolicitudeDto } from './dto/create-solicitude.dto';
-import { UpdateSolicitudeDto } from './dto/update-solicitude.dto';
-
+@ApiTags('Solicitudes')
 @Controller('solicitudes')
 export class SolicitudesController {
   constructor(private readonly solicitudesService: SolicitudesService) {}
-
+  @ApiResponse({
+    status: 201,
+    description: 'Se creo correctamente la solicitud en la base de datos',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'El usuario no realizo la solicitud de manera correcta',
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Error en el servidor, puede ser culpa del código o de la DB',
+  })
   @Post()
-  create(@Body() createSolicitudeDto: CreateSolicitudeDto) {
+  create(@Body() createSolicitudeDto: CreateSolicitudesDto) {
     return this.solicitudesService.create(createSolicitudeDto);
   }
 
+  @ApiResponse({
+    status: 200,
+    description: 'Se encontraron solicitudes',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'No hay solicitudes en la base de datos',
+  })
   @Get()
   findAll() {
     return this.solicitudesService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.solicitudesService.findOne(+id);
+  @ApiResponse({
+    status: 200,
+    description: 'Se encontró una solicitud con el id ingresado',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'No hay registros en la base de datos para esta solicitud',
+  })
+  @ApiParam({
+    name: 'id_solicitud',
+    description: 'id de la solicitud registrada',
+    example: 123456789,
+  })
+  @Get(':id_solicitud')
+  findOne(@Param('id_solicitud') idSolicitud: string) {
+    return this.solicitudesService.findOne(idSolicitud);
   }
 
+  @ApiResponse({
+    status: 200,
+    description: 'Se ha actualizado su solicitud',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'No hay registros en la base de datos para esta solicitud',
+  })
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateSolicitudeDto: UpdateSolicitudeDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateSolicitudeDto: UpdateSolicitudesDto,
+  ) {
     return this.solicitudesService.update(+id, updateSolicitudeDto);
   }
 
