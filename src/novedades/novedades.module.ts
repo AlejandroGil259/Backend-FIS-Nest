@@ -1,8 +1,8 @@
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { Module } from '@nestjs/common';
-import { NovedadesService } from './novedades.service';
-import { NovedadesController } from './novedades.controller';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { Novedades } from './entities/novedades.entity';
+import { NovedadesController } from './novedades.controller';
+import { NovedadesService } from './novedades.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Novedades])],

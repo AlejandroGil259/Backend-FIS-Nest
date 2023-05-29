@@ -8,6 +8,7 @@ export class Solicitudes extends BaseEntity {
   @ApiProperty({ uniqueItems: true })
   @Column({
     primary: true,
+    unique: true,
     type: 'uuid',
   })
   idSolicitud: string;
@@ -34,7 +35,7 @@ export class Solicitudes extends BaseEntity {
   @ApiProperty({
     enum: ESTADO_RESPUESTA,
     description: 'Respuesta del estado de la solicitud',
-    default: ESTADO_RESPUESTA.ESPERA
+    default: ESTADO_RESPUESTA.ESPERA,
   })
   @Column({
     type: 'varchar',

@@ -1,10 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateProyectoDto } from './dto/create-proyecto.dto';
-import { UpdateProyectoDto } from './dto/update-proyecto.dto';
-import { Proyecto } from './entities/proyecto.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { DBExceptionService } from '../commons/services/db-exception.service';
+import { CreateProyectoDto } from './dto/create-proyecto.dto';
+import { UpdateProyectoDto } from './dto/update-proyecto.dto';
+import { Proyecto } from './entities/proyecto.entity';
 
 @Injectable()
 export class ProyectosService {
@@ -44,11 +44,24 @@ export class ProyectosService {
     return proyecto;
   }
 
-  update(id: number, updateProyectoDto: UpdateProyectoDto) {
-    return `This action updates a #${id} proyecto`;
+  async update(idProyecto: string, updateProyectoDto: UpdateProyectoDto) {
+    const proyecto = await this.proyectoRepo.findOne({ where: { idProyecto } });
+
+    if (!proyecto) throw new NotFoundException('Este proyecto no existe');
+    const actualizarProyecto = Object.assign(proyecto, updateProyectoDto);
+
+    return await this.proyectoRepo.save(actualizarProyecto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} proyecto`;
+  async remove(idProyecto: string) {
+    const proyecto = await this.proyectoRepo.findOne({
+      where: { idProyecto },
+    });
+
+    if (!proyecto) {
+      throw new NotFoundException('Este proyecto no existe');
+    }
+
+    await this.proyectoRepo.remove(proyecto);
   }
 }

@@ -35,11 +35,11 @@ export class ArchivosController {
 
   @ApiResponse({
     status: 200,
-    description: 'Se encontraron los documentos',
+    description: 'Se encontraron los archivos',
   })
   @ApiResponse({
     status: 404,
-    description: 'No hay documentos en la base de datos',
+    description: 'No hay archivos en la base de datos',
   })
   @Get()
   findAll() {
@@ -64,13 +64,29 @@ export class ArchivosController {
     return this.archivosService.findOne(id);
   }
 
+  @ApiResponse({
+    status: 200,
+    description: 'Se ha actualizado el archivo',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'No hay registros en la base de datos de este archivo',
+  })
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateArchivoDto: UpdateArchivoDto) {
-    return this.archivosService.update(+id, updateArchivoDto);
+    return this.archivosService.update(id, updateArchivoDto);
   }
 
+  @ApiResponse({
+    status: 200,
+    description: 'Se ha eliminado el archivo',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'No hay archivos en la base de datos',
+  })
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.archivosService.remove(+id);
+    return this.archivosService.remove(id);
   }
 }

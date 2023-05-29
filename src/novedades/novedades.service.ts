@@ -1,26 +1,66 @@
-import { Injectable } from '@nestjs/common';
-import { CreateNovedadeDto } from './dto/create-novedade.dto';
-import { UpdateNovedadeDto } from './dto/update-novedade.dto';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { DBExceptionService } from 'src/commons/services/db-exception.service';
+import { Repository } from 'typeorm';
+import { CreateNovedadesDto } from './dto/create-novedades.dto';
+import { UpdateNovedadeDto } from './dto/update-novedades.dto';
+import { Novedades } from './entities/novedades.entity';
 
 @Injectable()
 export class NovedadesService {
-  create(createNovedadeDto: CreateNovedadeDto) {
-    return 'This action adds a new novedade';
+  constructor(
+    @InjectRepository(Novedades)
+    private readonly novedadRepo: Repository<Novedades>,
+  ) {}
+  async create(createNovedadDto: CreateNovedadesDto) {
+    try {
+      const novelty = await this.novedadRepo.save(createNovedadDto);
+      return {
+        novedad: novelty,
+      };
+    } catch (error) {
+      throw DBExceptionService.handleDBException(error);
+    }
   }
 
-  findAll() {
-    return `This action returns all novedades`;
+  async findAll() {
+    const novedades = await this.novedadRepo.find();
+
+    if (!novedades || novedades.length)
+      throw new NotFoundException('No se encontraron resultados');
+
+    return novedades;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} novedade`;
+  async findOne(id: string) {
+    const novedad = await this.novedadRepo.findOneBy({ id });
+
+    if (!novedad)
+      throw new NotFoundException(
+        `No se encontraron resultados para la novedad "${id}"`,
+      );
+
+    return novedad;
   }
 
-  update(id: number, updateNovedadeDto: UpdateNovedadeDto) {
-    return `This action updates a #${id} novedade`;
+  async update(id: string, updateNovedadeDto: UpdateNovedadeDto) {
+    const novedad = await this.novedadRepo.findOne({ where: { id } });
+
+    if (!novedad) throw new NotFoundException('Esta novedad no existe');
+    const actualizarNovedad = Object.assign(novedad, updateNovedadeDto);
+
+    return await this.novedadRepo.save(actualizarNovedad);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} novedade`;
+  async remove(id: string) {
+    const novedad = await this.novedadRepo.findOne({
+      where: { id },
+    });
+
+    if (!novedad) {
+      throw new NotFoundException('Este usuario no existe');
+    }
+
+    await this.novedadRepo.remove(novedad);
   }
 }
