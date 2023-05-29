@@ -39,17 +39,30 @@ export class ArchivosService {
 
     if (!archivo)
       throw new NotFoundException(
-        `No se encontraron resultados para el documento "${id}"`,
+        `No se encontraron resultados para el archivo "${id}"`,
       );
 
     return archivo;
   }
 
-  update(id: number, updateArchivoDto: UpdateArchivoDto) {
-    return `This action updates a #${id} archivo`;
+  async update(id: string, updateArchivoDto: UpdateArchivoDto) {
+    const archivo = await this.archivoRepo.findOne({ where: { id } });
+
+    if (!archivo) throw new NotFoundException('Este archivo no existe');
+    const actualizarArchivo = Object.assign(archivo, updateArchivoDto);
+
+    return await this.archivoRepo.save(actualizarArchivo);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} archivo`;
+  async remove(id: string) {
+    const archivo = await this.archivoRepo.findOne({
+      where: { id },
+    });
+
+    if (!archivo) {
+      throw new NotFoundException('Este usuario no existe');
+    }
+
+    await this.archivoRepo.remove(archivo);
   }
 }

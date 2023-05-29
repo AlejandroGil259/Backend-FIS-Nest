@@ -3,6 +3,10 @@ import { IsEnum, IsString } from 'class-validator';
 import { DOC_STATUS } from '../constants';
 
 export class CreateArchivoDto {
+  @ApiProperty({ uniqueItems: true, example: 'pdf, word' })
+  @IsString()
+  id: string;
+
   @ApiProperty({ example: 'pdf, word' })
   @IsString()
   nombreArchivoOriginal: string;
