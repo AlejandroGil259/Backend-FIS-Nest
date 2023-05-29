@@ -3,10 +3,6 @@ import { IsEnum, IsString } from 'class-validator';
 import { TIPO_SOLICITUD } from '../constants';
 
 export class CreateSolicitudesDto {
-  @ApiProperty({ uniqueItems: true })
-  @IsString()
-  idSolicitud: string;
-
   @ApiProperty({ description: 'Agregar contenido a la solicitud' })
   @IsString()
   contenido: string;

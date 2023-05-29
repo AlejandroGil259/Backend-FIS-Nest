@@ -71,16 +71,23 @@ export class SolicitudesController {
     status: 404,
     description: 'No hay registros en la base de datos para esta solicitud',
   })
-  @Patch(':id')
+  @Patch(':id_solicitud')
   update(
-    @Param('id') id: string,
+    @Param('id_solicitud') idSolicitud: string,
     @Body() updateSolicitudeDto: UpdateSolicitudesDto,
   ) {
-    return this.solicitudesService.update(+id, updateSolicitudeDto);
+    return this.solicitudesService.update(idSolicitud, updateSolicitudeDto);
   }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.solicitudesService.remove(+id);
+  @ApiResponse({
+    status: 200,
+    description: 'Se ha eliminado la solicitud',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'No hay solicitudes en la base de datos',
+  })
+  @Delete(':id_solicitud')
+  remove(@Param('id_solicitud') idSolicitud: string) {
+    return this.solicitudesService.remove(idSolicitud);
   }
 }
