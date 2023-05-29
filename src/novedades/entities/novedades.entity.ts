@@ -12,6 +12,7 @@ export class Novedades extends BaseEntity {
   @Column({
     primary: true,
     unique: true,
+    type: 'uuid',
   })
   id: string;
 
