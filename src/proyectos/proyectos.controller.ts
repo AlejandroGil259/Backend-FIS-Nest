@@ -62,17 +62,32 @@ export class ProyectosController {
   findOne(@Param('id_proyecto') idProyecto: string) {
     return this.proyectosService.findOne(idProyecto);
   }
-
-  @Patch(':id')
+  @ApiResponse({
+    status: 200,
+    description: 'Se ha actualizado el proyecto',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'No hay proyectos en la base de datos para este usuario',
+  })
+  @Patch(':id_proyecto')
   update(
-    @Param('id') id: string,
+    @Param('id_proyecto') idProyecto: string,
     @Body() updateProyectoDto: UpdateProyectoDto,
   ) {
-    return this.proyectosService.update(+id, updateProyectoDto);
+    return this.proyectosService.update(idProyecto, updateProyectoDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.proyectosService.remove(+id);
+  @ApiResponse({
+    status: 200,
+    description: 'Se ha eliminado el proyecto',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'No se encontro el proyectos en la base de datos',
+  })
+  @Delete(':id_proyecto')
+  remove(@Param('id_proyecto') idProyecto: string) {
+    return this.proyectosService.remove(idProyecto);
   }
 }
