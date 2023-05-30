@@ -1,7 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, OneToMany } from 'typeorm';
 import { BaseEntity } from '../../commons/entities/base-entity.entity';
 import { OPCION_GRADO } from '../constants';
+import { Archivo } from '../../archivos/entities/archivo.entity';
 
 @Entity('proyectos')
 export class Proyecto extends BaseEntity {
@@ -36,4 +37,7 @@ export class Proyecto extends BaseEntity {
   @ApiProperty({ description: 'Titulo del proyecto' })
   @Column()
   titulo: string;
+
+  @OneToMany(() => Archivo, (archivo) => archivo.proyecto)
+  archivos: Archivo[];
 }

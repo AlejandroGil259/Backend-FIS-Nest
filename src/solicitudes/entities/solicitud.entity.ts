@@ -1,11 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Column, Entity, ManyToOne } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 import { BaseEntity } from '../../commons/entities/base-entity.entity';
 import { ESTADO_RESPUESTA, TIPO_SOLICITUD } from '../constants';
 import { Usuario } from '../../usuarios/entities/usuarios.entity';
+import { Archivo } from '../../archivos/entities/archivo.entity';
 
 @Entity('solicitudes')
-export class Solicitudes extends BaseEntity {
+export class Solicitud extends BaseEntity {
   @ApiProperty({ uniqueItems: true })
   @Column({
     primary: true,
@@ -47,4 +48,7 @@ export class Solicitudes extends BaseEntity {
 
   @ManyToOne(() => Usuario, (usuario) => usuario.solicitudes)
   usuario: Usuario;
+
+  @OneToMany(() => Archivo, (archivo) => archivo.proyecto)
+  archivos: Archivo[];
 }

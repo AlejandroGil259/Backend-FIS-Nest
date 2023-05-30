@@ -1,7 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, ManyToOne } from 'typeorm';
 import { BaseEntity } from '../../commons/entities/base-entity.entity';
 import { DOC_STATUS } from '../constants';
+import { Proyecto } from '../../proyectos/entities/proyecto.entity';
+import { Solicitud } from '../../solicitudes/entities/solicitud.entity';
 
 @Entity('archivos')
 export class Archivo extends BaseEntity {
@@ -29,4 +31,10 @@ export class Archivo extends BaseEntity {
   })
   @Column({ type: 'varchar', enum: DOC_STATUS })
   estado: DOC_STATUS;
+
+  @ManyToOne(() => Proyecto, (proyecto) => proyecto.archivos)
+  proyecto: Proyecto;
+
+  @ManyToOne(() => Solicitud, (solicitud) => solicitud.archivos)
+  solicitud: Solicitud;
 }

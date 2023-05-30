@@ -3,7 +3,7 @@ import { Column, Entity, OneToMany } from 'typeorm';
 
 import { BaseEntity } from '../../commons/entities/base-entity.entity';
 import { ROLES } from '../constants';
-import { Solicitudes } from '../../solicitudes/entities/solicitudes.entity';
+import { Solicitud } from '../../solicitudes/entities/solicitud.entity';
 
 @Entity('usuarios')
 export class Usuario extends BaseEntity {
@@ -91,8 +91,8 @@ export class Usuario extends BaseEntity {
   })
   comite: boolean;
 
-  @OneToMany(() => Solicitudes, (solicitudes) => solicitudes.usuario)
-  solicitudes: Solicitudes[];
+  @OneToMany(() => Solicitud, (solicitudes) => solicitudes.usuario)
+  solicitudes: Solicitud[];
 }
 
 // @ApiProperty es para documentar las propiedades en Swagger, no tiene afectación en la DB
