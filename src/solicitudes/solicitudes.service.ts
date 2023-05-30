@@ -2,15 +2,15 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateSolicitudesDto } from './dto/create-solicitudes.dto';
 import { UpdateSolicitudesDto } from './dto/update-solicitudes.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Solicitudes } from './entities/solicitudes.entity';
+import { Solicitud } from './entities/solicitud.entity';
 import { Repository } from 'typeorm';
 import { DBExceptionService } from '../commons/services/db-exception.service';
 
 @Injectable()
 export class SolicitudesService {
   constructor(
-    @InjectRepository(Solicitudes)
-    private readonly solicitudRepo: Repository<Solicitudes>,
+    @InjectRepository(Solicitud)
+    private readonly solicitudRepo: Repository<Solicitud>,
   ) {}
 
   async create(createSolicitudesDto: CreateSolicitudesDto) {
@@ -35,7 +35,10 @@ export class SolicitudesService {
   }
 
   async findOne(idSolicitud: string) {
-    const solicitud = await this.solicitudRepo.findOneBy({ idSolicitud });
+    const solicitud = await this.solicitudRepo.findOne({
+      where: { idSolicitud },
+      relations: { archivos: true },
+    });
 
     if (!solicitud)
       throw new NotFoundException(

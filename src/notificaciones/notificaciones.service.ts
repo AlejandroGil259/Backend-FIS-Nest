@@ -3,45 +3,46 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DBExceptionService } from 'src/commons/services/db-exception.service';
 import { Repository } from 'typeorm';
 import { CreateNotificacionesDto } from './dto/create-notificaciones.dto';
-import { Notificaciones } from './entities/notificaciones.entity';
+import { UpdateNotificacioneDto } from './dto/update-notificaciones.dto';
+import { Notificacion } from './entities/notificacion.entity';
 
 @Injectable()
 export class NotificacionesService {
-    constructor (
-        @InjectRepository( Notificaciones )
-        private readonly notificacionRepo: Repository<Notificaciones>,
-    ) { }
+  constructor(
+    @InjectRepository(Notificacion)
+    private readonly notificacionRepo: Repository<Notificacion>,
+  ) {}
 
-    async create ( createNotificacionDto: CreateNotificacionesDto ) {
-        try {
-            const notification = await this.notificacionRepo.save(
-                createNotificacionDto,
-            );
-            return {
-                notificacion: notification,
-            };
-        } catch ( error ) {
-            throw DBExceptionService.handleDBException( error );
-        }
+  async create(createNotificacionDto: CreateNotificacionesDto) {
+    try {
+      const notification = await this.notificacionRepo.save(
+        createNotificacionDto,
+      );
+      return {
+        notificacion: notification,
+      };
+    } catch (error) {
+      throw DBExceptionService.handleDBException(error);
     }
+  }
 
-    async findAll () {
-        const notificaciones = await this.notificacionRepo.find();
+  async findAll() {
+    const notificaciones = await this.notificacionRepo.find();
 
-        if ( !notificaciones || !notificaciones.length )
-            throw new NotFoundException( 'No se encontraron resultados' );
+    if (!notificaciones || !notificaciones.length)
+      throw new NotFoundException('No se encontraron resultados');
 
-        return notificaciones;
-    }
+    return notificaciones;
+  }
 
-    async findOne ( id: string ) {
-        const notificacion = await this.notificacionRepo.findOneBy( { id } );
+  async findOne(id: string) {
+    const notificacion = await this.notificacionRepo.findOneBy({ id });
 
-        if ( !notificacion )
-            throw new NotFoundException(
-                `No se encontraron resultados para notificacion "${ id }"`,
-            );
+    if (!notificacion)
+      throw new NotFoundException(
+        `No se encontraron resultados para notificacion "${id}"`,
+      );
 
-        return notificacion;
-    }
+    return notificacion;
+  }
 }
