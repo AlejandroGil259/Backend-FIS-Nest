@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Column, Entity, ManyToOne, OneToOne } from 'typeorm';
 import { TIPO_NOVEDAD } from '../constansts';
 import { BaseEntity } from '../../commons/entities/base-entity.entity';
-import { Notificaciones } from '../../notificaciones/entities/notificaciones.entity';
+import { Notificacion } from '../../notificaciones/entities/notificacion.entity';
 import { Proyecto } from '../../proyectos/entities/proyecto.entity';
 
 @Entity('novedades')
@@ -43,8 +43,8 @@ export class Novedad extends BaseEntity {
   @Column()
   observaciones: string;
 
-  @OneToOne(() => Notificaciones)
-  notificacion: Notificaciones;
+  @OneToOne(() => Notificacion)
+  notificacion: Notificacion;
 
   @ManyToOne(() => Proyecto, (proyecto) => proyecto.novedades)
   proyecto: Proyecto;
