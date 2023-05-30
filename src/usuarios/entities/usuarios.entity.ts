@@ -1,11 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  Column,
-  Entity,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity,  ManyToOne, OneToMany, PrimaryGeneratedColumn,} from 'typeorm';
 
 import { BaseEntity } from '../../commons/entities/base-entity.entity';
 import { ROLES } from '../constants';
@@ -29,7 +23,7 @@ export class Usuario extends BaseEntity {
   @ApiProperty({
     example: 2251184,
     type: Number,
-    description: 'Código del programa para el estudiante',
+    description: 'Código del estudiante',
   })
   @Column({
     type: 'int8',
