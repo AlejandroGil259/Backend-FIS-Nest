@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseUUIDPipe,
   Patch,
   Post,
 } from '@nestjs/common';
@@ -59,7 +60,7 @@ export class SolicitudesController {
     example: 123456789,
   })
   @Get(':id_solicitud')
-  findOne(@Param('id_solicitud') idSolicitud: string) {
+  findOne(@Param('id_solicitud', ParseUUIDPipe) idSolicitud: string) {
     return this.solicitudesService.findOne(idSolicitud);
   }
 
@@ -73,7 +74,7 @@ export class SolicitudesController {
   })
   @Patch(':id_solicitud')
   update(
-    @Param('id_solicitud') idSolicitud: string,
+    @Param('id_solicitud', ParseUUIDPipe) idSolicitud: string,
     @Body() updateSolicitudeDto: UpdateSolicitudesDto,
   ) {
     return this.solicitudesService.update(idSolicitud, updateSolicitudeDto);
@@ -87,7 +88,7 @@ export class SolicitudesController {
     description: 'No hay solicitudes en la base de datos',
   })
   @Delete(':id_solicitud')
-  remove(@Param('id_solicitud') idSolicitud: string) {
+  remove(@Param('id_solicitud', ParseUUIDPipe) idSolicitud: string) {
     return this.solicitudesService.remove(idSolicitud);
   }
 }

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { BaseEntity } from '../../commons/entities/base-entity.entity';
 import { ESTADO_RESPUESTA, TIPO_SOLICITUD } from '../constants';
 import { Usuario } from '../../usuarios/entities/usuarios.entity';
@@ -8,11 +8,7 @@ import { Archivo } from '../../archivos/entities/archivo.entity';
 @Entity('solicitudes')
 export class Solicitud extends BaseEntity {
   @ApiProperty({ uniqueItems: true })
-  @Column({
-    primary: true,
-    unique: true,
-    type: 'uuid',
-  })
+  @PrimaryGeneratedColumn('uuid')
   idSolicitud: string;
 
   @ApiProperty({ description: 'Agregar contenido a la solicitud' })

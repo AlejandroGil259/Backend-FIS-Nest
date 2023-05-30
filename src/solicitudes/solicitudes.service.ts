@@ -52,25 +52,30 @@ export class SolicitudesService {
     idSolicitud: string,
     updateSolicitudesDto: UpdateSolicitudesDto,
   ) {
-    const solicitud = await this.solicitudRepo.findOne({
-      where: { idSolicitud },
-    });
+    const solicitud = await this.solicitudRepo.findOneBy({ idSolicitud });
+    if (!solicitud)
+      return new NotFoundException(
+        `No se encontró ninguna solicitud con el Id ${idSolicitud}`,
+      );
 
-    if (!solicitud) throw new NotFoundException('Esta solicitud no existe');
-    const actualizarSolicitud = Object.assign(solicitud, updateSolicitudesDto);
-
-    return await this.solicitudRepo.save(actualizarSolicitud);
+    try {
+      return await this.solicitudRepo.update(
+        { idSolicitud },
+        { ...updateSolicitudesDto },
+      );
+    } catch (error) {
+      throw DBExceptionService.handleDBException(error);
+    }
   }
 
   async remove(idSolicitud: string) {
     const solicitud = await this.solicitudRepo.findOne({
       where: { idSolicitud },
+      withDeleted: true,
     });
 
-    if (!solicitud) {
-      throw new NotFoundException('Esta solicitud no existe');
-    }
+    if (!solicitud) throw new NotFoundException('Esta solicitud no existe');
 
-    await this.solicitudRepo.remove(solicitud);
+    return await this.solicitudRepo.remove(solicitud);
   }
 }
