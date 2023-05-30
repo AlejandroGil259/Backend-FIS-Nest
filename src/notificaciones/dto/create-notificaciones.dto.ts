@@ -1,10 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsDate, IsEnum, IsNumber, IsString } from 'class-validator';
+import { IsDateString, IsEnum, IsNumber, IsString } from 'class-validator';
 import { TIPO_NOTIFICACION } from '../constansts';
 
 export class CreateNotificacionesDto {
-  @ApiProperty({ example: '01-01-2023' })
-  @IsDate()
+  @ApiProperty({ example: new Date().toISOString() })
+  @IsDateString()
   fechaNotificacion: Date;
 
   @ApiProperty({ example: '123456789' })

@@ -1,23 +1,28 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Column, Entity, JoinColumn, OneToMany, OneToOne } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { BaseEntity } from '../../commons/entities/base-entity.entity';
 import { TIPO_NOTIFICACION } from '../constansts';
 import { Novedad } from '../../novedades/entities/novedad.entity';
 import { UsuariosNotificaciones } from '../../usuarios/entities/usuarios.entity';
+import { Proyecto } from '../../proyectos/entities/proyecto.entity';
 
 @Entity('notificaciones')
 export class Notificacion extends BaseEntity {
   @ApiProperty({
     uniqueItems: true,
-    example: 123456789,
+    example: '4b87d547-ddc1-4e80-acdf-f1cd722f9f5',
   })
-  @Column({
-    primary: true,
-    unique: true,
-  })
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ApiProperty({ example: '01-01-2023' })
+  @ApiProperty({ example: new Date().toISOString() })
   @Column()
   fechaNotificacion: Date;
 
@@ -45,6 +50,9 @@ export class Notificacion extends BaseEntity {
   @OneToOne(() => Novedad)
   @JoinColumn({ name: 'id_novedad' })
   novedad: Novedad;
+
+  @OneToMany(() => Proyecto, (notificacion) => notificacion.notificaciones)
+  proyectos: Proyecto;
 
   @OneToMany(
     () => UsuariosNotificaciones,
