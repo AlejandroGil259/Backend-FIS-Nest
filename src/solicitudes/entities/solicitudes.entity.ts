@@ -1,7 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, ManyToOne } from 'typeorm';
 import { BaseEntity } from '../../commons/entities/base-entity.entity';
 import { ESTADO_RESPUESTA, TIPO_SOLICITUD } from '../constants';
+import { Usuario } from '../../usuarios/entities/usuarios.entity';
 
 @Entity('solicitudes')
 export class Solicitudes extends BaseEntity {
@@ -43,4 +44,7 @@ export class Solicitudes extends BaseEntity {
     default: ESTADO_RESPUESTA.ESPERA,
   })
   respEstado: ESTADO_RESPUESTA;
+
+  @ManyToOne(() => Usuario, (usuario) => usuario.solicitudes)
+  usuario: Usuario;
 }

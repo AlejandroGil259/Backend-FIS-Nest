@@ -1,8 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, OneToMany } from 'typeorm';
 
 import { BaseEntity } from '../../commons/entities/base-entity.entity';
 import { ROLES } from '../constants';
+import { Solicitudes } from '../../solicitudes/entities/solicitudes.entity';
 
 @Entity('usuarios')
 export class Usuario extends BaseEntity {
@@ -89,6 +90,9 @@ export class Usuario extends BaseEntity {
     default: false,
   })
   comite: boolean;
+
+  @OneToMany(() => Solicitudes, (solicitudes) => solicitudes.usuario)
+  solicitudes: Solicitudes[];
 }
 
 // @ApiProperty es para documentar las propiedades en Swagger, no tiene afectación en la DB

@@ -47,7 +47,10 @@ export class UsuariosService {
   }
 
   async findOne(documento: number) {
-    const usuario = await this.usuarioRepo.findOneBy({ documento });
+    const usuario = await this.usuarioRepo.findOne({
+      where: { documento },
+      relations: { solicitudes: true },
+    });
 
     if (!usuario)
       throw new NotFoundException(
