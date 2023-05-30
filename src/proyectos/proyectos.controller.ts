@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ProyectosService } from './proyectos.service';
@@ -59,7 +60,7 @@ export class ProyectosController {
     example: 123456789,
   })
   @Get(':id_proyecto')
-  findOne(@Param('id_proyecto') idProyecto: string) {
+  findOne(@Param('id_proyecto', ParseUUIDPipe) idProyecto: string) {
     return this.proyectosService.findOne(idProyecto);
   }
   @ApiResponse({
@@ -72,10 +73,45 @@ export class ProyectosController {
   })
   @Patch(':id_proyecto')
   update(
-    @Param('id_proyecto') idProyecto: string,
+    @Param('id_proyecto', ParseUUIDPipe) idProyecto: string,
     @Body() updateProyectoDto: UpdateProyectoDto,
   ) {
     return this.proyectosService.update(idProyecto, updateProyectoDto);
+  }
+  @ApiResponse({
+    status: 200,
+    description: 'Se ha eliminado el proyecto',
+  })
+  @ApiResponse({
+    status: 400,
+    description:
+      'No se pudo eliminar el proyecto por que ya se encuentra inactivo o por error en la consulta',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'No hay registros en la base de datos',
+  })
+  @Delete('desactivar/:id_proyecto')
+  deactivate(@Param('id_proyecto', ParseUUIDPipe) idProyecto: string) {
+    return this.proyectosService.desactivate(idProyecto);
+  }
+
+  @ApiResponse({
+    status: 200,
+    description: 'Se ha restaurado el proyecto',
+  })
+  @ApiResponse({
+    status: 400,
+    description:
+      'No se pudo restaurar el proyecto por que ya se encuentra activo o por error en la consulta',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'No hay registros en la base de datos',
+  })
+  @Patch('restore/:id_proyecto')
+  restore(@Param('id_proyecto', ParseUUIDPipe) idProyecto: string) {
+    return this.proyectosService.restore(idProyecto);
   }
 
   @ApiResponse({
@@ -87,7 +123,7 @@ export class ProyectosController {
     description: 'No se encontro el proyectos en la base de datos',
   })
   @Delete(':id_proyecto')
-  remove(@Param('id_proyecto') idProyecto: string) {
+  remove(@Param('id_proyecto', ParseUUIDPipe) idProyecto: string) {
     return this.proyectosService.remove(idProyecto);
   }
 }

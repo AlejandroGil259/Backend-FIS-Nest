@@ -3,7 +3,7 @@ import { IsOptional, IsString, IsEnum } from 'class-validator';
 import { OPCION_GRADO } from '../constants';
 
 export class CreateProyectoDto {
-  @ApiProperty({ description: 'Referencia del proyecto' })
+  @ApiProperty({ description: 'Referencia del proyecto', example: 'Fis01' })
   @IsOptional()
   @IsString()
   idReferencia: string;
@@ -12,7 +12,10 @@ export class CreateProyectoDto {
   @IsEnum(OPCION_GRADO)
   opcionGrado: OPCION_GRADO;
 
-  @ApiProperty({ description: 'Titulo del proyecto' })
+  @ApiProperty({
+    description: 'Titulo del proyecto',
+    example: 'Gestor Documentacion',
+  })
   @IsString()
   titulo: string;
 }

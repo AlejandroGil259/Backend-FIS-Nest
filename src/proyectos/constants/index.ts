@@ -1,6 +1,6 @@
 export enum OPCION_GRADO {
-  DESARROLLO_TECNOLOGICO = 'desarrollo tecnologico',
-  PASANTIA = 'pasantia',
-  MONOGRAFIA = 'monografia',
-  COTERMINAL = 'coterminal',
+  DESARROLLO_TECNOLOGICO = 'Desarrollo Tecnologico',
+  PASANTIA = 'Pasantia',
+  MONOGRAFIA = 'Monografia',
+  COTERMINAL = 'Espacio Coterminal',
 }
