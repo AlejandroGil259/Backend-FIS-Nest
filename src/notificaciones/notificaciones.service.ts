@@ -4,13 +4,13 @@ import { DBExceptionService } from 'src/commons/services/db-exception.service';
 import { Repository } from 'typeorm';
 import { CreateNotificacionesDto } from './dto/create-notificaciones.dto';
 import { UpdateNotificacioneDto } from './dto/update-notificaciones.dto';
-import { Notificaciones } from './entities/notificaciones.entity';
+import { Notificacion } from './entities/notificacion.entity';
 
 @Injectable()
 export class NotificacionesService {
   constructor(
-    @InjectRepository(Notificaciones)
-    private readonly notificacionRepo: Repository<Notificaciones>,
+    @InjectRepository(Notificacion)
+    private readonly notificacionRepo: Repository<Notificacion>,
   ) {}
 
   async create(createNotificacionDto: CreateNotificacionesDto) {

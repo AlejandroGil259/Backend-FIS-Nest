@@ -1,11 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToMany, OneToOne } from 'typeorm';
 import { BaseEntity } from '../../commons/entities/base-entity.entity';
 import { TIPO_NOTIFICACION } from '../constansts';
 import { Novedad } from '../../novedades/entities/novedad.entity';
+import { UsuariosNotificaciones } from '../../usuarios/entities/usuarios.entity';
 
 @Entity('notificaciones')
-export class Notificaciones extends BaseEntity {
+export class Notificacion extends BaseEntity {
   @ApiProperty({
     uniqueItems: true,
     example: 123456789,
@@ -44,4 +45,10 @@ export class Notificaciones extends BaseEntity {
   @OneToOne(() => Novedad)
   @JoinColumn({ name: 'id_novedad' })
   novedad: Novedad;
+
+  @OneToMany(
+    () => UsuariosNotificaciones,
+    (usuariosNotificacion) => usuariosNotificacion.notificaciones_id,
+  )
+  usuariosNotificaciones: UsuariosNotificaciones[];
 }
