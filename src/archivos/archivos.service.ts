@@ -46,23 +46,27 @@ export class ArchivosService {
   }
 
   async update(id: string, updateArchivoDto: UpdateArchivoDto) {
-    const archivo = await this.archivoRepo.findOne({ where: { id } });
+    const archivo = await this.archivoRepo.findOneBy({ id });
+    if (!archivo)
+      return new NotFoundException(
+        `No se encontró ningun archivo con el Id ${id}`,
+      );
 
-    if (!archivo) throw new NotFoundException('Este archivo no existe');
-    const actualizarArchivo = Object.assign(archivo, updateArchivoDto);
-
-    return await this.archivoRepo.save(actualizarArchivo);
+    try {
+      return await this.archivoRepo.update({ id }, { ...updateArchivoDto });
+    } catch (error) {
+      throw DBExceptionService.handleDBException(error);
+    }
   }
 
   async remove(id: string) {
     const archivo = await this.archivoRepo.findOne({
       where: { id },
+      withDeleted: true,
     });
 
-    if (!archivo) {
-      throw new NotFoundException('Este usuario no existe');
-    }
-
-    await this.archivoRepo.remove(archivo);
+    if (!archivo)
+      throw new NotFoundException(`El archivo no existe con el id ${id}`);
+    return await this.archivoRepo.remove(archivo);
   }
 }

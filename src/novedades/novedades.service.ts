@@ -23,32 +23,37 @@ export class NovedadesService {
     }
   }
 
-    async findAll () {
-        const novedades = await this.novedadRepo.find();
+  async findAll() {
+    const novedades = await this.novedadRepo.find();
 
-        if ( !novedades || novedades.length )
-            throw new NotFoundException( 'No se encontraron resultados' );
+    if (!novedades || novedades.length)
+      throw new NotFoundException('No se encontraron resultados');
 
-        return novedades;
+    return novedades;
+  }
+
+  async findOne(id: string) {
+    const novedad = await this.novedadRepo.findOneBy({ id });
+
+    if (!novedad)
+      throw new NotFoundException(
+        `No se encontraron resultados para la novedad "${id}"`,
+      );
+
+    return novedad;
+  }
+
+  async update(id: string, updateNovedadeDto: UpdateNovedadeDto) {
+    const novedad = await this.novedadRepo.findOneBy({ id });
+    if (!novedad)
+      return new NotFoundException(
+        `No se encontró ninguna novedad con el Id ${id}`,
+      );
+
+    try {
+      return await this.novedadRepo.update({ id }, { ...updateNovedadeDto });
+    } catch (error) {
+      throw DBExceptionService.handleDBException(error);
     }
-
-    async findOne ( id: string ) {
-        const novedad = await this.novedadRepo.findOneBy( { id } );
-
-        if ( !novedad )
-            throw new NotFoundException(
-                `No se encontraron resultados para la novedad "${ id }"`,
-            );
-
-        return novedad;
-    }
-
-    async update ( id: string, updateNovedadeDto: UpdateNovedadeDto ) {
-        const novedad = await this.novedadRepo.findOne( { where: { id } } );
-
-        if ( !novedad ) throw new NotFoundException( 'Esta novedad no existe' );
-        const actualizarNovedad = Object.assign( novedad, updateNovedadeDto );
-
-        return await this.novedadRepo.save( actualizarNovedad );
-    }
+  }
 }
