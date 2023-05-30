@@ -36,7 +36,7 @@ export class ProyectosService {
   async findOne(idProyecto: string) {
     const proyecto = await this.proyectoRepo.findOne({
       where: { idProyecto },
-      relations: { archivos: true },
+      relations: { archivos: true, novedades: true },
     });
 
     if (!proyecto)

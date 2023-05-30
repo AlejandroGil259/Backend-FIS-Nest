@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
 import { BaseEntity } from '../../commons/entities/base-entity.entity';
 import { TIPO_NOTIFICACION } from '../constansts';
-import { Novedades } from '../../novedades/entities/novedades.entity';
+import { Novedad } from '../../novedades/entities/novedad.entity';
 
 @Entity('notificaciones')
 export class Notificaciones extends BaseEntity {
@@ -41,7 +41,7 @@ export class Notificaciones extends BaseEntity {
   })
   tipoNotificacion: TIPO_NOTIFICACION;
 
-  @OneToOne(() => Novedades)
+  @OneToOne(() => Novedad)
   @JoinColumn({ name: 'id_novedad' })
-  novedad: Novedades;
+  novedad: Novedad;
 }

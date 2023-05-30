@@ -1,11 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Column, Entity, OneToOne } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToOne } from 'typeorm';
 import { TIPO_NOVEDAD } from '../constansts';
 import { BaseEntity } from '../../commons/entities/base-entity.entity';
 import { Notificaciones } from '../../notificaciones/entities/notificaciones.entity';
+import { Proyecto } from '../../proyectos/entities/proyecto.entity';
 
 @Entity('novedades')
-export class Novedades extends BaseEntity {
+export class Novedad extends BaseEntity {
   @ApiProperty({
     uniqueItems: true,
     example: 123456789,
@@ -44,4 +45,7 @@ export class Novedades extends BaseEntity {
 
   @OneToOne(() => Notificaciones)
   notificacion: Notificaciones;
+
+  @ManyToOne(() => Proyecto, (proyecto) => proyecto.novedades)
+  proyecto: Proyecto;
 }
