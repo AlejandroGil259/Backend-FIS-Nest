@@ -1,11 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Column, Entity, OneToMany } from 'typeorm';
+import { Column, Entity, OneToMany, OneToOne } from 'typeorm';
 
 import { BaseEntity } from '../../commons/entities/base-entity.entity';
 import { Solicitud } from '../../solicitudes/entities/solicitud.entity';
 import { ROLES } from '../constants';
-import { UsuariosNotificaciones } from './usuarios-notificaciones.entity';
 import { UsuariosProyectos } from './usuarios-proyectos.entity';
+import { Notificacion } from '../../notificaciones/entities/notificacion.entity';
 
 @Entity( 'usuarios' )
 export class Usuario extends BaseEntity {
@@ -96,15 +96,13 @@ export class Usuario extends BaseEntity {
     @OneToMany( () => Solicitud, ( solicitudes ) => solicitudes.usuario )
     solicitudes: Solicitud[];
 
-    @OneToMany( () => UsuariosNotificaciones, ( enviar ) => enviar.usuarioDocumento )
-    enviarNotificaciones: UsuariosNotificaciones[];
-
-    @OneToMany( () => UsuariosNotificaciones, ( recibir ) => recibir.usuarioReceptor )
-    recibirNotificaciones: UsuariosNotificaciones[];
+    @OneToOne( () => Notificacion )
+    enviarNotificacion: Notificacion[];
 
     @OneToMany(
         () => UsuariosProyectos,
-        ( usuarioProyecto ) => usuarioProyecto.usuarioDocumento,
+        ( usuarioProyecto ) => usuarioProyecto.usuario,
+        { cascade: true }
     )
     usuariosProyectos: UsuariosProyectos[];
 }
