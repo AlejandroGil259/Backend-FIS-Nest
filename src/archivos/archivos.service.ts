@@ -1,10 +1,16 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { existsSync } from 'fs';
+import { join } from 'path';
+import { Repository } from 'typeorm';
+import { DBExceptionService } from '../commons/services/db-exception.service';
 import { CreateArchivoDto } from './dto/create-archivo.dto';
 import { UpdateArchivoDto } from './dto/update-archivo.dto';
 import { Archivo } from './entities/archivo.entity';
-import { Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
-import { DBExceptionService } from '../commons/services/db-exception.service';
 
 @Injectable()
 export class ArchivosService {
@@ -12,6 +18,16 @@ export class ArchivosService {
     @InjectRepository(Archivo)
     private readonly archivoRepo: Repository<Archivo>,
   ) {}
+
+  getStaticProyecto(nombreProyecto: string) {
+    const path = join(__dirname, '../../static/proyectos', nombreProyecto);
+    if (!existsSync(path))
+      throw new BadRequestException(
+        `No se encontro ningun archivo ${nombreProyecto}`,
+      );
+    return path
+  }
+  
 
   async createFile(createArchivoDto: CreateArchivoDto) {
     try {
@@ -35,7 +51,10 @@ export class ArchivosService {
   }
 
   async findOne(id: string) {
-    const archivo = await this.archivoRepo.findOneBy({ id });
+    const archivo = await this.archivoRepo.findOne({
+      where: { id },
+      relations: { solicitud: true, proyectos: true },
+    });
 
     if (!archivo)
       throw new NotFoundException(

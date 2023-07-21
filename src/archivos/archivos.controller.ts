@@ -1,20 +1,33 @@
 import {
-  Controller,
-  Get,
-  Post,
+  BadRequestException,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Res,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Response } from 'express';
+import { diskStorage } from 'multer';
 import { ArchivosService } from './archivos.service';
 import { CreateArchivoDto } from './dto/create-archivo.dto';
 import { UpdateArchivoDto } from './dto/update-archivo.dto';
-import { ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { filtrarArchivo, nombreArchivo } from './helpers';
+
 @ApiTags('Archivos')
 @Controller('archivos')
 export class ArchivosController {
-  constructor(private readonly archivosService: ArchivosService) {}
+  constructor(
+    private readonly archivosService: ArchivosService,
+    private readonly configService: ConfigService,
+  ) {}
 
   @ApiResponse({
     status: 201,
@@ -28,7 +41,32 @@ export class ArchivosController {
     status: 500,
     description: 'Error en el servidor, puede ser culpa del código o de la DB',
   })
-  @Post()
+  @Post('proyecto')
+  @UseInterceptors(
+    FileInterceptor('archivo', {
+      fileFilter: filtrarArchivo,
+      // limits:{fileSize: 1000}
+      storage: diskStorage({
+        destination: './static/proyectos',
+        filename: nombreArchivo,
+      }),
+    }),
+  )
+  uploadProject(@UploadedFile() archivo: Express.Multer.File) {
+    if (!archivo) {
+      throw new BadRequestException('Asegurate de que el archivo sea pdf');
+    }
+
+    // const secureUrl = `${archivo.filename}`;
+    const secureUrl = `${this.configService.get(
+      'HOST_API',
+    )}/archivos/proyecto/${archivo.filename}`;
+
+    return {
+      secureUrl,
+    };
+  }
+
   create(@Body() createArchivoDto: CreateArchivoDto) {
     return this.archivosService.createFile(createArchivoDto);
   }
@@ -57,11 +95,13 @@ export class ArchivosController {
   @ApiParam({
     name: 'id',
     description: 'Id del archivo registrado',
-    example: 1234567,
+    example: 'b86d465f-4726-4068-80e8-26173238647f',
   })
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.archivosService.findOne(id);
+  @Get('proyecto/:id')
+  findOne(@Res() res: Response, @Param('id') id: string) {
+    const path = this.archivosService.getStaticProyecto(id);
+
+    res.sendFile(path);
   }
 
   @ApiResponse({
