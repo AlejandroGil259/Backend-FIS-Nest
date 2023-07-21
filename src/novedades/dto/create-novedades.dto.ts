@@ -25,4 +25,5 @@ export class CreateNovedadesDto extends CreateNotificacionesDto {
     @ApiProperty( { example: 'Observaciones' } )
     @IsString()
     observaciones: string;
+    
 }
