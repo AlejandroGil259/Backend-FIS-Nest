@@ -57,7 +57,7 @@ export class ProyectosController {
   @ApiParam({
     name: 'id_proyecto',
     description: 'id del proyecto registrado',
-    example: 123456789,
+    example: '1e63d902-b3f0-406c-9a37-d46eece2e016',
   })
   @Get(':id_proyecto')
   findOne(@Param('id_proyecto', ParseUUIDPipe) idProyecto: string) {
