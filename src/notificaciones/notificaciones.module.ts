@@ -3,15 +3,12 @@ import { NotificacionesService } from './notificaciones.service';
 import { NotificacionesController } from './notificaciones.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Notificacion } from './entities/notificacion.entity';
-import { UsuariosModule } from '../usuarios/usuarios.module';
+import { AuthModule } from '../auth/auth.module';
 
-@Module( {
-    imports: [
-        TypeOrmModule.forFeature( [ Notificacion ] ),
-        UsuariosModule
-    ],
-    controllers: [ NotificacionesController ],
-    providers: [ NotificacionesService ],
-    exports: [ TypeOrmModule ]
-} )
-export class NotificacionesModule { }
+@Module({
+  imports: [TypeOrmModule.forFeature([Notificacion]), AuthModule],
+  controllers: [NotificacionesController],
+  providers: [NotificacionesService],
+  exports: [TypeOrmModule],
+})
+export class NotificacionesModule {}

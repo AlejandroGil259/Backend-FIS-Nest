@@ -5,7 +5,7 @@ import { In, Repository } from 'typeorm';
 import { DBExceptionService } from '../commons/services/db-exception.service';
 import { CreateNotificacionesDto } from './dto/create-notificaciones.dto';
 import { Notificacion } from './entities/notificacion.entity';
-import { Usuario } from '../usuarios/entities/usuarios.entity';
+import { Usuario } from '../auth/entities/usuarios.entity';
 
 @Injectable()
 export class NotificacionesService {
@@ -44,7 +44,10 @@ export class NotificacionesService {
     }
 
     async findOne ( id: string ) {
-        const notificacion = await this.notificacionRepo.findOneBy( { id } );
+        const notificacion = await this.notificacionRepo.findOne({
+            where: { id },
+            relations:{novedad:true}
+        });
 
         if ( !notificacion )
             throw new NotFoundException(
