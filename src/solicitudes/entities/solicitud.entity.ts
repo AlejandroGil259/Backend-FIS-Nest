@@ -1,8 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { BaseEntity } from '../../commons/entities/base-entity.entity';
 import { ESTADO_RESPUESTA, TIPO_SOLICITUD } from '../constants';
-import { Usuario } from '../../usuarios/entities/usuarios.entity';
+import { Usuario } from '../../auth/entities/usuarios.entity';
 import { Archivo } from '../../archivos/entities/archivo.entity';
 
 @Entity('solicitudes')
@@ -42,9 +48,11 @@ export class Solicitud extends BaseEntity {
   })
   respEstado: ESTADO_RESPUESTA;
 
-  @ManyToOne(() => Usuario, (usuario) => usuario.solicitudes)
+  @ManyToOne(() => Usuario, (usuario) => usuario.solicitudes, {
+    onDelete: 'CASCADE',
+  })
   usuario: Usuario;
 
-  @OneToMany(() => Archivo, (archivo) => archivo.proyecto)
+  @OneToMany(() => Archivo, (archivo) => archivo.proyectos, { cascade: true })
   archivos: Archivo[];
 }
