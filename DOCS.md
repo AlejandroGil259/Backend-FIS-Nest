@@ -71,5 +71,35 @@
 ## Paquetes instalados
 
 ```txt
-$: npm i bcrypt class-validator class-transformer joi passport-jwt pg passport typeorm typeorm-naming-strategies uuid @nestjs/config @nestjs/passport @nestjs/typeorm @nestjs/swagger @nestjs/jwt @nestjs/mapped-types@*
+$: npm i bcrypt class-validator class-transformer joi passport-jwt pg passport typeorm typeorm-naming-strategies uuid @nestjs/config @nestjs/passport @nestjs/typeorm @nestjs/swagger @nestjs/jwt @nestjs/mapped-types@* @types/passport-jwt
+```
+
+## Generar modulos, controladores, servicios
+
+- En la entidad de usuario
+
+```txt
+nest g mo usuarios
+nest g co usuarios/controllers/usuarios --flat
+nest g s usuarios/servicios/usuarios --flat
+
+```
+
+- En Auth
+
+```txt
+nest g mo auth
+nest g co auth/controllers/auth --flat
+nest g s auth/services/auth --flat
+
+```
+
+## Generar un recurso de CRUD
+
+```txt
+ nest g res archivos
+ nest g res notificaciones
+ nest g res archivos
+ nest g res proyectos
+ nest g res solicitudes
 ```
