@@ -25,7 +25,7 @@ export class ProyectosService {
   ) {}
 
   async createProject(createProyectoDto: CreateProyectoDto) {
-    const { usuarioDocumento, rolProyecto, vigenciaRol } = createProyectoDto;
+    const { usuarioDocumento, archivoProyecto } = createProyectoDto;
 
     const usuario = await this.usuario.findOneBy({
       documento: usuarioDocumento,
@@ -46,8 +46,7 @@ export class ProyectosService {
       } = await this.usuariosProyectos.save({
         proyecto,
         usuario,
-        rolProyecto,
-        vigenciaRol,
+        archivoProyecto,
       });
 
       return { proyecto, usuarioProyecto: { idProyecto, documento, ...rest } };
@@ -90,7 +89,7 @@ export class ProyectosService {
         `No se encontró ningun proyecto con Id ${idProyecto}`,
       );
 
-    const { usuarioDocumento, rolProyecto, vigenciaRol, ...infoProyecto } =
+    const { usuarioDocumento, archivoProyecto, ...infoProyecto } =
       updateProyectoDto;
 
     try {
@@ -106,7 +105,7 @@ export class ProyectosService {
 
       await this.usuariosProyectos.update(
         { id: usuariosProyectos.id },
-        { rolProyecto, vigenciaRol },
+        { archivoProyecto },
       );
 
       return await this.proyectoRepo.update(

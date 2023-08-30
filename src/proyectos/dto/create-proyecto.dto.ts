@@ -26,11 +26,7 @@ export class CreateProyectoDto {
   @IsNumber()
   usuarioDocumento: number;
 
-  @ApiProperty({ description: '?????', example: '?????' })
+  @ApiProperty({ description: '?????', example: '-----' })
   @IsString()
-  rolProyecto: string;
-
-  @ApiProperty({ description: '?????', example: '?????' })
-  @IsString()
-  vigenciaRol: string;
+  archivoProyecto: string;
 }

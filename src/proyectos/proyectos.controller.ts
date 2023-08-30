@@ -12,6 +12,8 @@ import { ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ProyectosService } from './proyectos.service';
 import { CreateProyectoDto } from './dto/create-proyecto.dto';
 import { UpdateProyectoDto } from './dto/update-proyecto.dto';
+import { Auth, GetUsuario } from '../auth/decorators';
+import { ValidarRoles } from '../auth/interfaces';
 @ApiTags('Proyectos')
 @Controller('proyectos')
 export class ProyectosController {
@@ -72,6 +74,7 @@ export class ProyectosController {
     description: 'No hay proyectos en la base de datos para este usuario',
   })
   @Patch(':id_proyecto')
+  @Auth(ValidarRoles.Comite)
   update(
     @Param('id_proyecto', ParseUUIDPipe) idProyecto: string,
     @Body() updateProyectoDto: UpdateProyectoDto,
