@@ -10,11 +10,7 @@ export class UsuariosProyectos {
 
   @ApiProperty()
   @Column()
-  rolProyecto: string;
-
-  @ApiProperty()
-  @Column()
-  vigenciaRol: string;
+  archivoProyecto: string;
 
   @ManyToOne(() => Usuario, (usuario) => usuario.usuariosProyectos, {
     onDelete: 'CASCADE',

@@ -1,10 +1,18 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Column, Entity, OneToMany, OneToOne } from 'typeorm';
+import {
+  BeforeInsert,
+  BeforeUpdate,
+  Column,
+  Entity,
+  OneToMany,
+  OneToOne,
+} from 'typeorm';
 import { BaseEntity } from '../../commons/entities/base-entity.entity';
 import { Solicitud } from '../../solicitudes/entities/solicitud.entity';
 import { ROLES } from '../constants';
 import { UsuariosProyectos } from './usuarios-proyectos.entity';
 import { Notificacion } from '../../notificaciones/entities/notificacion.entity';
+import { check } from 'prettier';
 
 @Entity('usuarios')
 export class Usuario extends BaseEntity {
@@ -106,6 +114,16 @@ export class Usuario extends BaseEntity {
     { cascade: true },
   )
   usuariosProyectos: UsuariosProyectos[];
+
+  @BeforeInsert()
+  checkFieldsBeforeInsert() {
+    this.correo = this.correo.toLowerCase().trim();
+  }
+
+  @BeforeUpdate()
+  checkFieldsBeforeUpdate() {
+    this.checkFieldsBeforeInsert();
+  }
 }
 
 // @ApiProperty es para documentar las propiedades en Swagger, no tiene afectación en la DB
