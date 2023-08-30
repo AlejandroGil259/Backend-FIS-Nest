@@ -21,7 +21,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validar(payload: JwtPayload): Promise<Usuario> {
+  async validate(payload: JwtPayload): Promise<Usuario> {
     const { correo } = payload;
 
     const usuario = await this.usuarioRepositorio.findOneBy({ correo });
@@ -32,6 +32,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       throw new UnauthorizedException(
         'Usuario no esta activo, habla con el admin',
       );
+
+    console.log({ usuario });
 
     return usuario;
   }
