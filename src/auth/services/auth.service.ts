@@ -4,18 +4,21 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';
 import { DBExceptionService } from '../../commons/services/db-exception.service';
-import { CreateUserDto, UpdateUsuarioDto, LoginUsuarioDto } from '../dto';
+import { CreateUserDto, LoginUsuarioDto, UpdateUsuarioDto } from '../dto';
 import { Usuario } from '../entities/usuarios.entity';
+import { JwtPayload } from '../interfaces/jwt-payload.interface';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(Usuario)
     private readonly usuarioRepo: Repository<Usuario>,
+    private readonly jwtService: JwtService,
   ) {}
 
   async register(createUserDto: CreateUserDto) {
@@ -34,7 +37,11 @@ export class AuthService {
       // TODO: Crear JWT con información de autorización
 
       return {
-        usuario: user,
+        ...usuario,
+        token: this.getJwtToken({
+          documento: usuario.documento,
+          correo: usuario.correo,
+        }),
       };
     } catch (error) {
       throw DBExceptionService.handleDBException(error);
@@ -45,20 +52,33 @@ export class AuthService {
     const { contrasena, correo } = loginUsuarioDto;
     const usuario = await this.usuarioRepo.findOne({
       where: { correo },
-      select: { correo: true, contrasena: true },
+      select: { correo: true, contrasena: true, documento: true },
     });
 
     if (!usuario)
-      throw new UnauthorizedException('Credinciales no son validas (email)');
+      throw new UnauthorizedException(
+        'Las credinciales no son validas (email)',
+      );
 
     if (!bcrypt.compareSync(contrasena, usuario.contrasena))
       throw new UnauthorizedException(
         'Credinciales no son validas (contraseña)',
       );
 
-    return usuario;
+    return {
+      ...usuario,
+      token: this.getJwtToken({
+        documento: usuario.documento,
+        correo: usuario.correo,
+      }),
+    };
 
     // TODO: retornar el JWT de acceso
+  }
+
+  private getJwtToken(payload: JwtPayload) {
+    const token = this.jwtService.sign(payload);
+    return token;
   }
 
   async findAll() {
