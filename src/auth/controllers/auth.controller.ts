@@ -7,10 +7,17 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CreateUserDto, UpdateUsuarioDto, LoginUsuarioDto } from '../dto';
+import { Auth, GetUsuario, RawHeaders } from '../decorators';
+import { CreateUserDto, LoginUsuarioDto, UpdateUsuarioDto } from '../dto';
+import { Usuario } from '../entities/usuarios.entity';
 import { AuthService } from '../services/auth.service';
+import { UsuarioRolGuard } from '../guards/usuario-rol.guard';
+import { RolProtected } from '../decorators/rol-protected.decorator';
+import { ValidarRoles } from '../interfaces';
 
 @ApiTags('Usuarios')
 @Controller('auth')
@@ -49,6 +56,47 @@ export class AuthController {
   @Post('login')
   loginUser(@Body() loginUsuarioDto: LoginUsuarioDto) {
     return this.authService.login(loginUsuarioDto);
+  }
+
+  @Get('private')
+  @UseGuards(AuthGuard())
+  testingPrivateRoute(
+    @GetUsuario() usuario: Usuario,
+    @GetUsuario('correo') usuarioCorreo: string,
+    @RawHeaders('correo') rawHeaders: string[],
+  ) {
+    return {
+      ok: true,
+      message: 'Hola mundo private',
+      usuario,
+      usuarioCorreo,
+      rawHeaders,
+    };
+  }
+
+  //@SetMetadata('roles', ['Admin', 'Docente', 'Estudiante'])
+
+  // @Get('private2')
+  // @RolProtected(
+  //   ValidarRoles.Estudiante,
+  //   ValidarRoles.Docente,
+  //   ValidarRoles.Comite,
+  // )
+  // @UseGuards(AuthGuard(), UsuarioRolGuard)
+  // privateRoute2(@GetUsuario() usuario: Usuario) {
+  //   return {
+  //     ok: true,
+  //     usuario,
+  //   };
+  // }
+
+  @Get('private2')
+  @Auth(ValidarRoles.Comite, ValidarRoles.Estudiante)
+  privateRoute3(@GetUsuario() usuario: Usuario) {
+    return {
+      ok: true,
+      usuario,
+    };
   }
 
   @ApiResponse({
