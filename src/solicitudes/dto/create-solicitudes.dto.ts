@@ -13,11 +13,11 @@ export class CreateSolicitudesDto {
 
   @ApiProperty({ example: 'Cambio de director' })
   @IsString()
-  rutaCarta: string;
+  asunto: string;
 
   @ApiProperty({ example: 'Respuesta de la carta' })
   @IsString()
-  respCarta: string;
+  archivoCarta: string;
 
   @ApiProperty({ example: [123456789, 2251184], isArray: true })
   @IsArray()

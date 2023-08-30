@@ -30,11 +30,11 @@ export class Solicitud extends BaseEntity {
 
   @ApiProperty()
   @Column()
-  rutaCarta: string;
+  asunto: string;
 
   @ApiProperty()
   @Column()
-  respCarta: string;
+  archivoCarta: string;
 
   @ApiProperty({
     enum: ESTADO_RESPUESTA,
