@@ -4,3 +4,9 @@ export enum OPCION_GRADO {
   MONOGRAFIA = 'Monografia',
   COTERMINAL = 'Espacio Coterminal',
 }
+
+export enum TIPO_ENTREGA {
+  FICHA_OBJETIVOS = 'Ficha de objetivos',
+  PROPUESTA = 'Propuesta',
+  INFORME_FINAL = 'Informe final',
+}

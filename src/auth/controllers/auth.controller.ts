@@ -91,7 +91,7 @@ export class AuthController {
   // }
 
   @Get('private2')
-  @Auth(ValidarRoles.Comite, ValidarRoles.Estudiante)
+  @Auth()
   privateRoute3(@GetUsuario() usuario: Usuario) {
     return {
       ok: true,

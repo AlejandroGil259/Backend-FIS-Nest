@@ -10,7 +10,7 @@ import { TIPO_NOVEDAD } from '../constansts';
 import { BaseEntity } from '../../commons/entities/base-entity.entity';
 import { Notificacion } from '../../notificaciones/entities/notificacion.entity';
 import { Proyecto } from '../../proyectos/entities/proyecto.entity';
-
+  
 @Entity('novedades')
 export class Novedad extends BaseEntity {
   @ApiProperty({

@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { BaseEntity } from '../../commons/entities/base-entity.entity';
-import { OPCION_GRADO } from '../constants';
+import { OPCION_GRADO, TIPO_ENTREGA } from '../constants';
 import { Archivo } from '../../archivos/entities/archivo.entity';
 import { Novedad } from '../../novedades/entities/novedad.entity';
 import { UsuariosProyectos } from '../../auth/entities/usuarios-proyectos.entity';
@@ -24,6 +24,13 @@ export class Proyecto extends BaseEntity {
   })
   opcionGrado: OPCION_GRADO;
 
+  @ApiProperty({ enum: TIPO_ENTREGA })
+  @Column({
+    type: 'varchar',
+    enum: TIPO_ENTREGA,
+  })
+  tipoEntrega: TIPO_ENTREGA;
+
   @ApiProperty({
     description: 'Estado del proyecto en la plataforma',
     default: true,
@@ -37,6 +44,10 @@ export class Proyecto extends BaseEntity {
   @ApiProperty({ description: 'Titulo del proyecto' })
   @Column({ unique: true })
   titulo: string;
+
+  @ApiProperty({ description: 'descripcion' })
+  @Column({})
+  descripcion: string;
 
   @OneToMany(() => Archivo, (archivo) => archivo.proyectos, { cascade: true })
   archivos: Archivo[];
