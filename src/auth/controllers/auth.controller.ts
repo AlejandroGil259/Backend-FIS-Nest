@@ -90,14 +90,14 @@ export class AuthController {
   //   };
   // }
 
-  @Get('private2')
-  @Auth()
-  privateRoute3(@GetUsuario() usuario: Usuario) {
-    return {
-      ok: true,
-      usuario,
-    };
-  }
+  // @Get('private2')
+  // @Auth()
+  // privateRoute3(@GetUsuario() usuario: Usuario) {
+  //   return {
+  //     ok: true,
+  //     usuario,
+  //   };
+  // }
 
   @ApiResponse({
     status: 200,

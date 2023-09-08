@@ -1,8 +1,10 @@
 export enum OPCION_GRADO {
   DESARROLLO_TECNOLOGICO = 'Desarrollo Tecnologico',
-  PASANTIA = 'Pasantia',
-  MONOGRAFIA = 'Monografia',
-  COTERMINAL = 'Espacio Coterminal',
+  ESPACIO_COTERMINAL = 'Espacio Coterminal',
+  MONOGRAFIA = 'Monografía',
+  PASANTIA_EMPRESARIAL = 'Pasantía',
+  PROMEDIO_ACUMULADO = 'Promedio Acumulado',
+  PROYECTO_INVESTIGACION = 'Proyecto de Investigación'
 }
 
 export enum TIPO_ENTREGA {

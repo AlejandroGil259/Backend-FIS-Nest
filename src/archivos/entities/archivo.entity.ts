@@ -19,10 +19,6 @@ export class Archivo extends BaseEntity {
   @Column({ type: 'varchar' })
   nombreArchivoServidor: string;
 
-  @ApiProperty({ example: 'SergioG' })
-  @Column()
-  autor: string;
-
   @ApiProperty({
     description: 'Estado del archivo en la plataforma',
     enum: DOC_STATUS,
