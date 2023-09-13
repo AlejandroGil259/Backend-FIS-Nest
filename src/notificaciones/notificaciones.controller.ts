@@ -3,17 +3,22 @@ import {
   Controller,
   Get,
   Param,
+  ParseIntPipe,
   ParseUUIDPipe,
   Post,
 } from '@nestjs/common';
 import { ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateNotificacionesDto } from './dto/create-notificaciones.dto';
 import { NotificacionesService } from './notificaciones.service';
+import { AuthService } from '../auth/services/auth.service';
 
 @ApiTags('Notificaciones')
 @Controller('notificaciones')
 export class NotificacionesController {
-  constructor(private readonly notificacionesService: NotificacionesService) {}
+  constructor(
+    private readonly notificacionesService: NotificacionesService,
+    private readonly authService: AuthService,
+  ) {}
   @ApiResponse({
     status: 201,
     description: 'Se creo correctamente la notificación en la base de datos',
@@ -60,5 +65,23 @@ export class NotificacionesController {
   @Get(':id')
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.notificacionesService.findOne(id);
+  }
+
+  @ApiResponse({
+    status: 200,
+    description: 'Se encontró una notificacion con el documento ingresado',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'No hay notificaciones en la base de datos con ese documento',
+  })
+  @ApiParam({
+    name: 'documento',
+    description: 'Documento de la notificación registrado',
+    example: '123456789',
+  })
+  @Get(':documento')
+  findOneD(@Param('documento', ParseIntPipe) documento: number) {
+    return this.authService.findOne(documento);
   }
 }

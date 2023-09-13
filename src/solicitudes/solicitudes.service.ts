@@ -47,7 +47,6 @@ export class SolicitudesService {
   async findOne(idSolicitud: string) {
     const solicitud = await this.solicitudRepo.findOne({
       where: { idSolicitud },
-      relations: { archivos: true },
     });
 
     if (!solicitud)

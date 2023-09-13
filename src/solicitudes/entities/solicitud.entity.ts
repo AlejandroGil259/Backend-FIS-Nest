@@ -21,6 +21,14 @@ export class Solicitud extends BaseEntity {
   @Column()
   contenido: string;
 
+  @ApiProperty()
+  @Column()
+  nombres: string;
+
+  @ApiProperty()
+  @Column()
+  apellidos: string;
+
   @ApiProperty({ enum: TIPO_SOLICITUD })
   @Column({
     type: 'varchar',

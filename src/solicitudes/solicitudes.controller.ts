@@ -55,12 +55,12 @@ export class SolicitudesController {
     description: 'No hay registros en la base de datos para esta solicitud',
   })
   @ApiParam({
-    name: 'id_solicitud',
+    name: 'idSolicitud',
     description: 'id de la solicitud registrada',
     example: 123456789,
   })
-  @Get(':id_solicitud')
-  findOne(@Param('id_solicitud', ParseUUIDPipe) idSolicitud: string) {
+  @Get(':idSolicitud')
+  findOne(@Param('idSolicitud', ParseUUIDPipe) idSolicitud: string) {
     return this.solicitudesService.findOne(idSolicitud);
   }
 
@@ -72,9 +72,9 @@ export class SolicitudesController {
     status: 404,
     description: 'No hay registros en la base de datos para esta solicitud',
   })
-  @Patch(':id_solicitud')
+  @Patch(':idSolicitud')
   update(
-    @Param('id_solicitud', ParseUUIDPipe) idSolicitud: string,
+    @Param('idSolicitud', ParseUUIDPipe) idSolicitud: string,
     @Body() updateSolicitudeDto: UpdateSolicitudesDto,
   ) {
     return this.solicitudesService.update(idSolicitud, updateSolicitudeDto);
@@ -87,8 +87,8 @@ export class SolicitudesController {
     status: 404,
     description: 'No hay solicitudes en la base de datos',
   })
-  @Delete(':id_solicitud')
-  remove(@Param('id_solicitud', ParseUUIDPipe) idSolicitud: string) {
+  @Delete(':idSolicitud')
+  remove(@Param('idSolicitud', ParseUUIDPipe) idSolicitud: string) {
     return this.solicitudesService.remove(idSolicitud);
   }
 }

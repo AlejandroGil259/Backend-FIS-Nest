@@ -7,6 +7,14 @@ export class CreateSolicitudesDto {
   @IsString()
   contenido: string;
 
+  @ApiProperty({ description: 'Nombres' })
+  @IsString()
+  nombres: string;
+
+  @ApiProperty({ description: 'Apellidos' })
+  @IsString()
+  apellidos: string;
+
   @ApiProperty({ enum: TIPO_SOLICITUD })
   @IsEnum(TIPO_SOLICITUD)
   tipoSolicitud: TIPO_SOLICITUD;
