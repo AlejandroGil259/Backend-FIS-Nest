@@ -39,6 +39,8 @@ export class AuthService {
       return {
         ...usuario,
         token: this.getJwtToken({
+          nombres: usuario.nombres,
+          apellidos: usuario.apellidos,
           documento: usuario.documento,
           correo: usuario.correo,
         }),
@@ -57,6 +59,7 @@ export class AuthService {
         contrasena: true,
         documento: true,
         nombres: true,
+        apellidos: true,
       },
     });
 
@@ -73,6 +76,8 @@ export class AuthService {
     return {
       ...usuario,
       token: this.getJwtToken({
+        nombres: usuario.nombres,
+        apellidos: usuario.apellidos,
         documento: usuario.documento,
         correo: usuario.correo,
       }),
