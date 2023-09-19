@@ -1,5 +1,6 @@
 export enum TIPO_NOTIFICACION {
-  REVISION = 'Revision',
-  PROYECTOS = 'proyectos',
+  REVISION = 'Revisión',
+  PROYECTOS = 'Proyectos',
   ACTAS = 'Actas',
+  SOLICITUDES='Solicitudes'
 }
