@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { BaseEntity } from '../../commons/entities/base-entity.entity';
-import { OPCION_GRADO, TIPO_ENTREGA } from '../constants';
+import { DIRECTOR, OPCION_GRADO, TIPO_ENTREGA } from '../constants';
 import { Archivo } from '../../archivos/entities/archivo.entity';
 import { Novedad } from '../../novedades/entities/novedad.entity';
 import { UsuariosProyectos } from '../../auth/entities/usuarios-proyectos.entity';
@@ -30,6 +30,13 @@ export class Proyecto extends BaseEntity {
     enum: TIPO_ENTREGA,
   })
   tipoEntrega: TIPO_ENTREGA;
+
+  @ApiProperty({ enum: DIRECTOR })
+  @Column({
+    type: 'varchar',
+    enum: DIRECTOR,
+  })
+  director: DIRECTOR;
 
   @ApiProperty({
     description: 'Estado del proyecto en la plataforma',

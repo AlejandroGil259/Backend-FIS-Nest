@@ -12,3 +12,10 @@ export enum TIPO_ENTREGA {
   PROPUESTA = 'Propuesta',
   INFORME_FINAL = 'Informe final',
 }
+
+export enum DIRECTOR {
+  ING_SUSANA = 'Ing. Susana Contreras',
+  ING_HENRY = 'Ing. Henry Guio',
+  ING_CARLOS = 'Ing. Carlos Guerrero',
+  ING_HARVEY = 'Ing. Harvey '
+}

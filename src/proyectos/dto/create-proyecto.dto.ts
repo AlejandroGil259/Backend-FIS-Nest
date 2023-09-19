@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsOptional, IsString, IsEnum, IsNumber } from 'class-validator';
-import { OPCION_GRADO, TIPO_ENTREGA } from '../constants';
+import { DIRECTOR, OPCION_GRADO, TIPO_ENTREGA } from '../constants';
 
 export class CreateProyectoDto {
   @ApiProperty({ description: 'Referencia del proyecto', example: 'Fis01' })
@@ -15,6 +15,10 @@ export class CreateProyectoDto {
   @ApiProperty({ enum: TIPO_ENTREGA })
   @IsEnum(TIPO_ENTREGA)
   tipoEntrega: TIPO_ENTREGA;
+
+  @ApiProperty({ enum: DIRECTOR })
+  @IsEnum(DIRECTOR)
+  director: DIRECTOR;
 
   @ApiProperty({
     description: 'Titulo del proyecto',
