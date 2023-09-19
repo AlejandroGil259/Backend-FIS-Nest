@@ -43,6 +43,7 @@ export class AuthService {
           apellidos: usuario.apellidos,
           documento: usuario.documento,
           correo: usuario.correo,
+          rol: usuario.rol,
         }),
       };
     } catch (error) {
@@ -60,6 +61,7 @@ export class AuthService {
         documento: true,
         nombres: true,
         apellidos: true,
+        rol: true,
       },
     });
 
@@ -80,6 +82,7 @@ export class AuthService {
         apellidos: usuario.apellidos,
         documento: usuario.documento,
         correo: usuario.correo,
+        rol: usuario.rol,
       }),
     };
 
