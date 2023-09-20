@@ -44,6 +44,7 @@ export class CreateUserDto {
 
   @ApiProperty({ example: 'Max-10' })
   @IsString()
+  @IsOptional()
   @MinLength(6)
   @Matches(/(?:(?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
     message:
