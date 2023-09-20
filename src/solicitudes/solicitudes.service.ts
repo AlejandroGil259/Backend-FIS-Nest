@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Usuario } from '../auth/entities/usuarios.entity';
 import { DBExceptionService } from '../commons/services/db-exception.service';
 import { CreateSolicitudesDto } from './dto/create-solicitudes.dto';
@@ -21,7 +21,7 @@ export class SolicitudesService {
       createSolicitudesDto;
     try {
       const usuarioSolicitudes = await this.usuarioRepo.findBy({
-        documento: In(usuariosSolicitudesDocumento),
+        documento: usuariosSolicitudesDocumento,
       });
 
       const solicitud = await this.solicitudRepo.save({

@@ -56,6 +56,10 @@ export class Solicitud extends BaseEntity {
   })
   respEstado: ESTADO_RESPUESTA;
 
+  @ApiProperty()
+  @Column()
+  usuariosSolicitudesDocumentos: number;
+
   @ManyToOne(() => Usuario, (usuario) => usuario.solicitudes, {
     onDelete: 'CASCADE',
   })

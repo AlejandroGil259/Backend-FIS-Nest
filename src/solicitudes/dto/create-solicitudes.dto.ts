@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsEnum, IsString } from 'class-validator';
+import { IsEnum, IsNumber, IsString } from 'class-validator';
 import { TIPO_SOLICITUD } from '../constants';
 
 export class CreateSolicitudesDto {
@@ -27,7 +27,7 @@ export class CreateSolicitudesDto {
   @IsString()
   archivoCarta: string;
 
-  @ApiProperty({ example: [123456789, 2251184], isArray: true })
-  @IsArray()
-  usuariosSolicitudesDocumentos: number[];
+  @ApiProperty({ example: 123456789 })
+  @IsNumber()
+  usuariosSolicitudesDocumentos: number;
 }
