@@ -16,9 +16,9 @@ export class CreateProyectoDto {
   @IsEnum(TIPO_ENTREGA)
   tipoEntrega: TIPO_ENTREGA;
 
-  @ApiProperty({ enum: DIRECTOR })
-  @IsEnum(DIRECTOR)
-  director: DIRECTOR;
+  @ApiProperty({ description: 'Nombre del director o directora' })
+  @IsString()
+  director: string;
 
   @ApiProperty({
     description: 'Titulo del proyecto',
