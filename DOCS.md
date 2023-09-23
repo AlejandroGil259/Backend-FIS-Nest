@@ -102,4 +102,6 @@ nest g s auth/services/auth --flat
  nest g res archivos
  nest g res proyectos
  nest g res solicitudes
+ nest g res pasantias
+ nest g res espaciosCoterminales
 ```

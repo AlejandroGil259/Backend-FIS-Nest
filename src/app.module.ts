@@ -10,6 +10,8 @@ import { NovedadesModule } from './novedades/novedades.module';
 import { ProyectosModule } from './proyectos/proyectos.module';
 import { SolicitudesModule } from './solicitudes/solicitudes.module';
 import { AuthModule } from './auth/auth.module';
+import { PasantiasModule } from './pasantias/pasantias.module';
+import { EspaciosCoterminalesModule } from './espacios-coterminales/espacios-coterminales.module';
 
 @Module({
   imports: [
@@ -42,6 +44,10 @@ import { AuthModule } from './auth/auth.module';
     NotificacionesModule,
 
     NovedadesModule,
+
+    PasantiasModule,
+
+    EspaciosCoterminalesModule,
   ],
 })
 export class AppModule {}
