@@ -12,7 +12,6 @@ import { Solicitud } from '../../solicitudes/entities/solicitud.entity';
 import { ROLES } from '../constants';
 import { UsuariosProyectos } from './usuarios-proyectos.entity';
 import { Notificacion } from '../../notificaciones/entities/notificacion.entity';
-import { check } from 'prettier';
 
 @Entity('usuarios')
 export class Usuario extends BaseEntity {
