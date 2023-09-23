@@ -4,7 +4,7 @@ export enum OPCION_GRADO {
   MONOGRAFIA = 'Monografía',
   PASANTIA_EMPRESARIAL = 'Pasantía',
   PROMEDIO_ACUMULADO = 'Promedio Acumulado',
-  PROYECTO_INVESTIGACION = 'Proyecto de Investigación'
+  PROYECTO_INVESTIGACION = 'Proyecto de Investigación',
 }
 
 export enum TIPO_ENTREGA {
@@ -14,8 +14,21 @@ export enum TIPO_ENTREGA {
 }
 
 export enum DIRECTOR {
-  ING_SUSANA = 'Ing. Susana Contreras',
-  ING_HENRY = 'Ing. Henry Guio',
-  ING_CARLOS = 'Ing. Carlos Guerrero',
-  ING_HARVEY = 'Ing. Harvey '
+  ING_HENRY = 'Ing. Henry Alfonso Guio Ávila',
+  ING_SUSANA = 'Ing. Martha Susana Contreras Ortiz',
+  ING_HARVEY = 'Ing. Harvey Nicolás Echavarría Ortiz',
+  ING_CARLOS = 'Ing. Carlos Andrés Guerrero Alarcón',
+  ING_JUAN = 'Ing. Juan Fransisco Mendoza Moreno',
+  ING_CRISTIAN = 'Ing. Cristian Vidal Mosso Coy',
+  ING_SEBASTIAN = 'Ing. Juan Sebastian Ulloa Parra',
+}
+
+export enum CODIRECTOR {
+  ING_HENRY = 'Ing. Henry Alfonso Guio Ávila',
+  ING_SUSANA = 'Ing. Martha Susana Contreras Ortiz',
+  ING_HARVEY = 'Ing. Harvey Nicolás Echavarría Ortiz',
+  ING_CARLOS = 'Ing. Carlos Andrés Guerrero Alarcón',
+  ING_JUAN = 'Ing. Juan Fransisco Mendoza Moreno',
+  ING_CRISTIAN = 'Ing. Cristian Vidal Mosso Coy',
+  ING_SEBASTIAN = 'Ing. Juan Sebastian Ulloa Parra',
 }

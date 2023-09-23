@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsOptional, IsString, IsEnum, IsNumber } from 'class-validator';
-import { DIRECTOR, OPCION_GRADO, TIPO_ENTREGA } from '../constants';
+import { CODIRECTOR, DIRECTOR, OPCION_GRADO, TIPO_ENTREGA } from '../constants';
 
 export class CreateProyectoDto {
   @ApiProperty({ description: 'Referencia del proyecto', example: 'Fis01' })
@@ -16,9 +16,19 @@ export class CreateProyectoDto {
   @IsEnum(TIPO_ENTREGA)
   tipoEntrega: TIPO_ENTREGA;
 
-  @ApiProperty({ description: 'Nombre del director o directora' })
-  @IsString()
-  director: string;
+  @ApiProperty({
+    description: 'Nombre del director',
+    enum: DIRECTOR,
+  })
+  @IsEnum(DIRECTOR)
+  director: DIRECTOR;
+
+  @ApiProperty({
+    description: 'Nombre del codirector',
+    enum: CODIRECTOR,
+  })
+  @IsEnum(CODIRECTOR)
+  codirector: CODIRECTOR;
 
   @ApiProperty({
     description: 'Titulo del proyecto',

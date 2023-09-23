@@ -1,11 +1,20 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { BaseEntity } from '../../commons/entities/base-entity.entity';
-import { OPCION_GRADO, TIPO_ENTREGA } from '../constants';
+import { CODIRECTOR, DIRECTOR, OPCION_GRADO, TIPO_ENTREGA } from '../constants';
 import { Archivo } from '../../archivos/entities/archivo.entity';
 import { Novedad } from '../../novedades/entities/novedad.entity';
 import { UsuariosProyectos } from '../../auth/entities/usuarios-proyectos.entity';
 import { Notificacion } from '../../notificaciones/entities/notificacion.entity';
+import { Pasantia } from '../../pasantias/entities/pasantia.entity';
+import { EspaciosCoterminale } from '../../espacios-coterminales/entities/espacios-coterminale.entity';
 
 @Entity('proyectos')
 export class Proyecto extends BaseEntity {
@@ -31,11 +40,19 @@ export class Proyecto extends BaseEntity {
   })
   tipoEntrega: TIPO_ENTREGA;
 
-  @ApiProperty({ description: 'Nombre del director' })
+  @ApiProperty({ enum: DIRECTOR })
   @Column({
     type: 'varchar',
+    enum: DIRECTOR,
   })
-  director: string;
+  director: DIRECTOR;
+
+  @ApiProperty({ enum: CODIRECTOR })
+  @Column({
+    type: 'varchar',
+    enum: CODIRECTOR,
+  })
+  codirector: CODIRECTOR;
 
   @ApiProperty({
     description: 'Estado del proyecto en la plataforma',
@@ -54,6 +71,17 @@ export class Proyecto extends BaseEntity {
   @ApiProperty({ description: 'descripcion' })
   @Column({})
   descripcion: string;
+
+  @OneToOne(() => Pasantia, (pasantia) => pasantia.proyecto)
+  @JoinColumn()
+  pasantia: Pasantia;
+
+  @OneToOne(
+    () => EspaciosCoterminale,
+    (espacioCoterminal) => espacioCoterminal.proyecto,
+  )
+  @JoinColumn()
+  espacioCoterminal: EspaciosCoterminale;
 
   @OneToMany(() => Archivo, (archivo) => archivo.proyectos, { cascade: true })
   archivos: Archivo[];
