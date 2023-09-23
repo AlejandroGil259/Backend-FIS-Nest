@@ -17,9 +17,9 @@ export class Solicitud extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   idSolicitud: string;
 
-  @ApiProperty({ description: 'Agregar contenido a la solicitud' })
+  @ApiProperty({ description: 'Agregar descripción a la solicitud' })
   @Column()
-  contenido: string;
+  descripcion: string;
 
   @ApiProperty()
   @Column()

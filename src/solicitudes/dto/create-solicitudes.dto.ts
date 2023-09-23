@@ -5,7 +5,7 @@ import { TIPO_SOLICITUD } from '../constants';
 export class CreateSolicitudesDto {
   @ApiProperty({ description: 'Agregar contenido a la solicitud' })
   @IsString()
-  contenido: string;
+  descripcion: string;
 
   @ApiProperty({ description: 'Nombres' })
   @IsString()
