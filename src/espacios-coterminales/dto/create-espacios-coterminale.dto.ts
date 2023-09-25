@@ -1,8 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsString } from 'class-validator';
+import { IsEnum, IsNumber, IsString } from 'class-validator';
 import { SEDES } from '../constants';
 
 export class CreateEspaciosCoterminaleDto {
+  @ApiProperty({ example: 1001, type: Number })
+  @IsNumber()
+  idPrograma: number;
+
   @ApiProperty({ description: 'Nombre del postgrado' })
   @IsString()
   nombrePrograma: string;
@@ -14,4 +18,8 @@ export class CreateEspaciosCoterminaleDto {
   })
   @IsEnum(SEDES)
   institucion: SEDES;
+
+  @ApiProperty({ example: 123456789 })
+  @IsNumber()
+  usuariosEspacioCoCedula: number;
 }

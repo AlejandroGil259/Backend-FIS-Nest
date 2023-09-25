@@ -24,6 +24,10 @@ export class EspaciosCoterminale {
   @Column({ type: 'varchar', enum: SEDES })
   institucion: SEDES;
 
+  @ApiProperty()
+  @Column()
+  usuariosEspacioCoCedula: number;
+
   @OneToOne(() => Proyecto)
   @JoinColumn()
   proyecto: Proyecto;
