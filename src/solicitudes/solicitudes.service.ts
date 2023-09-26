@@ -6,6 +6,7 @@ import { DBExceptionService } from '../commons/services/db-exception.service';
 import { CreateSolicitudesDto } from './dto/create-solicitudes.dto';
 import { UpdateSolicitudesDto } from './dto/update-solicitudes.dto';
 import { Solicitud } from './entities/solicitud.entity';
+import { ESTADO_RESPUESTA, TIPO_SOLICITUD } from './constants';
 
 @Injectable()
 export class SolicitudesService {
@@ -55,6 +56,14 @@ export class SolicitudesService {
       );
 
     return solicitud;
+  }
+
+  async getTipoSolicitud() {
+    return Object.values(TIPO_SOLICITUD);
+  }
+
+  async getEstado() {
+    return Object.values(ESTADO_RESPUESTA);
   }
 
   async update(

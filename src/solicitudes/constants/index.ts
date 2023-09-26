@@ -8,5 +8,5 @@ export enum TIPO_SOLICITUD {
 export enum ESTADO_RESPUESTA {
   APROBADO = 'Aprobado',
   ESPERA = 'En Espera',
-  RECHAZADO = 'Rechado',
+  RECHAZADO = 'Rechazada',
 }

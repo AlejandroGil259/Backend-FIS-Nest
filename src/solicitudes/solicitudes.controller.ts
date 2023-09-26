@@ -48,6 +48,32 @@ export class SolicitudesController {
 
   @ApiResponse({
     status: 200,
+    description: 'Se encontraron los tipos de solicitudes',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'No hay tipos de solicitud en la base de datos',
+  })
+  @Get(':tipoSolicitud')
+  getTipoSolicitud() {
+    return this.solicitudesService.getTipoSolicitud();
+  }
+
+  @ApiResponse({
+    status: 200,
+    description: 'Se encontraron los estados',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'No hay estados de respuesta en la base de datos',
+  })
+  @Get('respuesta/:estado')
+  getEstado() {
+    return this.solicitudesService.getEstado();
+  }
+
+  @ApiResponse({
+    status: 200,
     description: 'Se encontró una solicitud con el id ingresado',
   })
   @ApiResponse({
