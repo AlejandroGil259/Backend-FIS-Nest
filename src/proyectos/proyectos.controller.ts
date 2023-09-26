@@ -50,6 +50,45 @@ export class ProyectosController {
 
   @ApiResponse({
     status: 200,
+    description: 'Se encontraron los siguientes tipos de entrega',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'No hay tipo de entregas en la base de datos',
+  })
+  @Get('cargarDocument/:tipoEntrega')
+  getTipoEntrega() {
+    return this.proyectosService.getTipoEntrega();
+  }
+
+  @ApiResponse({
+    status: 200,
+    description: 'Se encontraron las siguientes opciones de grado',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'No hay opciones de grado en la base de datos',
+  })
+  @Get('cargarDocumentos/:opcionGrado')
+  getOpcionGrado() {
+    return this.proyectosService.getOpcionGrado();
+  }
+
+  @ApiResponse({
+    status: 200,
+    description: 'Se encontraron los siguientes directores',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'No hay directores en la base de datos',
+  })
+  @Get(':director')
+  getDirectores() {
+    return this.proyectosService.getDirectores();
+  }
+
+  @ApiResponse({
+    status: 200,
     description: 'Se encontró un proyecto con el id ingresado',
   })
   @ApiResponse({
@@ -74,7 +113,6 @@ export class ProyectosController {
     description: 'No hay proyectos en la base de datos para este usuario',
   })
   @Patch(':id_proyecto')
-  @Auth(ValidarRoles.Comite)
   update(
     @Param('id_proyecto', ParseUUIDPipe) idProyecto: string,
     @Body() updateProyectoDto: UpdateProyectoDto,

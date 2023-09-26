@@ -12,6 +12,7 @@ import { UpdateProyectoDto } from './dto/update-proyecto.dto';
 import { Proyecto } from './entities/proyecto.entity';
 import { UsuariosProyectos } from '../auth/entities/usuarios-proyectos.entity';
 import { Usuario } from '../auth/entities/usuarios.entity';
+import { DIRECTOR, OPCION_GRADO, TIPO_ENTREGA } from './constants';
 
 @Injectable()
 export class ProyectosService {
@@ -80,6 +81,17 @@ export class ProyectosService {
       );
 
     return proyecto;
+  }
+
+  async getOpcionGrado() {
+    return Object.values(OPCION_GRADO);
+  }
+  async getTipoEntrega() {
+    return Object.values(TIPO_ENTREGA);
+  }
+
+  async getDirectores() {
+    return Object.values(DIRECTOR);
   }
 
   async update(idProyecto: string, updateProyectoDto: UpdateProyectoDto) {

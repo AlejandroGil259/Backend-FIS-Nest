@@ -58,21 +58,21 @@ export class AuthController {
     return this.authService.login(loginUsuarioDto);
   }
 
-  @Get('private')
-  @UseGuards(AuthGuard())
-  testingPrivateRoute(
-    @GetUsuario() usuario: Usuario,
-    @GetUsuario('correo') usuarioCorreo: string,
-    @RawHeaders('correo') rawHeaders: string[],
-  ) {
-    return {
-      ok: true,
-      message: 'Hola mundo private',
-      usuario,
-      usuarioCorreo,
-      rawHeaders,
-    };
-  }
+  // @Get('private')
+  // @UseGuards(AuthGuard())
+  // testingPrivateRoute(
+  //   @GetUsuario() usuario: Usuario,
+  //   @GetUsuario('correo') usuarioCorreo: string,
+  //   @RawHeaders('correo') rawHeaders: string[],
+  // ) {
+  //   return {
+  //     ok: true,
+  //     message: 'Hola mundo private',
+  //     usuario,
+  //     usuarioCorreo,
+  //     rawHeaders,
+  //   };
+  // }
 
   //@SetMetadata('roles', ['Admin', 'Docente', 'Estudiante'])
 
