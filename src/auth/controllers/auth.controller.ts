@@ -12,13 +12,16 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Auth, GetUsuario, RawHeaders } from '../decorators';
-import { CreateUserDto, LoginUsuarioDto, UpdateUsuarioDto } from '../dto';
+import {
+  CreateUserDto,
+  LoginUsuarioDto,
+  UpdateUsuarioDto,
+  ChangePasswordDto,
+} from '../dto';
 import { Usuario } from '../entities/usuarios.entity';
 import { AuthService } from '../services/auth.service';
 import { UsuarioRolGuard } from '../guards/usuario-rol.guard';
 import { RolProtected } from '../decorators/rol-protected.decorator';
-import { ValidarRoles } from '../interfaces';
-
 @ApiTags('Usuarios')
 @Controller('auth')
 export class AuthController {
@@ -56,6 +59,22 @@ export class AuthController {
   @Post('login')
   loginUser(@Body() loginUsuarioDto: LoginUsuarioDto) {
     return this.authService.login(loginUsuarioDto);
+  }
+
+  @Post('cambiarContrasena')
+  async change(@Body() changePasswordDto: ChangePasswordDto) {
+    const { documento, nuevaContrasena } = changePasswordDto;
+
+    try {
+      await this.authService.change(documento, nuevaContrasena);
+      return { message: 'Contraseña cambiada con éxito' };
+    } catch (error) {
+      // Maneja los errores apropiadamente, por ejemplo, si el usuario no existe
+      return {
+        error: 'No se pudo cambiar la contraseña',
+        message: error.message,
+      };
+    }
   }
 
   // @Get('private')

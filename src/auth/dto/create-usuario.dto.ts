@@ -42,7 +42,7 @@ export class CreateUserDto {
   @IsEmail()
   correo: string;
 
-  @ApiProperty({ example: 'Max-10' })
+  @ApiProperty({ example: 'Abc12345' })
   @IsString()
   @IsOptional()
   @MinLength(6)
@@ -60,6 +60,10 @@ export class CreateUserDto {
   @IsOptional()
   periodoIngreso?: number;
 
+  @ApiProperty({
+    example: 3229201744,
+    type: Number,
+  })
   @IsNumber()
   @IsOptional()
   telefono?: number;

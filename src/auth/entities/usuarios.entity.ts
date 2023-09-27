@@ -62,8 +62,8 @@ export class Usuario extends BaseEntity {
   correo: string;
 
   @ApiProperty({ example: 'Minimo 6 caracteres' })
-  @Column({ select: false, nullable: true })
-  contrasena?: string;
+  @Column()
+  contrasena: string;
 
   @ApiProperty({
     example: 20181,
@@ -86,7 +86,7 @@ export class Usuario extends BaseEntity {
     example: 3126650202,
     type: Number,
   })
-  @Column({ nullable: true })
+  @Column({ type: 'int8', nullable: true })
   telefono?: number;
 
   @ApiProperty({

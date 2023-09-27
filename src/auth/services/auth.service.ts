@@ -94,6 +94,23 @@ export class AuthService {
     return token;
   }
 
+  async change(documento: number, nuevaContrasena: string): Promise<void> {
+    // Busca al usuario por el número de documento
+    const user = await this.usuarioRepo.findOne({ where: { documento } });
+
+    if (!user) {
+      throw new Error('Usuario no encontrado'); // Maneja el caso cuando el usuario no existe
+    }
+
+    const hashedPassword = await bcrypt.hash(nuevaContrasena, 10);
+
+    // Asigna la contraseña hasheada al usuario
+    user.contrasena = hashedPassword;
+
+    // Luego, guarda los cambios en la base de datos
+    await this.usuarioRepo.save(user);
+  }
+
   async findAll() {
     const usuarios = await this.usuarioRepo.find();
 
