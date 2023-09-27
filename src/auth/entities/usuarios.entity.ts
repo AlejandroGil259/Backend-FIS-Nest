@@ -86,7 +86,7 @@ export class Usuario extends BaseEntity {
     example: 3126650202,
     type: Number,
   })
-  @Column({ type: 'int8', nullable: true })
+  @Column({ nullable: true })
   telefono?: number;
 
   @ApiProperty({

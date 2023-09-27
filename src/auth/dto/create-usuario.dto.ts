@@ -60,10 +60,6 @@ export class CreateUserDto {
   @IsOptional()
   periodoIngreso?: number;
 
-  @ApiProperty({
-    example: 3126650202,
-    type: Number,
-  })
   @IsNumber()
   @IsOptional()
   telefono?: number;
