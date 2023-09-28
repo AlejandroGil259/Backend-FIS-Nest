@@ -1,20 +1,25 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Proyecto } from '../../proyectos/entities/proyecto.entity';
-import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { SEDES } from '../constants';
 
 @Entity('espacio_coterminal')
 export class EspaciosCoterminale {
+  @ApiProperty({ uniqueItems: true })
+  @PrimaryGeneratedColumn('uuid')
+  idPrograma: string;
+  
   @ApiProperty({
-    uniqueItems: true,
     example: 636402,
   })
-  @Column({
-    primary: true,
-    type: 'int8',
-    unique: true,
-  })
-  idPrograma: number;
+  @Column()
+  codigoPrograma: number;
 
   @ApiProperty()
   @Column()

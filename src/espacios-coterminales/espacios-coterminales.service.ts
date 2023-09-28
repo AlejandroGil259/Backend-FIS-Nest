@@ -44,7 +44,7 @@ export class EspaciosCoterminalesService {
     return espaciosCo;
   }
 
-  async findOne(idPrograma: number) {
+  async findOne(idPrograma: string) {
     const espaciosCo = await this.espaciosRepo.findOne({
       where: { idPrograma },
     });
@@ -62,7 +62,7 @@ export class EspaciosCoterminalesService {
   }
 
   async update(
-    idPrograma: number,
+    idPrograma: string,
     updateEspaciosCoterminaleDto: UpdateEspaciosCoterminaleDto,
   ) {
     const espaciosCo = await this.espaciosRepo.findOneBy({ idPrograma });

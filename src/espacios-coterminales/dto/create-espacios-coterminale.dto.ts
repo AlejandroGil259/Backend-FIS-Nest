@@ -5,7 +5,7 @@ import { SEDES } from '../constants';
 export class CreateEspaciosCoterminaleDto {
   @ApiProperty({ example: 1001, type: Number })
   @IsNumber()
-  idPrograma: number;
+  codigoPrograma: number;
 
   @ApiProperty({ description: 'Nombre del postgrado' })
   @IsString()
