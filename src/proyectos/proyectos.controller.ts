@@ -82,7 +82,7 @@ export class ProyectosController {
     status: 404,
     description: 'No hay directores en la base de datos',
   })
-  @Get(':director')
+  @Get('cargar/:director')
   getDirectores() {
     return this.proyectosService.getDirectores();
   }
