@@ -54,7 +54,7 @@ export class SolicitudesController {
     status: 404,
     description: 'No hay tipos de solicitud en la base de datos',
   })
-  @Get(':tipoSolicitud')
+  @Get('tipo/:solicitud')
   getTipoSolicitud() {
     return this.solicitudesService.getTipoSolicitud();
   }
@@ -83,7 +83,6 @@ export class SolicitudesController {
   @ApiParam({
     name: 'idSolicitud',
     description: 'id de la solicitud registrada',
-    example: 123456789,
   })
   @Get(':idSolicitud')
   findOne(@Param('idSolicitud', ParseUUIDPipe) idSolicitud: string) {
