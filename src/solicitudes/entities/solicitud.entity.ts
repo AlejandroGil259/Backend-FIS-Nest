@@ -38,21 +38,17 @@ export class Solicitud extends BaseEntity {
 
   @ApiProperty()
   @Column()
-  asunto: string;
-
-  @ApiProperty()
-  @Column()
   archivoCarta: string;
 
   @ApiProperty({
     enum: ESTADO_RESPUESTA,
     description: 'Respuesta del estado de la solicitud',
-    default: ESTADO_RESPUESTA.ESPERA,
+    default: ESTADO_RESPUESTA.REVISION,
   })
   @Column({
     type: 'varchar',
     enum: ESTADO_RESPUESTA,
-    default: ESTADO_RESPUESTA.ESPERA,
+    default: ESTADO_RESPUESTA.REVISION,
   })
   respEstado: ESTADO_RESPUESTA;
 

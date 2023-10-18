@@ -19,10 +19,6 @@ export class CreateSolicitudesDto {
   @IsEnum(TIPO_SOLICITUD)
   tipoSolicitud: TIPO_SOLICITUD;
 
-  @ApiProperty({ example: 'Cambio de director' })
-  @IsString()
-  asunto: string;
-
   @ApiProperty({ example: 'Respuesta de la carta' })
   @IsString()
   archivoCarta: string;
