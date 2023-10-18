@@ -32,3 +32,10 @@ export enum CODIRECTOR {
   ING_CRISTIAN = 'Ing. Cristian Vidal Mosso Coy',
   ING_SEBASTIAN = 'Ing. Juan Sebastian Ulloa Parra',
 }
+
+export enum RESPUESTA {
+  APROBADO = 'Aprobado',
+  APROBADO_OBSERVACIONES = 'Aprobado con observaciones',
+  NO_APROBADO = 'No aprobado',
+  CANCELADO = 'Cancelado',
+}
