@@ -120,6 +120,14 @@ export class AuthService {
     return usuarios;
   }
 
+  // async getUserByCedula(documento: number) {
+  //   return this.usuarioRepo.findOne({ where: { documento } });
+  // }
+
+  // async getRequestsByUserId(idSolicitud: string) {
+  //   return this.solicitudesRepo.find({ where: { idSolicitud } });
+  // }
+
   async findOne(documento: number) {
     const usuario = await this.usuarioRepo.findOneBy({ documento });
 

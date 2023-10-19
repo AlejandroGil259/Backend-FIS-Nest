@@ -7,11 +7,8 @@ import {
   ParseIntPipe,
   Patch,
   Post,
-  UseGuards,
 } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
 import { ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Auth, GetUsuario, RawHeaders } from '../decorators';
 import {
   CreateUserDto,
   LoginUsuarioDto,
@@ -147,6 +144,13 @@ export class AuthController {
   @Get(':documento')
   findOne(@Param('documento', ParseIntPipe) documento: number) {
     return this.authService.findOne(documento);
+    
+    // async getUserAndRequestsByCedula(
+    //   @Param('documento', ParseIntPipe) documento: number,
+    // ) {
+    //   const user = await this.authService.getUserByCedula(documento);
+    //   const requests = await this.authService.getRequestsByUserId(user.nombres);
+    //   return { user, requests };
   }
 
   @ApiResponse({
