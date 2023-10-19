@@ -51,8 +51,9 @@ export class Proyecto extends BaseEntity {
   @Column({
     type: 'varchar',
     enum: CODIRECTOR,
+    nullable: true,
   })
-  codirector: CODIRECTOR;
+  codirector?: CODIRECTOR;
 
   @ApiProperty({
     description: 'Estado del proyecto en la plataforma',

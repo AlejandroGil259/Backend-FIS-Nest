@@ -27,8 +27,9 @@ export class CreateProyectoDto {
     description: 'Nombre del codirector',
     enum: CODIRECTOR,
   })
+  @IsOptional()
   @IsEnum(CODIRECTOR)
-  codirector: CODIRECTOR;
+  codirector?: CODIRECTOR;
 
   @ApiProperty({
     description: 'Titulo del proyecto',
