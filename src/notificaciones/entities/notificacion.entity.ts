@@ -45,6 +45,12 @@ export class Notificacion extends BaseEntity {
   })
   tipoNotificacion: TIPO_NOTIFICACION;
 
+  @Column({
+    type: 'bool',
+    default: true,
+  })
+  estado: boolean;
+
   @OneToOne(() => Novedad)
   @JoinColumn({ name: 'id_novedad' })
   novedad: Novedad;
