@@ -80,7 +80,7 @@ export class NotificacionesController {
     description: 'Documento de la notificación registrado',
     example: '123456789',
   })
-  @Get(':documento')
+  @Get('auth/:documento')
   findOneD(@Param('documento', ParseIntPipe) documento: number) {
     return this.authService.findOne(documento);
   }

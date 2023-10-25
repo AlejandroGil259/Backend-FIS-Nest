@@ -68,6 +68,7 @@ export class NotificacionesService {
       );
 
     return usuario;
+
     // const documento = await this.usuarioRepo.findOneBy({
     //   where: { documento },
     //   relations: { novedad: true },
