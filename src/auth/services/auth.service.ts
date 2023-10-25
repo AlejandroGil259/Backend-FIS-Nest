@@ -111,6 +111,16 @@ export class AuthService {
     await this.usuarioRepo.save(user);
   }
 
+  async findByCedulaWithSolicitudes(
+    documento: number,
+  ): Promise<Usuario | null> {
+    return this.usuarioRepo
+      .createQueryBuilder('usuario')
+      .leftJoinAndSelect('usuario.solicitudes', 'solicitud')
+      .where('usuario.documento = :documento', { documento })
+      .getOne();
+  }
+
   async findAll() {
     const usuarios = await this.usuarioRepo.find();
 
@@ -120,16 +130,12 @@ export class AuthService {
     return usuarios;
   }
 
-  // async getUserByCedula(documento: number) {
-  //   return this.usuarioRepo.findOne({ where: { documento } });
-  // }
-
-  // async getRequestsByUserId(idSolicitud: string) {
-  //   return this.solicitudesRepo.find({ where: { idSolicitud } });
-  // }
-
   async findOne(documento: number) {
-    const usuario = await this.usuarioRepo.findOneBy({ documento });
+    const usuario = await this.usuarioRepo.findOne({
+      where: { documento: 123456789 },
+      relations: ['solicitudes'],
+    });
+    // const usuario = await this.usuarioRepo.findOneBy({ documento });
 
     if (!usuario)
       throw new NotFoundException(

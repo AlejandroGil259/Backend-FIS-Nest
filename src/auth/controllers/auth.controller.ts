@@ -17,8 +17,6 @@ import {
 } from '../dto';
 import { Usuario } from '../entities/usuarios.entity';
 import { AuthService } from '../services/auth.service';
-import { UsuarioRolGuard } from '../guards/usuario-rol.guard';
-import { RolProtected } from '../decorators/rol-protected.decorator';
 @ApiTags('Usuarios')
 @Controller('auth')
 export class AuthController {
@@ -144,13 +142,27 @@ export class AuthController {
   @Get(':documento')
   findOne(@Param('documento', ParseIntPipe) documento: number) {
     return this.authService.findOne(documento);
-    
-    // async getUserAndRequestsByCedula(
-    //   @Param('documento', ParseIntPipe) documento: number,
-    // ) {
-    //   const user = await this.authService.getUserByCedula(documento);
-    //   const requests = await this.authService.getRequestsByUserId(user.nombres);
-    //   return { user, requests };
+  }
+
+  @ApiResponse({
+    status: 200,
+    description: 'Se encontró un registro con el documento ingresado',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'No hay registros en la base de datos para ese documento',
+  })
+  @ApiParam({
+    name: 'documento',
+    description: 'Documento del usuario registrado',
+    example: 123456789,
+  })
+  @Get('solicitudes/buscar/:documento')
+  async findUsuarioByCedula(@Param('documento', ParseIntPipe) documento) {
+    const usuario = await this.authService.findByCedulaWithSolicitudes(
+      documento,
+    );
+    return usuario;
   }
 
   @ApiResponse({

@@ -96,8 +96,9 @@ export class Usuario extends BaseEntity {
   })
   comite: boolean;
 
-  @OneToMany(() => Solicitud, (solicitudes) => solicitudes.usuario, {
+  @OneToMany(() => Solicitud, (solicitud) => solicitud.usuario, {
     cascade: true,
+    eager: true,
   })
   solicitudes: Solicitud[];
 
