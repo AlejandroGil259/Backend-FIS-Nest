@@ -25,5 +25,5 @@ export class CreateSolicitudesDto {
 
   @ApiProperty({ example: 123456789 })
   @IsNumber()
-  usuariosSolicitudesDocumentos: number;
+  usuariosSolicitudesDocumento: number;
 }

@@ -18,24 +18,34 @@ export class SolicitudesService {
   ) {}
 
   async create(createSolicitudesDto: CreateSolicitudesDto) {
-    const { usuariosSolicitudesDocumentos: usuariosSolicitudesDocumento } =
-      createSolicitudesDto;
+    const { usuariosSolicitudesDocumento } = createSolicitudesDto;
+
     try {
-      const usuarioSolicitudes = await this.usuarioRepo.findBy({
-        documento: usuariosSolicitudesDocumento,
+      // Busca el usuario por número de documento
+      const usuarioSolicitudes = await this.usuarioRepo.findOne({
+        where: { documento: usuariosSolicitudesDocumento },
       });
 
-      const solicitud = await this.solicitudRepo.save({
-        ...createSolicitudesDto,
-        usuarioSolicitudes,
-      });
+      if (!usuarioSolicitudes) {
+        // Maneja el caso en el que no se encuentra el usuario
+        throw new Error('Usuario no encontrado'); // Puedes personalizar el mensaje de error
+      }
 
-      return { solicitud };
+      // Crea una nueva instancia de Solicitud
+      const solicitud = this.solicitudRepo.create(createSolicitudesDto);
+
+      // Establece la relación entre la solicitud y el usuario
+      solicitud.usuario = usuarioSolicitudes;
+
+      // Guarda la solicitud en la base de datos
+      const solicitudGuardada = await this.solicitudRepo.save(solicitud);
+
+      return { solicitud: solicitudGuardada };
     } catch (error) {
+      // Maneja las excepciones de la base de datos
       throw DBExceptionService.handleDBException(error);
     }
   }
-
   async findAll() {
     const solicitudes = await this.solicitudRepo.find();
 

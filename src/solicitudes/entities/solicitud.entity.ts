@@ -54,11 +54,9 @@ export class Solicitud extends BaseEntity {
 
   @ApiProperty()
   @Column()
-  usuariosSolicitudesDocumentos: number;
+  usuariosSolicitudesDocumento: number;
 
-  @ManyToOne(() => Usuario, (usuario) => usuario.solicitudes, {
-    onDelete: 'CASCADE',
-  })
+  @ManyToOne(() => Usuario, (usuario) => usuario.solicitudes)
   usuario: Usuario;
 
   @OneToMany(() => Archivo, (archivo) => archivo.proyectos, { cascade: true })
