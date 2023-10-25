@@ -65,12 +65,9 @@ export class Usuario extends BaseEntity {
   @Column()
   contrasena: string;
 
-  @ApiProperty({
-    example: 20181,
-    type: Number,
-  })
+  @ApiProperty({ example: new Date().toISOString() })
   @Column({ type: 'integer', nullable: true })
-  periodoIngreso?: number;
+  periodoIngreso?: Date;
 
   @ApiProperty({
     description: 'Estado del usuario en la plataforma',

@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
+  IsDateString,
   IsEmail,
   IsEnum,
   IsNumber,
@@ -52,13 +53,10 @@ export class CreateUserDto {
   })
   contrasena: string;
 
-  @ApiProperty({
-    example: 20181,
-    type: Number,
-  })
-  @IsNumber()
+  @ApiProperty({ example: new Date().toISOString() })
+  @IsDateString()
   @IsOptional()
-  periodoIngreso?: number;
+  periodoIngreso?: Date;
 
   @ApiProperty({
     example: 3229201744,
