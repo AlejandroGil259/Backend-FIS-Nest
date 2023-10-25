@@ -98,7 +98,6 @@ export class Usuario extends BaseEntity {
 
   @OneToMany(() => Solicitud, (solicitud) => solicitud.usuario, {
     cascade: true,
-    eager: true,
   })
   solicitudes: Solicitud[];
 

@@ -15,7 +15,6 @@ import {
   UpdateUsuarioDto,
   ChangePasswordDto,
 } from '../dto';
-import { Usuario } from '../entities/usuarios.entity';
 import { AuthService } from '../services/auth.service';
 @ApiTags('Usuarios')
 @Controller('auth')
