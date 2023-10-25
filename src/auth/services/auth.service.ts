@@ -132,7 +132,7 @@ export class AuthService {
 
   async findOne(documento: number) {
     const usuario = await this.usuarioRepo.findOne({
-      where: { documento: 123456789 },
+      where: { documento},
       relations: ['solicitudes'],
     });
     // const usuario = await this.usuarioRepo.findOneBy({ documento });
