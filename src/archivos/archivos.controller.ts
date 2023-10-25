@@ -54,7 +54,9 @@ export class ArchivosController {
   )
   uploadProject(@UploadedFile() archivo: Express.Multer.File) {
     if (!archivo) {
-      throw new BadRequestException('Asegurate de que el archivo sea pdf');
+      throw new BadRequestException(
+        'Asegúrate de que sea un archivo Word (.docx) o un archivo PDF (.pdf).',
+      );
     }
 
     // const secureUrl = `${archivo.filename}`;

@@ -9,9 +9,18 @@ export const filtrarArchivo = (
   if (!archivo) return callback(new Error('El archivo esta vacio'), false);
 
   const extensionArchivo = archivo.mimetype.split('/')[1];
-  const extensionValida = ['pdf', 'docx'];
+  const tipoMIME = archivo.mimetype;
 
-  if (extensionValida.includes(extensionArchivo)) {
+  const extensionValida = ['pdf', 'docx'];
+  const tiposMIMEValidos = [
+    'application/pdf',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  ];
+
+  if (
+    extensionValida.includes(extensionArchivo) ||
+    tiposMIMEValidos.includes(tipoMIME)
+  ) {
     return callback(null, true);
   }
   callback(null, false);
