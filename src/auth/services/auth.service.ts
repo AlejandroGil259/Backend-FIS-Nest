@@ -131,12 +131,11 @@ export class AuthService {
   }
 
   async findOne(documento: number) {
-    const usuario = await this.usuarioRepo.findOne({
-      where: { documento},
-      relations: ['solicitudes'],
-    });
-    // const usuario = await this.usuarioRepo.findOneBy({ documento });
-
+    const usuario = await this.usuarioRepo.findOneBy({ documento });
+    // const usuario = await this.usuarioRepo.findOne({
+    //   where: { documento},
+    //   relations: ['solicitudes'],
+    // });
     if (!usuario)
       throw new NotFoundException(
         `No se encontraron resultados para el documento "${documento}"`,
