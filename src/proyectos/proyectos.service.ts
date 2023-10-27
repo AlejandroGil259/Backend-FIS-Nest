@@ -20,7 +20,7 @@ export class ProyectosService {
     @InjectRepository(Proyecto)
     private readonly proyectoRepo: Repository<Proyecto>,
     @InjectRepository(UsuariosProyectos)
-    private readonly usuariosProyectos: Repository<UsuariosProyectos>,
+    private readonly usuariosProyectosRepo: Repository<UsuariosProyectos>,
     @InjectRepository(Usuario)
     private readonly usuario: Repository<Usuario>,
   ) {}
@@ -44,7 +44,7 @@ export class ProyectosService {
         proyecto: { idProyecto },
         usuario: { documento },
         ...rest
-      } = await this.usuariosProyectos.save({
+      } = await this.usuariosProyectosRepo.save({
         proyecto,
         usuario,
         archivoProyecto,
@@ -53,6 +53,22 @@ export class ProyectosService {
       return { proyecto, usuarioProyecto: { idProyecto, documento, ...rest } };
     } catch (error) {
       throw DBExceptionService.handleDBException(error);
+    }
+  }
+
+  async getProjectsByUserDocument(documento: number): Promise<Proyecto[]> {
+    const usuariosProyectos = await this.usuariosProyectosRepo.find({
+      where: { usuario: { documento: documento } }, // Buscar en UsuariosProyectos por el número de documento del usuario
+      relations: ['proyecto'], // Incluir la relación 'proyecto'
+    });
+
+    if (usuariosProyectos) {
+      // Extraer la lista de proyectos desde los registros de UsuariosProyectos
+      const proyectos = usuariosProyectos.map((up) => up.proyecto);
+
+      return proyectos;
+    } else {
+      return []; // Usuario no encontrado o no tiene proyectos asociados
     }
   }
 
@@ -105,7 +121,7 @@ export class ProyectosService {
       updateProyectoDto;
 
     try {
-      const usuariosProyectos = await this.usuariosProyectos.findOneBy({
+      const usuariosProyectos = await this.usuariosProyectosRepo.findOneBy({
         proyecto: { idProyecto },
         usuario: { documento: usuarioDocumento },
       });
@@ -115,7 +131,7 @@ export class ProyectosService {
           `No existe la relacion con el proyecto ${idProyecto}, y el usuario ${usuarioDocumento}`,
         );
 
-      await this.usuariosProyectos.update(
+      await this.usuariosProyectosRepo.update(
         { id: usuariosProyectos.id },
         { archivoProyecto },
       );

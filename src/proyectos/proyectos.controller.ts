@@ -7,13 +7,13 @@ import {
   Param,
   Delete,
   ParseUUIDPipe,
+  NotFoundException,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ProyectosService } from './proyectos.service';
 import { CreateProyectoDto } from './dto/create-proyecto.dto';
 import { UpdateProyectoDto } from './dto/update-proyecto.dto';
-import { Auth, GetUsuario } from '../auth/decorators';
-import { ValidarRoles } from '../auth/interfaces';
 @ApiTags('Proyectos')
 @Controller('proyectos')
 export class ProyectosController {
@@ -85,6 +85,19 @@ export class ProyectosController {
   @Get('cargar/:director')
   getDirectores() {
     return this.proyectosService.getDirectores();
+  }
+
+  @Get('por-documento/:documento')
+  async getProjectByDocument(
+    @Param('documento', ParseIntPipe) documento: number,
+  ) {
+    const proyecto = await this.proyectosService.getProjectsByUserDocument(
+      documento,
+    );
+    if (!proyecto) {
+      throw new NotFoundException('Proyecto no encontrado');
+    }
+    return proyecto;
   }
 
   @ApiResponse({
