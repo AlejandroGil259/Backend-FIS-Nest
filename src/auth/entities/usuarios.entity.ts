@@ -66,7 +66,7 @@ export class Usuario extends BaseEntity {
   contrasena: string;
 
   @ApiProperty({ example: new Date().toISOString() })
-  @Column({ type: 'integer', nullable: true })
+  @Column({ type: 'date', nullable: true })
   periodoIngreso?: Date;
 
   @ApiProperty({
