@@ -59,26 +59,5 @@ export class NotificacionesService {
     return notificacion;
   }
 
-  async findOneD(documento: number) {
-    const usuario = await this.usuarioRepo.findOneBy({ documento });
 
-    if (!usuario)
-      throw new NotFoundException(
-        `No se encontraron resultados para el documento "${documento}"`,
-      );
-
-    return usuario;
-
-    // const documento = await this.usuarioRepo.findOneBy({
-    //   where: { documento },
-    //   relations: { novedad: true },
-    // });
-
-    // if (!documento)
-    //   throw new NotFoundException(
-    //     `No se encontraron resultados para notificacion "${documento}"`,
-    //   );
-
-    // return documento;
-  }
 }

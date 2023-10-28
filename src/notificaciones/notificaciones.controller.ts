@@ -67,21 +67,4 @@ export class NotificacionesController {
     return this.notificacionesService.findOne(id);
   }
 
-  @ApiResponse({
-    status: 200,
-    description: 'Se encontró una notificacion con el documento ingresado',
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'No hay notificaciones en la base de datos con ese documento',
-  })
-  @ApiParam({
-    name: 'documento',
-    description: 'Documento de la notificación registrado',
-    example: '123456789',
-  })
-  @Get('auth/:documento')
-  findOneD(@Param('documento', ParseIntPipe) documento: number) {
-    return this.authService.findOne(documento);
-  }
 }

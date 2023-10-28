@@ -34,6 +34,7 @@ export enum CODIRECTOR {
 }
 
 export enum RESPUESTA {
+  REVISION = 'En revisión',
   APROBADO = 'Aprobado',
   APROBADO_OBSERVACIONES = 'Aprobado con observaciones',
   NO_APROBADO = 'No aprobado',
