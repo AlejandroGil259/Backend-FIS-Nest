@@ -101,8 +101,11 @@ export class Usuario extends BaseEntity {
   })
   solicitudes: Solicitud[];
 
-  @OneToOne(() => Notificacion)
-  enviarNotificacion: Notificacion[];
+  // @OneToOne(() => Notificacion)
+  // enviarNotificacion: Notificacion[];
+
+  @OneToMany(() => Notificacion, (notificacion) => notificacion.usuariosReceptores)
+  notificaciones: Notificacion[];
 
   @OneToMany(
     () => UsuariosProyectos,
