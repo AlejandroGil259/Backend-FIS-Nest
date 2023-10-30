@@ -23,13 +23,25 @@ export class NotificacionesService {
       const usuariosReceptores = await this.usuarioRepo.findBy({
         documento: In(usuariosReceptoresDocumento),
       });
+
+      // Verificar si todos los usuarios receptores están registrados
+      if (usuariosReceptores.length !== usuariosReceptoresDocumento.length) {
+        // Al menos un usuario receptor no está registrado
+        throw new Error(
+          'El usuario receptores no está registrado y no se pueden enviar notificaciones.',
+        );
+      }
+
       const notificacion = await this.notificacionRepo.save({
         ...createNotificacionDto,
         usuariosReceptores,
       });
       return { notificacion };
     } catch (error) {
-      throw DBExceptionService.handleDBException(error);
+      console.error('Error al crear y enviar notificación:', error);
+      throw new NotFoundException(
+        `El usuario receptor no se encuentra registrado en la base de datos`,
+      );
     }
   }
 
@@ -73,6 +85,13 @@ export class NotificacionesService {
 
   async getNotificacionesPorDocumento(documento: number) {
     try {
+      // Verificar si el usuario con el número de documento existe
+      const usuario = await this.usuarioRepo.findOne({ where: { documento } });
+
+      if (!usuario) {
+        throw new Error('No se encontraron notificaciones para el usuario.');
+      }
+
       const notificaciones = await this.notificacionRepo
         .createQueryBuilder('notificacion')
         .innerJoinAndSelect('notificacion.usuariosReceptores', 'usuario')
@@ -81,9 +100,9 @@ export class NotificacionesService {
 
       return notificaciones;
     } catch (error) {
-      console.error('Error al buscar notificaciones por documento:', error);
-      throw new Error(
-        'Ocurrió un error al buscar notificaciones por documento',
+      console.error('No se encontro al usuario:', error);
+      throw new NotFoundException(
+        `No se encontraron notificaciones para el usuario "${documento}"`,
       );
     }
   }

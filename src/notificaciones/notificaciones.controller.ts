@@ -81,7 +81,15 @@ export class NotificacionesController {
       await this.notificacionesService.getNotificacionesPorRol(rol);
     return notificaciones;
   }
-
+  @ApiResponse({
+    status: 200,
+    description: 'se encontro el usuario',
+  })
+  @ApiResponse({
+    status: 404,
+    description:
+      'No se encontro la notificacion por numero documento en la base de datos',
+  })
   @Get('por-documento/:documento')
   async obtenerNotificacionesPorDocumento(
     @Param('documento') documento: number,
@@ -90,7 +98,7 @@ export class NotificacionesController {
       await this.notificacionesService.getNotificacionesPorDocumento(documento);
     return notificaciones;
   }
-  
+
   @ApiResponse({
     status: 200,
     description: 'Se ha eliminado la notificacion',
