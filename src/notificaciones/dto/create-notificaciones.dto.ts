@@ -8,6 +8,7 @@ import {
   IsUUID,
 } from 'class-validator';
 import { TIPO_NOTIFICACION } from '../constansts';
+import { ROLES } from '../../auth/constants';
 
 export class CreateNotificacionesDto {
   @ApiProperty({ example: new Date().toISOString() })
@@ -33,7 +34,11 @@ export class CreateNotificacionesDto {
   @IsEnum(TIPO_NOTIFICACION)
   tipoNotificacion: TIPO_NOTIFICACION;
 
-  @ApiProperty({ example: [123456789, 2251184], isArray: true })
+  @ApiProperty({ enum: ROLES })
+  @IsEnum(ROLES)
+  rol: ROLES;
+
+  @ApiProperty({ example: [123456789], isArray: true })
   @IsArray()
   usuariosReceptoresDocumentos: number[];
 
