@@ -87,6 +87,14 @@ export class ProyectosController {
     return this.proyectosService.getDirectores();
   }
 
+  @ApiResponse({
+    status: 200,
+    description: 'Se encontraron los siguientes proyectos',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'No hay proyectos en la base de datos para ese usuario',
+  })
   @Get('por-documento/:documento')
   async getProjectByDocument(
     @Param('documento', ParseIntPipe) documento: number,

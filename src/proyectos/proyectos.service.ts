@@ -62,13 +62,15 @@ export class ProyectosService {
       relations: ['proyecto'], // Incluir la relación 'proyecto'
     });
 
-    if (usuariosProyectos) {
+    if (usuariosProyectos && usuariosProyectos.length > 0) {
       // Extraer la lista de proyectos desde los registros de UsuariosProyectos
       const proyectos = usuariosProyectos.map((up) => up.proyecto);
 
       return proyectos;
     } else {
-      return []; // Usuario no encontrado o no tiene proyectos asociados
+      throw new NotFoundException(
+        `El usuario "${documento}" no existe en la base de datos o no tiene proyectos asociados.`,
+      );
     }
   }
 
