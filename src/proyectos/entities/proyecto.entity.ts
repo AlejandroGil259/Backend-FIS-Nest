@@ -90,7 +90,7 @@ export class Proyecto extends BaseEntity {
   @OneToMany(() => Novedad, (novedad) => novedad.proyectos, { cascade: true })
   novedades: Novedad[];
 
-  @OneToMany(() => Notificacion, (proyecto) => proyecto.proyectos, {
+  @OneToMany(() => Notificacion, (notificacion) => notificacion.proyectos, {
     cascade: true,
   })
   notificaciones: Notificacion;
