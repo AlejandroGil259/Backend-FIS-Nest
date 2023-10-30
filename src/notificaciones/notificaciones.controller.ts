@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseUUIDPipe,
@@ -66,4 +67,40 @@ export class NotificacionesController {
     return this.notificacionesService.findOne(id);
   }
 
+  @ApiResponse({
+    status: 200,
+    description: 'se encontro el rol',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'No hay roles en la base de datos',
+  })
+  @Get('por-rol/:rol')
+  async getNotificacionesPorRol(@Param('rol') rol: string) {
+    const notificaciones =
+      await this.notificacionesService.getNotificacionesPorRol(rol);
+    return notificaciones;
+  }
+
+  @Get('por-documento/:documento')
+  async obtenerNotificacionesPorDocumento(
+    @Param('documento') documento: number,
+  ) {
+    const notificaciones =
+      await this.notificacionesService.getNotificacionesPorDocumento(documento);
+    return notificaciones;
+  }
+  
+  @ApiResponse({
+    status: 200,
+    description: 'Se ha eliminado la notificacion',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'No hay notificaciones en la base de datos',
+  })
+  @Delete(':id')
+  remove(@Param('id', ParseUUIDPipe) id: string) {
+    return this.notificacionesService.remove(id);
+  }
 }
