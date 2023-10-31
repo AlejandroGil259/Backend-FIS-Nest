@@ -4,6 +4,7 @@ import {
   Controller,
   Delete,
   Get,
+  NotFoundException,
   Param,
   Patch,
   Post,
@@ -81,11 +82,15 @@ export class ArchivosController {
     status: 404,
     description: 'No hay archivos en la base de datos',
   })
-  @Get()
-  findAll() {
-    return this.archivosService.findAll();
+  // @Get()
+  // findAll() {
+  //   return this.archivosService.findAll();
+  // }
+  @Get('pdf-y-docx')
+  async getArchivosPdfDocx(@Res() res: Response) {
+    const archivos = await this.archivosService.getArchivosPdfDocx();
+    res.json(archivos);
   }
-
   @ApiResponse({
     status: 200,
     description: 'Se encontró un archivo con el id ingresado ',
@@ -114,9 +119,35 @@ export class ArchivosController {
     status: 404,
     description: 'No hay registros en la base de datos de este archivo',
   })
+  // @Patch(':id')
+  // update(@Param('id') id: string, @Body() updateArchivoDto: UpdateArchivoDto) {
+  //   return this.archivosService.update(id, updateArchivoDto);
+  // }
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateArchivoDto: UpdateArchivoDto) {
-    return this.archivosService.update(id, updateArchivoDto);
+  async updateFile(
+    @Param('id') id: string,
+    @Body() updateArchivoDto: UpdateArchivoDto, // Asegúrate de proporcionar el DTO
+    @Res() res: Response,
+  ) {
+    try {
+      const updatedFile = await this.archivosService.updateArchivo(
+        id,
+        updateArchivoDto.extensionArchivo, // Pasar la nueva extensión
+        updateArchivoDto.nombreArchivo, // Pasar el nuevo nombre
+      );
+
+      if (!updatedFile) {
+        throw new NotFoundException('Archivo no encontrado.');
+      }
+
+      res.json(updatedFile);
+    } catch (error) {
+      console.error(error);
+      // Manejar otros errores aquí
+      res
+        .status(500)
+        .json({ message: 'Ocurrió un error al actualizar el archivo.' });
+    }
   }
 
   @ApiResponse({

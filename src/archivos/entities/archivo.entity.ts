@@ -10,9 +10,12 @@ export class Archivo extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ApiProperty({ example: 'pdf, word' })
-  @Column()
-  extensionArchivo: string;
+  @Column({ type: 'text', nullable: false })
+  nombreArchivo: string; // Nombre del archivo
+
+  @ApiProperty({ example: 'pdf, word(.docx o .doc)' })
+  @Column({ type: 'text', nullable: false })
+  extensionArchivo: string; // Extensión del archivo (por ejemplo, 'pdf', 'docx', 'doc')
 
   @ManyToOne(() => Proyecto, (proyecto) => proyecto.archivos, {
     onDelete: 'CASCADE',
