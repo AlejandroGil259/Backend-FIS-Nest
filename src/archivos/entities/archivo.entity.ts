@@ -1,7 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { BaseEntity } from '../../commons/entities/base-entity.entity';
-import { DOC_STATUS } from '../constants';
 import { Proyecto } from '../../proyectos/entities/proyecto.entity';
 import { Solicitud } from '../../solicitudes/entities/solicitud.entity';
 
@@ -11,20 +10,13 @@ export class Archivo extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ApiProperty({ example: 'pdf, word' })
+  @ApiProperty({ example: 'nombre de archivo' })
   @Column({ type: 'varchar' })
-  nombreArchivoOriginal: string;
+  nombreArchivo: string;
 
   @ApiProperty({ example: 'pdf, word' })
-  @Column({ type: 'varchar' })
-  nombreArchivoServidor: string;
-
-  @ApiProperty({
-    description: 'Estado del archivo en la plataforma',
-    enum: DOC_STATUS,
-  })
-  @Column({ type: 'varchar', enum: DOC_STATUS })
-  estado: DOC_STATUS;
+  @Column()
+  extensionArchivo: string;
 
   @ManyToOne(() => Proyecto, (proyecto) => proyecto.archivos, {
     onDelete: 'CASCADE',

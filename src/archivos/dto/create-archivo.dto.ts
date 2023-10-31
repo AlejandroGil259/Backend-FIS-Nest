@@ -1,24 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsString } from 'class-validator';
-import { DOC_STATUS } from '../constants';
-
+import { IsString } from 'class-validator';
 export class CreateArchivoDto {
-  @ApiProperty({ example: 'pdf, word' })
+  @ApiProperty({ example: 'nombre archivo' })
   @IsString()
-  nombreArchivoOriginal: string;
+  nombreArchivo: string;
 
   @ApiProperty({ example: 'pdf, word' })
   @IsString()
-  nombreArchivoServidor: string;
-
-  @ApiProperty({ example: 'SergioG' })
-  @IsString()
-  autor: string;
-
-  @ApiProperty({
-    description: 'Estado del archivo en la plataforma',
-    enum: DOC_STATUS,
-  })
-  @IsEnum(DOC_STATUS)
-  estado: DOC_STATUS;
+  extensionArchivo: string;
 }
