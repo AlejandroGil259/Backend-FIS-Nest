@@ -2,10 +2,10 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 
-import { DBExceptionService } from '../commons/services/db-exception.service';
 import { CreateNotificacionesDto } from './dto/create-notificaciones.dto';
 import { Notificacion } from './entities/notificacion.entity';
 import { Usuario } from '../auth/entities/usuarios.entity';
+import { UsuariosProyectos } from 'src/auth/entities/usuarios-proyectos.entity';
 
 @Injectable()
 export class NotificacionesService {
@@ -14,21 +14,37 @@ export class NotificacionesService {
     private readonly notificacionRepo: Repository<Notificacion>,
     @InjectRepository(Usuario)
     private readonly usuarioRepo: Repository<Usuario>,
+    @InjectRepository(UsuariosProyectos)
+    private readonly usuariosProyectosRepo: Repository<UsuariosProyectos>,
   ) {}
 
   async create(createNotificacionDto: CreateNotificacionesDto) {
-    const { usuariosReceptoresDocumentos: usuariosReceptoresDocumento } =
+    const { idProyecto, usuarioEmisorDocumento, usuariosReceptoresDocumentos } =
       createNotificacionDto;
+
     try {
-      const usuariosReceptores = await this.usuarioRepo.findBy({
-        documento: In(usuariosReceptoresDocumento),
+      // Verificar si el usuario emisor tiene el proyecto asociado
+      const usuarioProyecto = await this.usuariosProyectosRepo.findOne({
+        where: {
+          proyecto: { idProyecto },
+          usuario: { documento: usuarioEmisorDocumento },
+        },
       });
 
+      if (!usuarioProyecto) {
+        throw new NotFoundException(
+          `El usuario emisor "${usuarioEmisorDocumento}"no tiene acceso al proyecto especificado.`,
+        );
+      }
+
       // Verificar si todos los usuarios receptores están registrados
-      if (usuariosReceptores.length !== usuariosReceptoresDocumento.length) {
-        // Al menos un usuario receptor no está registrado
-        throw new Error(
-          'El usuario receptores no está registrado y no se pueden enviar notificaciones.',
+      const usuariosReceptores = await this.usuarioRepo.find({
+        where: { documento: In(usuariosReceptoresDocumentos) },
+      });
+
+      if (usuariosReceptores.length !== usuariosReceptoresDocumentos.length) {
+        throw new NotFoundException(
+          'Alguno de los usuarios receptores no está registrado y no se pueden enviar notificaciones.',
         );
       }
 
@@ -36,12 +52,11 @@ export class NotificacionesService {
         ...createNotificacionDto,
         usuariosReceptores,
       });
+
       return { notificacion };
     } catch (error) {
       console.error('Error al crear y enviar notificación:', error);
-      throw new NotFoundException(
-        `El usuario receptor no se encuentra registrado en la base de datos`,
-      );
+      throw error;
     }
   }
 
@@ -65,7 +80,9 @@ export class NotificacionesService {
       return notificaciones;
     } catch (error) {
       console.error('Error al buscar notificaciones por rol:', error);
-      throw new Error('Ocurrió un error al buscar notificaciones por rol');
+      throw new NotFoundException(
+        'Ocurrió un error al buscar notificaciones por rol',
+      );
     }
   }
 
