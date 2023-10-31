@@ -10,10 +10,6 @@ export class Archivo extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ApiProperty({ example: 'nombre de archivo' })
-  @Column({ type: 'varchar' })
-  nombreArchivo: string;
-
   @ApiProperty({ example: 'pdf, word' })
   @Column()
   extensionArchivo: string;
