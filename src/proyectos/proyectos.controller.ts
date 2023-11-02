@@ -44,8 +44,8 @@ export class ProyectosController {
     description: 'No hay proyectos en la base de datos',
   })
   @Get()
-  findAll() {
-    return this.proyectosService.findAll();
+  findAllWithUserDetails() {
+    return this.proyectosService.findAllWithUserDetails();
   }
 
   @ApiResponse({

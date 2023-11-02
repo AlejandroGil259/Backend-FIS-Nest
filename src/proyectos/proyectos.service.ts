@@ -74,11 +74,25 @@ export class ProyectosService {
     }
   }
 
-  async findAll() {
-    const proyectos = await this.proyectoRepo.find();
+  // async findAll() {
+  //   const proyectos = await this.proyectoRepo.find();
 
-    if (!proyectos || !proyectos.length)
+  //   if (!proyectos || !proyectos.length)
+  //     throw new NotFoundException('No se encontraron resultados');
+
+  //   return proyectos;
+  // }
+
+  async findAllWithUserDetails() {
+    const proyectos = await this.proyectoRepo
+      .createQueryBuilder('proyecto')
+      .leftJoinAndSelect('proyecto.usuariosProyectos', 'usuariosProyectos')
+      .leftJoinAndSelect('usuariosProyectos.usuario', 'usuario')
+      .getMany();
+
+    if (!proyectos || !proyectos.length) {
       throw new NotFoundException('No se encontraron resultados');
+    }
 
     return proyectos;
   }
