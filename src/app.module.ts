@@ -12,6 +12,7 @@ import { SolicitudesModule } from './solicitudes/solicitudes.module';
 import { AuthModule } from './auth/auth.module';
 import { PasantiasModule } from './pasantias/pasantias.module';
 import { EspaciosCoterminalesModule } from './espacios-coterminales/espacios-coterminales.module';
+import { EstadisticasModule } from './estadisticas/estadisticas.module';
 
 @Module({
   imports: [
@@ -48,6 +49,8 @@ import { EspaciosCoterminalesModule } from './espacios-coterminales/espacios-cot
     PasantiasModule,
 
     EspaciosCoterminalesModule,
+    
+    EstadisticasModule,
   ],
 })
 export class AppModule {}
