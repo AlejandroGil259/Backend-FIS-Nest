@@ -4,7 +4,6 @@ import {
   Controller,
   Delete,
   Get,
-  NotFoundException,
   Param,
   Patch,
   Post,
@@ -53,20 +52,33 @@ export class ArchivosController {
       }),
     }),
   )
-  uploadProject(@UploadedFile() archivo: Express.Multer.File) {
+  async uploadProject(@UploadedFile() archivo: Express.Multer.File) {
     if (!archivo) {
       throw new BadRequestException(
         'Asegúrate de que sea un archivo Word (.docx) o un archivo PDF (.pdf).',
       );
     }
+    // Llama al servicio para guardar el archivo en la base de datos
+    const createArchivoDto: CreateArchivoDto = {
+      filename: archivo.filename,
+      originalname: archivo.originalname,
+    };
+
+    const savedFile = await this.archivosService.createFile(createArchivoDto);
 
     // const secureUrl = `${archivo.filename}`;
-    const secureUrl = `${this.configService.get(
-      'HOST_API',
-    )}/archivos/proyecto/${archivo.filename}`;
+    // const secureUrl = `${this.configService.get(
+    //   'HOST_API',
+    // )}/archivos/proyecto/${archivo.filename}`;
+
+    // return {
+    //   secureUrl,
+    // };
 
     return {
-      secureUrl,
+      secureUrl: `${this.configService.get('HOST_API')}/archivos/proyecto/${
+        archivo.filename
+      }`,
     };
   }
 
@@ -111,6 +123,19 @@ export class ArchivosController {
     res.sendFile(path);
   }
 
+  // @Put(':id')
+  // async updateArchivo(
+  //   @Param('id') id: string,
+  //   @Body() updateArchivoDto: UpdateArchivoDto,
+  // ) {
+  //   // Llama al servicio para actualizar el archivo con el ID proporcionado
+  //   const updatedArchivo = await this.archivosService.updateArchivo(
+  //     id,
+  //     updateArchivoDto,
+  //   );
+  //   return updatedArchivo;
+  // }
+
   @ApiResponse({
     status: 200,
     description: 'Se ha actualizado el archivo',
@@ -119,35 +144,9 @@ export class ArchivosController {
     status: 404,
     description: 'No hay registros en la base de datos de este archivo',
   })
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateArchivoDto: UpdateArchivoDto) {
-  //   return this.archivosService.update(id, updateArchivoDto);
-  // }
   @Patch(':id')
-  async updateFile(
-    @Param('id') id: string,
-    @Body() updateArchivoDto: UpdateArchivoDto, // Asegúrate de proporcionar el DTO
-    @Res() res: Response,
-  ) {
-    try {
-      const updatedFile = await this.archivosService.updateArchivo(
-        id,
-        updateArchivoDto.extensionArchivo, // Pasar la nueva extensión
-        updateArchivoDto.nombreArchivo, // Pasar el nuevo nombre
-      );
-
-      if (!updatedFile) {
-        throw new NotFoundException('Archivo no encontrado.');
-      }
-
-      res.json(updatedFile);
-    } catch (error) {
-      console.error(error);
-      // Manejar otros errores aquí
-      res
-        .status(500)
-        .json({ message: 'Ocurrió un error al actualizar el archivo.' });
-    }
+  update(@Param('id') id: string, @Body() updateArchivoDto: UpdateArchivoDto) {
+    return this.archivosService.update(id, updateArchivoDto);
   }
 
   @ApiResponse({

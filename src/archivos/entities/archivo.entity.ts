@@ -8,14 +8,19 @@ import { Solicitud } from '../../solicitudes/entities/solicitud.entity';
 export class Archivo extends BaseEntity {
   @ApiProperty({ uniqueItems: true })
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  idArchivo: string;
 
+  @ApiProperty()
   @Column({ type: 'text', nullable: false })
-  nombreArchivo: string; // Nombre del archivo
+  filename: string;
 
-  @ApiProperty({ example: 'pdf, word(.docx o .doc)' })
+  @ApiProperty()
   @Column({ type: 'text', nullable: false })
-  extensionArchivo: string; // Extensión del archivo (por ejemplo, 'pdf', 'docx', 'doc')
+  originalname: string;
+
+  // @ApiProperty()
+  // @Column({ type: 'text', nullable: false })
+  // extensionArchivo: string; // Extensión del archivo (por ejemplo, 'pdf', 'docx', 'doc')
 
   @ManyToOne(() => Proyecto, (proyecto) => proyecto.archivos, {
     onDelete: 'CASCADE',

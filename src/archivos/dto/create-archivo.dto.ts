@@ -1,11 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString } from 'class-validator';
+
 export class CreateArchivoDto {
   @ApiProperty({ example: 'nombre archivo' })
   @IsString()
-  nombreArchivo: string;
+  filename: string;
 
-  @ApiProperty({ example: 'pdf, word (.docx .doc)' })
+  @ApiProperty()
   @IsString()
-  extensionArchivo: string;
+  originalname: string;
 }

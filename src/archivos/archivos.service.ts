@@ -43,15 +43,18 @@ export class ArchivosService {
     return archivosFiltrados;
   }
 
-  async createFile(createArchivoDto: CreateArchivoDto) {
+  async createFile(createArchivoDto: CreateArchivoDto): Promise<Archivo> {
     try {
-      const file = await this.archivoRepo.save(createArchivoDto);
+      const archivo = this.archivoRepo.create(createArchivoDto);
+      return await this.archivoRepo.save(archivo);
+      //const file = await this.archivoRepo.save(createArchivoDto);
 
-      return {
-        archivo: file,
-      };
+      // return {
+      //   archivo: file,
+      // };
     } catch (error) {
-      throw DBExceptionService.handleDBException(error);
+      //throw DBExceptionService.handleDBException(error);
+      throw new Error('No se pudo crear el archivo en la base de datos.');
     }
   }
 
@@ -64,65 +67,81 @@ export class ArchivosService {
     return archivos;
   }
 
-  async findOne(id: string) {
+  async findOne(idArchivo: string) {
     const archivo = await this.archivoRepo.findOne({
-      where: { id },
+      where: { idArchivo },
       relations: { solicitud: true, proyectos: true },
     });
 
     if (!archivo)
       throw new NotFoundException(
-        `No se encontraron resultados para el archivo "${id}"`,
+        `No se encontraron resultados para el archivo "${idArchivo}"`,
       );
 
     return archivo;
   }
 
-  // async update(id: string, updateArchivoDto: UpdateArchivoDto) {
-  //   const archivo = await this.archivoRepo.findOneBy({ id });
-  //   if (!archivo)
-  //     return new NotFoundException(
-  //       `No se encontró ningun archivo con el Id ${id}`,
-  //     );
-
-  //   try {
-  //     return await this.archivoRepo.update({ id }, { ...updateArchivoDto });
-  //   } catch (error) {
-  //     throw DBExceptionService.handleDBException(error);
-  //   }
-  // }
-
-  async updateArchivo(id: string, newExtension: string, newName: string) {
-    const archivo = await this.archivoRepo.findOne({ where: { id: id } }); // Usar un objeto de opciones
-
+  async update(idArchivo: string, updateArchivoDto: UpdateArchivoDto) {
+    const archivo = await this.archivoRepo.findOne({ where: { idArchivo } });
     if (!archivo) {
-      return null; // Retorna null si el archivo no se encuentra
-    }
-
-    // Realiza las modificaciones necesarias en el archivo
-    archivo.extensionArchivo = newExtension;
-    archivo.nombreArchivo = newName;
-
-    try {
-      await this.archivoRepo.save(archivo); // Guarda el archivo actualizado en la base de datos
-      return archivo; // Retorna el archivo actualizado
-    } catch (error) {
-      console.error(error);
-      // Maneja errores de guardado en la base de datos
-      throw new Error(
-        'Error al guardar el archivo actualizado en la base de datos.',
+      throw new NotFoundException(
+        `No se encontró ningún archivo con el ID ${idArchivo}`,
       );
     }
-  }
 
-  async remove(id: string) {
+    try {
+      // Actualiza las propiedades del archivo con los datos proporcionados en updateArchivoDto
+      this.archivoRepo.merge(archivo, updateArchivoDto);
+
+      return await this.archivoRepo.save(archivo);
+    } catch (error) {
+      throw DBExceptionService.handleDBException(error);
+    }
+  }
+  //PRUEBA PATCH1
+  // async updateExtension(id: string, newExtension: string): Promise<Archivo> {
+  //   const archivo = await this.archivoRepo.findOne({ where: { id } });
+  //   if (!archivo) {
+  //     throw new NotFoundException('Archivo no encontrado');
+  //   }
+
+  //   archivo.extensionArchivo = newExtension;
+  //   return this.archivoRepo.save(archivo);
+  // }
+
+  // PRUEBA PUT 2
+  // async updateArchivo(
+  //   idArchivo: string,
+  //   updateArchivoDto: UpdateArchivoDto,
+  // ): Promise<Archivo> {
+  //   // Encuentra el archivo por ID
+  //   const archivo = await this.archivoRepo.findOne({
+  //     where: { idArchivo: idArchivo },
+  //   });
+
+  //   if (!archivo) {
+  //     // Manejar el caso en que el archivo no existe
+  //     throw new Error('Archivo no encontrado');
+  //   }
+
+  //   // Aplica las actualizaciones desde el DTO
+  //   archivo.filename = updateArchivoDto.filename;
+
+  //   // Guarda el archivo actualizado en la base de datos
+  //   await this.archivoRepo.save(archivo);
+
+  //   return archivo;
+  // }
+  async remove(idArchivo: string) {
     const archivo = await this.archivoRepo.findOne({
-      where: { id },
+      where: { idArchivo },
       withDeleted: true,
     });
 
     if (!archivo)
-      throw new NotFoundException(`El archivo no existe con el id ${id}`);
+      throw new NotFoundException(
+        `El archivo no existe con el id ${idArchivo}`,
+      );
     return await this.archivoRepo.remove(archivo);
   }
 }
