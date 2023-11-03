@@ -81,6 +81,18 @@ export class ArchivosService {
     return archivo;
   }
 
+  async getArchivoById(idArchivo: string): Promise<Archivo> {
+    const archivo = await this.archivoRepo.findOne({ where: { idArchivo } });
+
+    if (!archivo) {
+      throw new NotFoundException(
+        `No se encontró ningún archivo con el ID ${idArchivo}`,
+      );
+    }
+
+    return archivo;
+  }
+
   async update(idArchivo: string, updateArchivoDto: UpdateArchivoDto) {
     const archivo = await this.archivoRepo.findOne({ where: { idArchivo } });
     if (!archivo) {

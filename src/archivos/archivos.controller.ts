@@ -88,16 +88,24 @@ export class ArchivosController {
 
   @ApiResponse({
     status: 200,
-    description: 'Se encontraron los archivos',
+    description: 'Se encontraron todos los archivos',
   })
   @ApiResponse({
     status: 404,
     description: 'No hay archivos en la base de datos',
   })
-  // @Get()
-  // findAll() {
-  //   return this.archivosService.findAll();
-  // }
+  @Get()
+  findAll() {
+    return this.archivosService.findAll();
+  }
+  @ApiResponse({
+    status: 200,
+    description: 'Se encontraron los archivos en la carpeta de proyectos',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'No hay archivos en la base de datos',
+  })
   @Get('pdf-y-docx')
   async getArchivosPdfDocx(@Res() res: Response) {
     const archivos = await this.archivosService.getArchivosPdfDocx();
@@ -123,6 +131,11 @@ export class ArchivosController {
     res.sendFile(path);
   }
 
+  @Get(':id')
+  async getArchivoById(@Param('id') id: string) {
+    const archivo = await this.archivosService.getArchivoById(id);
+    return archivo;
+  }
   // @Put(':id')
   // async updateArchivo(
   //   @Param('id') id: string,
