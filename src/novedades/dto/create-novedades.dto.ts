@@ -20,7 +20,8 @@ export class CreateNovedadesDto extends CreateNotificacionesDto {
 
   @ApiProperty({ example: 'Nombre evaluador1' })
   @IsString()
-  evaluador1: string;
+  @IsOptional()
+  evaluador1?: string;
 
   @ApiProperty({ example: 'Nombre evaluador2' })
   @IsString()

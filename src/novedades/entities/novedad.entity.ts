@@ -38,11 +38,11 @@ export class Novedad extends BaseEntity {
   tipoNovedad: TIPO_NOVEDAD;
 
   @ApiProperty({ example: 'Nombre evaluador1' })
-  @Column()
-  evaluador1: string;
+  @Column({ type: 'text', nullable: true })
+  evaluador1?: string;
 
   @ApiProperty({ example: 'Nombre evaluador2' })
-  @Column({type: 'text', nullable: true} )
+  @Column({ type: 'text', nullable: true })
   evaluador2?: string;
 
   @ApiProperty({ example: 'Respuesta' })
