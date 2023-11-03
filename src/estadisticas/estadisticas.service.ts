@@ -13,38 +13,64 @@ export class EstadisticasService {
   ) {}
 
   async getTotalProyectosPorTipo() {
-    const totalPorTipo = {};
+    const totalPorTipo = [];
 
     // Itera sobre los valores de OPCION_GRADO y cuenta proyectos por tipo
-    for (const tipo in OPCION_GRADO) {
-      if (OPCION_GRADO.hasOwnProperty(tipo)) {
-        const count = await this.proyectoRepo.count({
-          where: {
-            opcionGrado: OPCION_GRADO[tipo],
-          },
-        });
-        totalPorTipo[OPCION_GRADO[tipo]] = count;
-      }
+    for (const tipo of Object.values(OPCION_GRADO)) {
+      const count = await this.proyectoRepo.count({
+        where: {
+          opcionGrado: tipo,
+        },
+      });
+      totalPorTipo.push({ tipo, count });
     }
 
     return totalPorTipo;
   }
 
+  // async getProyectosFinalizadosPorAno(ano: number) {
+  //   const hoy = new Date(); // Obtén la fecha actual
+
+  //   // Asumimos que un proyecto se considera "finalizado" si la fecha de creación es anterior al año que se proporciona como parámetro
+  //   const proyectosFinalizados = await this.proyectoRepo.find({
+  //     where: {
+  //       createdAt: LessThan(
+  //         new Date(hoy.getFullYear() - ano, hoy.getMonth(), hoy.getDate()),
+  //       ),
+  //       // También podrías agregar otras condiciones si es necesario
+  //     },
+  //   });
+
+  //   return proyectosFinalizados.length;
+  // }
+
   async getProyectosFinalizadosPorAno(ano: number) {
+    const proyectosFinalizadosPorAno = [];
+
     const hoy = new Date(); // Obtén la fecha actual
 
-    // Asumimos que un proyecto se considera "finalizado" si la fecha de creación es anterior al año que se proporciona como parámetro
-    const proyectosFinalizados = await this.proyectoRepo.find({
-      where: {
-        createdAt: LessThan(
-          new Date(hoy.getFullYear() - ano, hoy.getMonth(), hoy.getDate()),
-        ),
-        // También podrías agregar otras condiciones si es necesario
-      },
-    });
+    for (let i = 0; i < ano; i++) {
+      const fechaLimite = new Date(
+        hoy.getFullYear() - i,
+        hoy.getMonth(),
+        hoy.getDate(),
+      );
 
-    return proyectosFinalizados.length;
+      const proyectosFinalizados = await this.proyectoRepo.count({
+        where: {
+          createdAt: LessThan(fechaLimite),
+        },
+      });
+
+      proyectosFinalizadosPorAno.push({
+        ano: hoy.getFullYear() - i,
+        proyectosFinalizados,
+      });
+    }
+
+    return proyectosFinalizadosPorAno;
   }
+
   async getProyectosPorDirector() {
     const proyectosPorDirector = [];
 
