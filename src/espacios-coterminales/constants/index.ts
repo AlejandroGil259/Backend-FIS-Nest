@@ -1,7 +1,7 @@
 export enum SEDES {
-  BOGOTA = 'Sede Bogotá',
   BUCARAMANGA = 'Seccional Bucaramanga',
-  MEDELLIN = 'Sede Medellín',
   TUNJA = 'Seccional Tunja',
+  BOGOTA = 'Sede Bogotá',
+  MEDELLIN = 'Sede Medellín',
   VILLAVICENCIO = 'Sede Villavicencio',
 }
