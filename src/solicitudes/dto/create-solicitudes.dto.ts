@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsNumber, IsString } from 'class-validator';
+import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
 import { TIPO_SOLICITUD } from '../constants';
 
 export class CreateSolicitudesDto {
@@ -21,6 +21,7 @@ export class CreateSolicitudesDto {
 
   @ApiProperty({ example: 'Respuesta de la carta' })
   @IsString()
+  @IsOptional()
   archivoCarta: string;
 
   @ApiProperty({ example: 123456789 })
