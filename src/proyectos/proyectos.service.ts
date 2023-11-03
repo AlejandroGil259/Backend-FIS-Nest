@@ -114,7 +114,7 @@ export class ProyectosService {
 
     return proyecto;
   }
-
+  
   async getOpcionGrado() {
     return Object.values(OPCION_GRADO);
   }

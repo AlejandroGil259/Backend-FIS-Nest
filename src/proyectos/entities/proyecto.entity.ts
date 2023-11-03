@@ -84,7 +84,10 @@ export class Proyecto extends BaseEntity {
   @JoinColumn()
   espacioCoterminal: EspaciosCoterminale;
 
-  @OneToMany(() => Archivo, (archivo) => archivo.proyectos, { cascade: true })
+  @OneToMany(() => Archivo, (archivo) => archivo.proyectos, {
+    cascade: true,
+    eager: true,
+  })
   archivos: Archivo[];
 
   @OneToMany(() => Novedad, (novedad) => novedad.proyectos, { cascade: true })
