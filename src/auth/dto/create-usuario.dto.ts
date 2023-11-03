@@ -34,7 +34,7 @@ export class CreateUserDto {
   @IsString()
   nombres: string;
 
-  @ApiProperty({ example: 'Rodriguez' })
+  @ApiProperty({ example: 'Example' })
   @IsString()
   apellidos: string;
 

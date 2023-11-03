@@ -46,7 +46,7 @@ export class Usuario extends BaseEntity {
   @Column()
   nombres: string;
 
-  @ApiProperty({ example: 'Rodriguez' })
+  @ApiProperty({ example: 'Example' })
   @Column()
   apellidos: string;
 
