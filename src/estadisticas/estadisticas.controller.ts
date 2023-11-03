@@ -12,13 +12,13 @@ export class EstadisticasController {
     return this.estadisticasService.getTotalProyectosPorTipo();
   }
 
-  //   @Get('proyectos-finalizados-por-ano/:ano')
-  //   getProyectosFinalizadosPorAno(@Param('ano') ano: number) {
-  //     return this.estadisticasService.getProyectosFinalizadosPorAno(ano);
-  //   }
+  @Get('proyectos-finalizados-por-ano/:ano')
+  getProyectosFinalizadosPorAno(@Param('ano') ano: number) {
+    return this.estadisticasService.getProyectosFinalizadosPorAno(ano);
+  }
 
-  //   @Get('proyectos-por-director/:directorId')
-  //   getProyectosPorDirector(@Param('directorId') directorId: number) {
-  //     return this.estadisticasService.getProyectosPorDirector(directorId);
-  //   }
+  @Get('proyectos-por-director')
+  getProyectosPorDirector() {
+    return this.estadisticasService.getProyectosPorDirector();
+  }
 }

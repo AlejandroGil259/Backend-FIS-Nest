@@ -2,7 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Proyecto } from '../proyectos/entities/proyecto.entity';
-import { OPCION_GRADO } from '../proyectos/constants';
+import { DIRECTOR, OPCION_GRADO } from '../proyectos/constants';
+import { LessThan } from 'typeorm';
 
 @Injectable()
 export class EstadisticasService {
@@ -27,5 +28,38 @@ export class EstadisticasService {
     }
 
     return totalPorTipo;
+  }
+
+  async getProyectosFinalizadosPorAno(ano: number) {
+    const hoy = new Date(); // Obtén la fecha actual
+
+    // Asumimos que un proyecto se considera "finalizado" si la fecha de creación es anterior al año que se proporciona como parámetro
+    const proyectosFinalizados = await this.proyectoRepo.find({
+      where: {
+        createdAt: LessThan(
+          new Date(hoy.getFullYear() - ano, hoy.getMonth(), hoy.getDate()),
+        ),
+        // También podrías agregar otras condiciones si es necesario
+      },
+    });
+
+    return proyectosFinalizados.length;
+  }
+  async getProyectosPorDirector() {
+    const proyectosPorDirector = {};
+
+    // Itera sobre los directores del enum DIRECTOR
+    for (const director of Object.values(DIRECTOR)) {
+      const proyectosAsignados = await this.proyectoRepo.count({
+        where: {
+          director,
+          // También podrías agregar otras condiciones si es necesario
+        },
+      });
+
+      proyectosPorDirector[director] = proyectosAsignados;
+    }
+
+    return proyectosPorDirector;
   }
 }
