@@ -7,7 +7,7 @@ import { ApiTags } from '@nestjs/swagger';
 export class EstadisticasController {
   constructor(private readonly estadisticasService: EstadisticasService) {}
 
-  @Get('total-proyectos-por-tipo')
+  @Get('total-proyectos-por-opcion')
   getTotalProyectosPorTipo() {
     return this.estadisticasService.getTotalProyectosPorTipo();
   }
@@ -17,7 +17,7 @@ export class EstadisticasController {
     return this.estadisticasService.getProyectosPorDirector();
   }
 
-  @Get('proyectos-finalizados-por-ano/:ano')
+  @Get('proyectos-finalizados/:ano')
   getProyectosFinalizadosPorAno(@Param('ano', ParseIntPipe) ano: number) {
     return this.estadisticasService.getProyectosFinalizadosPorAno(ano);
   }

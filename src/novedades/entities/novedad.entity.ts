@@ -10,7 +10,7 @@ import { TIPO_NOVEDAD } from '../constansts';
 import { BaseEntity } from '../../commons/entities/base-entity.entity';
 import { Notificacion } from '../../notificaciones/entities/notificacion.entity';
 import { Proyecto } from '../../proyectos/entities/proyecto.entity';
-  
+
 @Entity('novedades')
 export class Novedad extends BaseEntity {
   @ApiProperty({
@@ -36,6 +36,14 @@ export class Novedad extends BaseEntity {
     enum: TIPO_NOVEDAD,
   })
   tipoNovedad: TIPO_NOVEDAD;
+
+  @ApiProperty({ example: 'Nombre evaluador1' })
+  @Column()
+  evaluador1: string;
+
+  @ApiProperty({ example: 'Nombre evaluador2' })
+  @Column({type: 'text', nullable: true} )
+  evaluador2?: string;
 
   @ApiProperty({ example: 'Respuesta' })
   @Column()
