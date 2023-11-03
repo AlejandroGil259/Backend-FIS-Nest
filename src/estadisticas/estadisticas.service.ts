@@ -46,7 +46,7 @@ export class EstadisticasService {
     return proyectosFinalizados.length;
   }
   async getProyectosPorDirector() {
-    const proyectosPorDirector = {};
+    const proyectosPorDirector = [];
 
     // Itera sobre los directores del enum DIRECTOR
     for (const director of Object.values(DIRECTOR)) {
@@ -57,7 +57,7 @@ export class EstadisticasService {
         },
       });
 
-      proyectosPorDirector[director] = proyectosAsignados;
+      proyectosPorDirector.push({ director, proyectosAsignados });
     }
 
     return proyectosPorDirector;
