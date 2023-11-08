@@ -7,7 +7,7 @@ export enum TIPO_SOLICITUD {
   REALIZAR_OTRA = 'Realizar otra solicitud',
 }
 
-export enum ESTADO_RESPUESTA {
+export enum ESTADO_RESPUESTA_SOLICITUD {
   ENVIADO = 'Enviado',
   REVISION = 'En revisión',
   RESUELTA = 'Resuelta',

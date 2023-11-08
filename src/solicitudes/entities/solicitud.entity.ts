@@ -7,7 +7,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { BaseEntity } from '../../commons/entities/base-entity.entity';
-import { ESTADO_RESPUESTA, TIPO_SOLICITUD } from '../constants';
+import { ESTADO_RESPUESTA_SOLICITUD, TIPO_SOLICITUD } from '../constants';
 import { Usuario } from '../../auth/entities/usuarios.entity';
 import { Archivo } from '../../archivos/entities/archivo.entity';
 
@@ -41,16 +41,16 @@ export class Solicitud extends BaseEntity {
   archivoCarta: string;
 
   @ApiProperty({
-    enum: ESTADO_RESPUESTA,
+    enum: ESTADO_RESPUESTA_SOLICITUD,
     description: 'Respuesta del estado de la solicitud',
-    default: ESTADO_RESPUESTA.REVISION,
+    default: ESTADO_RESPUESTA_SOLICITUD.REVISION,
   })
   @Column({
     type: 'varchar',
-    enum: ESTADO_RESPUESTA,
-    default: ESTADO_RESPUESTA.REVISION,
+    enum: ESTADO_RESPUESTA_SOLICITUD,
+    default: ESTADO_RESPUESTA_SOLICITUD.REVISION,
   })
-  respEstado: ESTADO_RESPUESTA;
+  respEstado: ESTADO_RESPUESTA_SOLICITUD;
 
   @ApiProperty()
   @Column()
