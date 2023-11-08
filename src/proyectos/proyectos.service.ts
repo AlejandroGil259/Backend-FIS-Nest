@@ -12,7 +12,12 @@ import { UpdateProyectoDto } from './dto/update-proyecto.dto';
 import { Proyecto } from './entities/proyecto.entity';
 import { UsuariosProyectos } from '../auth/entities/usuarios-proyectos.entity';
 import { Usuario } from '../auth/entities/usuarios.entity';
-import { DIRECTOR, OPCION_GRADO, TIPO_ENTREGA } from './constants';
+import {
+  DIRECTOR,
+  OPCION_GRADO,
+  TIPO_ENTREGA,
+  ESTADO_RESPUESTA_PROYECTOS,
+} from './constants';
 
 @Injectable()
 export class ProyectosService {
@@ -114,7 +119,7 @@ export class ProyectosService {
 
     return proyecto;
   }
-  
+
   async getOpcionGrado() {
     return Object.values(OPCION_GRADO);
   }
@@ -175,7 +180,7 @@ export class ProyectosService {
     const { affected } = await this.proyectoRepo.update(
       { idProyecto },
       {
-        estado: false,
+        estado: ESTADO_RESPUESTA_PROYECTOS.CANCELADO,
         deletedAt: new Date(),
       },
     );
@@ -207,7 +212,7 @@ export class ProyectosService {
     const { affected } = await this.proyectoRepo.update(
       { idProyecto },
       {
-        estado: true,
+        estado: ESTADO_RESPUESTA_PROYECTOS.ENVIADO,
         deletedAt: null,
       },
     );
