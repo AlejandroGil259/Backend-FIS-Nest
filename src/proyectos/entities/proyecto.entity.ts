@@ -8,7 +8,13 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { BaseEntity } from '../../commons/entities/base-entity.entity';
-import { CODIRECTOR, DIRECTOR, OPCION_GRADO, TIPO_ENTREGA } from '../constants';
+import {
+  CODIRECTOR,
+  DIRECTOR,
+  ESTADO_RESPUESTA_PROYECTOS,
+  OPCION_GRADO,
+  TIPO_ENTREGA,
+} from '../constants';
 import { Archivo } from '../../archivos/entities/archivo.entity';
 import { Novedad } from '../../novedades/entities/novedad.entity';
 import { UsuariosProyectos } from '../../auth/entities/usuarios-proyectos.entity';
@@ -56,14 +62,16 @@ export class Proyecto extends BaseEntity {
   codirector?: CODIRECTOR;
 
   @ApiProperty({
-    description: 'Estado del proyecto en la plataforma',
-    default: true,
+    enum: ESTADO_RESPUESTA_PROYECTOS,
+    description: 'Respuesta del estado del proyecto',
+    default: ESTADO_RESPUESTA_PROYECTOS.REVISION,
   })
   @Column({
-    type: 'bool',
-    default: true,
+    type: 'varchar',
+    enum: ESTADO_RESPUESTA_PROYECTOS,
+    default: ESTADO_RESPUESTA_PROYECTOS.ENVIADO,
   })
-  estado: boolean;
+  estado: ESTADO_RESPUESTA_PROYECTOS;
 
   @ApiProperty({ description: 'Titulo del proyecto' })
   @Column({ unique: true })

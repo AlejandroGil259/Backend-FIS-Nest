@@ -44,7 +44,7 @@ export enum CODIRECTOR {
   ING_ALIX = 'Ing. Alix Cecilia Chinchilla Rueda',
 }
 
-export enum RESPUESTA {
+export enum ESTADO_RESPUESTA_PROYECTOS {
   ENVIADO = 'Enviado',
   REVISION = 'En revisión',
   APROBADO = 'Aprobado',
