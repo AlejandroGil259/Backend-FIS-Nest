@@ -128,7 +128,11 @@ export class ProyectosService {
   }
 
   async getDirectores() {
-    return Object.values(DIRECTOR);
+    const directoresArray = Object.values(DIRECTOR);
+    const directoresOrdenados = directoresArray.sort((a, b) =>
+      a.localeCompare(b),
+    );
+    return directoresOrdenados;
   }
 
   async update(idProyecto: string, updateProyectoDto: UpdateProyectoDto) {
