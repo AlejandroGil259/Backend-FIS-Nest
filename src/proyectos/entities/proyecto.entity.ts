@@ -73,6 +73,16 @@ export class Proyecto extends BaseEntity {
   })
   estado: ESTADO_RESPUESTA_PROYECTOS;
 
+  @ApiProperty({
+    description: 'Proyecto activo en la plataforma',
+    default: true,
+  })
+  @Column({
+    type: 'bool',
+    default: true,
+  })
+  activo: boolean;
+
   @ApiProperty({ description: 'Titulo del proyecto' })
   @Column({ unique: true })
   titulo: string;

@@ -51,4 +51,5 @@ export enum ESTADO_RESPUESTA_PROYECTOS {
   APROBADO_OBSERVACIONES = 'Aprobado con observaciones',
   NO_APROBADO = 'No aprobado',
   CANCELADO = 'Cancelado',
+  FINALIZADO = 'Finalizado'
 }
