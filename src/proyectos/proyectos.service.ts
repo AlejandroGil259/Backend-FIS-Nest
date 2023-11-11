@@ -135,6 +135,10 @@ export class ProyectosService {
     return directoresOrdenados;
   }
 
+  obtenerEstadosProyectos(): string[] {
+    // Obtener y devolver un array con los valores del enum
+    return Object.values(ESTADO_RESPUESTA_PROYECTOS);
+  }
   async update(idProyecto: string, updateProyectoDto: UpdateProyectoDto) {
     const proyecto = await this.proyectoRepo.findOneBy({ idProyecto });
     if (!proyecto)

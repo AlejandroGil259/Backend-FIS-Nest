@@ -89,6 +89,19 @@ export class ProyectosController {
 
   @ApiResponse({
     status: 200,
+    description: 'Se encontraron los estados',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'No hay estados de respuesta en la base de datos',
+  })
+  @Get('estados')
+  obtenerEstadosProyectos(): string[] {
+    return this.proyectosService.obtenerEstadosProyectos();
+  }
+
+  @ApiResponse({
+    status: 200,
     description: 'Se encontraron los siguientes proyectos',
   })
   @ApiResponse({
