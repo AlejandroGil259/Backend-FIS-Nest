@@ -79,11 +79,11 @@ export class EstadisticasService {
       const proyectosAsignados = await this.proyectoRepo.count({
         where: {
           director,
-          // También podrías agregar otras condiciones si es necesario
         },
       });
-
-      proyectosPorDirector.push({ director, proyectosAsignados });
+      if (proyectosAsignados > 0) {
+        proyectosPorDirector.push({ director, proyectosAsignados });
+      }
     }
 
     return proyectosPorDirector;
