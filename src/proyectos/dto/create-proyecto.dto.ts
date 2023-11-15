@@ -44,7 +44,8 @@ export class CreateProyectoDto {
       'Hola buen dia, adjunto el proyecto con mi compañero Julian Duarte',
   })
   @IsString()
-  descripcion: string;
+  @IsOptional()
+  descripcion?: string;
 
   @ApiProperty({
     description: 'Documento del usuario que crea el proyecto',

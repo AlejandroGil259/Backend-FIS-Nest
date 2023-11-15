@@ -88,8 +88,8 @@ export class Proyecto extends BaseEntity {
   titulo: string;
 
   @ApiProperty({ description: 'descripcion' })
-  @Column({})
-  descripcion: string;
+  @Column({ nullable: true })
+  descripcion?: string;
 
   @OneToOne(() => Pasantia, (pasantia) => pasantia.proyecto)
   @JoinColumn()
