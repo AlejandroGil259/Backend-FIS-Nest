@@ -17,10 +17,6 @@ export class Solicitud extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   idSolicitud: string;
 
-  @ApiProperty({ description: 'Agregar descripción a la solicitud' })
-  @Column()
-  descripcion: string;
-
   @ApiProperty()
   @Column()
   nombres: string;
@@ -36,19 +32,31 @@ export class Solicitud extends BaseEntity {
   })
   tipoSolicitud: TIPO_SOLICITUD;
 
+  @ApiProperty({ description: 'Agregar descripción a la solicitud' })
+  @Column()
+  descripcion: string;
+
   @ApiProperty()
   @Column()
   archivoCarta: string;
 
+  @ApiProperty({ example: 'Número de Acta' })
+  @Column({ nullable: true })
+  numActa?: string;
+
+  @ApiProperty({ example: new Date().toISOString() })
+  @Column({ nullable: true })
+  fechaActa?: Date;
+
   @ApiProperty({
     enum: ESTADO_RESPUESTA_SOLICITUD,
     description: 'Respuesta del estado de la solicitud',
-    default: ESTADO_RESPUESTA_SOLICITUD.REVISION,
+    default: ESTADO_RESPUESTA_SOLICITUD.ENVIADO,
   })
   @Column({
     type: 'varchar',
     enum: ESTADO_RESPUESTA_SOLICITUD,
-    default: ESTADO_RESPUESTA_SOLICITUD.REVISION,
+    default: ESTADO_RESPUESTA_SOLICITUD.ENVIADO,
   })
   respEstado: ESTADO_RESPUESTA_SOLICITUD;
 
