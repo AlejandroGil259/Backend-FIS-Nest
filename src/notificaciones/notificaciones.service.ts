@@ -89,7 +89,6 @@ export class NotificacionesService {
   async findOne(id: string) {
     const notificacion = await this.notificacionRepo.findOne({
       where: { id },
-      relations: { novedad: true },
     });
 
     if (!notificacion)

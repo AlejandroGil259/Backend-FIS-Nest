@@ -11,7 +11,7 @@ import {
 } from 'typeorm';
 import { BaseEntity } from '../../commons/entities/base-entity.entity';
 import { TIPO_NOTIFICACION } from '../constansts';
-import { Novedad } from '../../novedades/entities/novedad.entity';
+// import { Novedad } from '../../novedades/entities/novedad.entity';
 import { Proyecto } from '../../proyectos/entities/proyecto.entity';
 import { Usuario } from '../../auth/entities/usuarios.entity';
 import { ROLES } from '../../auth/constants';
@@ -61,9 +61,9 @@ export class Notificacion extends BaseEntity {
   })
   rol: ROLES;
 
-  @OneToOne(() => Novedad)
-  @JoinColumn({ name: 'id_novedad' })
-  novedad: Novedad;
+  // @OneToOne(() => Novedad)
+  // @JoinColumn({ name: 'id_novedad' })
+  // novedad: Novedad;
 
   @OneToMany(() => Proyecto, (notificacion) => notificacion.notificaciones)
   proyectos: Proyecto;
