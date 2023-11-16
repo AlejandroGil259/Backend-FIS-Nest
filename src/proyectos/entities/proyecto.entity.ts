@@ -16,7 +16,6 @@ import {
   TIPO_ENTREGA,
 } from '../constants';
 import { Archivo } from '../../archivos/entities/archivo.entity';
-import { Novedad } from '../../novedades/entities/novedad.entity';
 import { UsuariosProyectos } from '../../auth/entities/usuarios-proyectos.entity';
 import { Notificacion } from '../../notificaciones/entities/notificacion.entity';
 import { Pasantia } from '../../pasantias/entities/pasantia.entity';
@@ -46,6 +45,14 @@ export class Proyecto extends BaseEntity {
   })
   tipoEntrega: TIPO_ENTREGA;
 
+  @ApiProperty({ example: 'Número de Acta' })
+  @Column({ nullable: true })
+  numActa?: string;
+
+  @ApiProperty({ example: new Date().toISOString() })
+  @Column({ nullable: true })
+  fechaActa?: Date;
+
   @ApiProperty({ enum: DIRECTOR })
   @Column({
     type: 'varchar',
@@ -60,6 +67,18 @@ export class Proyecto extends BaseEntity {
     nullable: true,
   })
   codirector?: CODIRECTOR;
+
+  @ApiProperty({ example: 'Nombre del segundo autor' })
+  @Column({ nullable: true })
+  segundoAutor?: string;
+
+  @ApiProperty({ example: 'Nombre evaluador1' })
+  @Column({ nullable: true })
+  evaluador1?: string;
+
+  @ApiProperty({ example: 'Nombre evaluador2' })
+  @Column({ nullable: true })
+  evaluador2?: string;
 
   @ApiProperty({
     enum: ESTADO_RESPUESTA_PROYECTOS,
@@ -108,8 +127,8 @@ export class Proyecto extends BaseEntity {
   })
   archivos: Archivo[];
 
-  @OneToMany(() => Novedad, (novedad) => novedad.proyectos, { cascade: true })
-  novedades: Novedad[];
+  // @OneToMany(() => Novedad, (novedad) => novedad.proyectos, { cascade: true })
+  // novedades: Novedad[];
 
   @OneToMany(() => Notificacion, (notificacion) => notificacion.proyectos, {
     cascade: true,

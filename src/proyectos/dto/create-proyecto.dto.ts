@@ -1,5 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsOptional, IsString, IsEnum, IsNumber } from 'class-validator';
+import {
+  IsOptional,
+  IsString,
+  IsEnum,
+  IsNumber,
+  IsNotEmpty,
+  IsDateString,
+} from 'class-validator';
 import { CODIRECTOR, DIRECTOR, OPCION_GRADO, TIPO_ENTREGA } from '../constants';
 
 export class CreateProyectoDto {
@@ -16,6 +23,18 @@ export class CreateProyectoDto {
   @IsEnum(TIPO_ENTREGA)
   tipoEntrega: TIPO_ENTREGA;
 
+  @ApiProperty({ example: 'Número de Acta' })
+  @IsString()
+  @IsNotEmpty()
+  @IsOptional()
+  numActa?: string;
+
+  @ApiProperty({ type: Date, example: new Date().toISOString() })
+  @IsDateString()
+  @IsOptional()
+  @IsNotEmpty()
+  fechaActa?: Date;
+
   @ApiProperty({
     description: 'Nombre del director',
     enum: DIRECTOR,
@@ -30,6 +49,21 @@ export class CreateProyectoDto {
   @IsOptional()
   @IsEnum(CODIRECTOR)
   codirector?: CODIRECTOR;
+
+  @ApiProperty({ example: 'Nombre Segundo autor' })
+  @IsString()
+  @IsOptional()
+  segundoAutor?: string;
+
+  @ApiProperty({ example: 'Nombre evaluador1' })
+  @IsString()
+  @IsOptional()
+  evaluador1?: string;
+
+  @ApiProperty({ example: 'Nombre evaluador2' })
+  @IsString()
+  @IsOptional()
+  evaluador2?: string;
 
   @ApiProperty({
     description: 'Titulo del proyecto',

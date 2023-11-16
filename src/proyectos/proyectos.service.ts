@@ -31,8 +31,16 @@ export class ProyectosService {
   ) {}
 
   async createProject(createProyectoDto: CreateProyectoDto) {
-    const { usuarioDocumento, archivoProyecto } = createProyectoDto;
+    const { usuarioDocumento, archivoProyecto, director, codirector } =
+      createProyectoDto;
 
+    // Verificar que el director y el codirector no sean el mismo
+    // Verificar que el director y el codirector no sean el mismo
+    if (director.valueOf() === codirector?.valueOf()) {
+      throw new BadRequestException(
+        'El director y el codirector no pueden ser la misma persona.',
+      );
+    }
     const usuario = await this.usuario.findOneBy({
       documento: usuarioDocumento,
     });
@@ -108,7 +116,6 @@ export class ProyectosService {
       relations: {
         usuariosProyectos: { usuario: true },
         archivos: true,
-        novedades: true,
       },
     });
 
