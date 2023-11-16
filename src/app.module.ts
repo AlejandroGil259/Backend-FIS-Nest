@@ -6,7 +6,6 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { ArchivosModule } from './archivos/archivos.module';
 import { JoiValidationSchema } from './config';
 import { NotificacionesModule } from './notificaciones/notificaciones.module';
-import { NovedadesModule } from './novedades/novedades.module';
 import { ProyectosModule } from './proyectos/proyectos.module';
 import { SolicitudesModule } from './solicitudes/solicitudes.module';
 import { AuthModule } from './auth/auth.module';
@@ -44,12 +43,10 @@ import { EstadisticasModule } from './estadisticas/estadisticas.module';
 
     NotificacionesModule,
 
-    NovedadesModule,
-
     PasantiasModule,
 
     EspaciosCoterminalesModule,
-    
+
     EstadisticasModule,
   ],
 })
