@@ -22,7 +22,7 @@ export class EstadisticasController {
     return this.estadisticasService.getProyectosFinalizadosPorAno(ano);
   }
 
-  @Get('proyectos-excluyendo-estados')
+  @Get('proyectos-activos')
   getProyectosExcluyendoEstados() {
     return this.estadisticasService.getProyectosExcluyendoEstados();
   }
