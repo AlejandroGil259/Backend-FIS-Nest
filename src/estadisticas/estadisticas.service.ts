@@ -2,7 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Proyecto } from '../proyectos/entities/proyecto.entity';
-import { DIRECTOR, ESTADO_RESPUESTA_PROYECTOS, OPCION_GRADO } from '../proyectos/constants';
+import {
+  DIRECTOR,
+  ESTADO_RESPUESTA_PROYECTOS,
+  OPCION_GRADO,
+} from '../proyectos/constants';
 import { LessThan } from 'typeorm';
 
 @Injectable()
@@ -28,28 +32,12 @@ export class EstadisticasService {
     return totalPorTipo;
   }
 
-  // async getProyectosFinalizadosPorAno(ano: number) {
-  //   const hoy = new Date(); // Obtén la fecha actual
-
-  //   // Asumimos que un proyecto se considera "finalizado" si la fecha de creación es anterior al año que se proporciona como parámetro
-  //   const proyectosFinalizados = await this.proyectoRepo.find({
-  //     where: {
-  //       createdAt: LessThan(
-  //         new Date(hoy.getFullYear() - ano, hoy.getMonth(), hoy.getDate()),
-  //       ),
-  //       // También podrías agregar otras condiciones si es necesario
-  //     },
-  //   });
-
-  //   return proyectosFinalizados.length;
-  // }
-
-  async getProyectosFinalizadosPorAno(ano: number) {
+  async getProyectosFinalizadosPorAno() {
     const proyectosFinalizadosPorAno = [];
 
     const hoy = new Date(); // Obtén la fecha actual
 
-    for (let i = 0; i < ano; i++) {
+    for (let i = 0; i < 3; i++) {
       const fechaLimite = new Date(
         hoy.getFullYear() - i,
         hoy.getMonth(),
@@ -58,6 +46,7 @@ export class EstadisticasService {
 
       const proyectosFinalizados = await this.proyectoRepo.count({
         where: {
+          estado: ESTADO_RESPUESTA_PROYECTOS.FINALIZADO,
           createdAt: LessThan(fechaLimite),
         },
       });

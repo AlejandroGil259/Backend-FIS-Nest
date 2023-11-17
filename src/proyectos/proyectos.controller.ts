@@ -47,7 +47,7 @@ export class ProyectosController {
   findAllWithUserDetails() {
     return this.proyectosService.findAllWithUserDetails();
   }
-
+ 
   @ApiResponse({
     status: 200,
     description: 'Se encontraron los siguientes tipos de entrega',

@@ -83,7 +83,7 @@ export class Proyecto extends BaseEntity {
   @ApiProperty({
     enum: ESTADO_RESPUESTA_PROYECTOS,
     description: 'Respuesta del estado del proyecto',
-    default: ESTADO_RESPUESTA_PROYECTOS.REVISION,
+    default: ESTADO_RESPUESTA_PROYECTOS.ENVIADO,
   })
   @Column({
     type: 'varchar',

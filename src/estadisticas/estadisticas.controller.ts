@@ -1,4 +1,4 @@
-import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { EstadisticasService } from './estadisticas.service';
 import { ApiTags } from '@nestjs/swagger';
 
@@ -17,9 +17,9 @@ export class EstadisticasController {
     return this.estadisticasService.getProyectosPorDirector();
   }
 
-  @Get('proyectos-finalizados/:ano')
-  getProyectosFinalizadosPorAno(@Param('ano', ParseIntPipe) ano: number) {
-    return this.estadisticasService.getProyectosFinalizadosPorAno(ano);
+  @Get('proyectos-finalizados')
+  getProyectosFinalizadosPorAno() {
+    return this.estadisticasService.getProyectosFinalizadosPorAno();
   }
 
   @Get('proyectos-activos')
