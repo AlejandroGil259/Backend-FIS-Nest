@@ -7,7 +7,7 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { TIPO_SOLICITUD } from '../constants';
+import { ESTADO_RESPUESTA_SOLICITUD, TIPO_SOLICITUD } from '../constants';
 
 export class CreateSolicitudesDto {
   @ApiProperty({ example: 'Nombres' })
@@ -42,6 +42,14 @@ export class CreateSolicitudesDto {
   @IsOptional()
   @IsNotEmpty()
   fechaActa?: Date;
+
+  @ApiProperty({
+    enum: ESTADO_RESPUESTA_SOLICITUD,
+    description: 'Respuesta del estado de la solicitud',
+    default: ESTADO_RESPUESTA_SOLICITUD.ENVIADO,
+  })
+  @IsEnum(ESTADO_RESPUESTA_SOLICITUD)
+  respEstado: ESTADO_RESPUESTA_SOLICITUD;
 
   @ApiProperty({ example: 123456789 })
   @IsNumber()

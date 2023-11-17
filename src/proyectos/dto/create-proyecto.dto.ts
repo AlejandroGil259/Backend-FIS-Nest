@@ -7,7 +7,13 @@ import {
   IsNotEmpty,
   IsDateString,
 } from 'class-validator';
-import { CODIRECTOR, DIRECTOR, OPCION_GRADO, TIPO_ENTREGA } from '../constants';
+import {
+  CODIRECTOR,
+  DIRECTOR,
+  ESTADO_RESPUESTA_PROYECTOS,
+  OPCION_GRADO,
+  TIPO_ENTREGA,
+} from '../constants';
 
 export class CreateProyectoDto {
   @ApiProperty({ description: 'Referencia del proyecto', example: 'Fis01' })
@@ -65,6 +71,13 @@ export class CreateProyectoDto {
   @IsOptional()
   evaluador2?: string;
 
+  @ApiProperty({
+    enum: ESTADO_RESPUESTA_PROYECTOS,
+    description: 'Respuesta del estado del proyecto',
+    default: ESTADO_RESPUESTA_PROYECTOS.ENVIADO,
+  })
+  @IsEnum(ESTADO_RESPUESTA_PROYECTOS)
+  estado: ESTADO_RESPUESTA_PROYECTOS;
   @ApiProperty({
     description: 'Titulo del proyecto',
     example: 'Gestor Documentacion',
