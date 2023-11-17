@@ -45,7 +45,6 @@ export class ArchivosController {
   @UseInterceptors(
     FileInterceptor('archivo', {
       fileFilter: filtrarArchivo,
-      // limits:{fileSize: 1000}
       storage: diskStorage({
         destination: './static/proyectos',
         filename: nombreArchivo,
@@ -55,31 +54,29 @@ export class ArchivosController {
   async uploadProject(@UploadedFile() archivo: Express.Multer.File) {
     if (!archivo) {
       throw new BadRequestException(
-        'Asegúrate de que sea un archivo Word (.docx) o un archivo PDF (.pdf).',
+        'Asegúrate de que sea un archivo Word (.docx), un archivo PDF (.pdf), o .zip',
       );
     }
+
     // Llama al servicio para guardar el archivo en la base de datos
     const createArchivoDto: CreateArchivoDto = {
       filename: archivo.filename,
       originalname: archivo.originalname,
     };
 
-    const savedFile = await this.archivosService.createFile(createArchivoDto);
-
-    // const secureUrl = `${archivo.filename}`;
-    // const secureUrl = `${this.configService.get(
-    //   'HOST_API',
-    // )}/archivos/proyecto/${archivo.filename}`;
-
-    // return {
-    //   secureUrl,
-    // };
-
-    return {
-      secureUrl: `${this.configService.get('HOST_API')}/archivos/proyecto/${
-        archivo.filename
-      }`,
-    };
+    try {
+      const savedFile = await this.archivosService.createFile(createArchivoDto);
+      return {
+        secureUrl: `${this.configService.get('HOST_API')}/archivos/proyecto/${
+          archivo.filename
+        }`,
+      };
+    } catch (error) {
+      // Maneja errores específicos de la base de datos o personaliza el mensaje según sea necesario
+      throw new BadRequestException(
+        'No se pudo guardar el archivo en la base de datos.',
+      );
+    }
   }
 
   create(@Body() createArchivoDto: CreateArchivoDto) {

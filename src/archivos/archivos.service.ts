@@ -47,13 +47,7 @@ export class ArchivosService {
     try {
       const archivo = this.archivoRepo.create(createArchivoDto);
       return await this.archivoRepo.save(archivo);
-      //const file = await this.archivoRepo.save(createArchivoDto);
-
-      // return {
-      //   archivo: file,
-      // };
     } catch (error) {
-      //throw DBExceptionService.handleDBException(error);
       throw new Error('No se pudo crear el archivo en la base de datos.');
     }
   }

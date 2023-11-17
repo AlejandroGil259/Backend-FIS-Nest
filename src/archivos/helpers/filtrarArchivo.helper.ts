@@ -11,10 +11,11 @@ export const filtrarArchivo = (
   const extensionArchivo = archivo.mimetype.split('/')[1];
   const tipoMIME = archivo.mimetype;
 
-  const extensionValida = ['pdf', 'docx'];
+  const extensionValida = ['pdf', 'docx', 'zip'];
   const tiposMIMEValidos = [
     'application/pdf',
     'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'application/zip',
   ];
 
   if (
