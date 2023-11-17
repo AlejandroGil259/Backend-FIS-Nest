@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Proyecto } from '../proyectos/entities/proyecto.entity';
-import { DIRECTOR, OPCION_GRADO } from '../proyectos/constants';
+import { DIRECTOR, ESTADO_RESPUESTA_PROYECTOS, OPCION_GRADO } from '../proyectos/constants';
 import { LessThan } from 'typeorm';
 
 @Injectable()
@@ -87,5 +87,27 @@ export class EstadisticasService {
     }
 
     return proyectosPorDirector;
+  }
+
+  async getProyectosExcluyendoEstados() {
+    const proyectosExcluyendoEstados = [];
+
+    // Itera sobre los estados del enum ESTADO_RESPUESTA_PROYECTOS
+    for (const estado of Object.values(ESTADO_RESPUESTA_PROYECTOS)) {
+      if (
+        estado !== ESTADO_RESPUESTA_PROYECTOS.CANCELADO &&
+        estado !== ESTADO_RESPUESTA_PROYECTOS.NO_APROBADO &&
+        estado !== ESTADO_RESPUESTA_PROYECTOS.FINALIZADO
+      ) {
+        const proyectos = await this.proyectoRepo.find({
+          where: {
+            estado,
+          },
+        });
+        proyectosExcluyendoEstados.push({ estado, proyectos });
+      }
+    }
+
+    return proyectosExcluyendoEstados;
   }
 }

@@ -21,4 +21,9 @@ export class EstadisticasController {
   getProyectosFinalizadosPorAno(@Param('ano', ParseIntPipe) ano: number) {
     return this.estadisticasService.getProyectosFinalizadosPorAno(ano);
   }
+
+  @Get('proyectos-excluyendo-estados')
+  getProyectosExcluyendoEstados() {
+    return this.estadisticasService.getProyectosExcluyendoEstados();
+  }
 }
