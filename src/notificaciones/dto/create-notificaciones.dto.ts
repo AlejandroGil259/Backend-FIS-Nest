@@ -34,10 +34,6 @@ export class CreateNotificacionesDto {
   @IsEnum(TIPO_NOTIFICACION)
   tipoNotificacion: TIPO_NOTIFICACION;
 
-  @ApiProperty({ enum: ROLES })
-  @IsEnum(ROLES)
-  rol: ROLES;
-
   @ApiProperty({ example: [123456789], isArray: true })
   @IsArray()
   usuariosReceptoresDocumentos: number[];
