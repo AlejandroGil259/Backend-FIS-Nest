@@ -76,6 +76,7 @@ export class CreateProyectoDto {
     description: 'Respuesta del estado del proyecto',
     default: ESTADO_RESPUESTA_PROYECTOS.ENVIADO,
   })
+  @IsOptional()
   @IsEnum(ESTADO_RESPUESTA_PROYECTOS)
   estado: ESTADO_RESPUESTA_PROYECTOS;
   @ApiProperty({

@@ -49,6 +49,7 @@ export class CreateSolicitudesDto {
     default: ESTADO_RESPUESTA_SOLICITUD.ENVIADO,
   })
   @IsEnum(ESTADO_RESPUESTA_SOLICITUD)
+  @IsOptional()
   respEstado: ESTADO_RESPUESTA_SOLICITUD;
 
   @ApiProperty({ example: 123456789 })
