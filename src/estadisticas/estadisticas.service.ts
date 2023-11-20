@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Not, Repository } from 'typeorm';
 import { Proyecto } from '../proyectos/entities/proyecto.entity';
 import {
   DIRECTOR,
@@ -24,6 +24,12 @@ export class EstadisticasService {
       const count = await this.proyectoRepo.count({
         where: {
           opcionGrado: tipo,
+          estado: Not(
+            In([
+              ESTADO_RESPUESTA_PROYECTOS.CANCELADO,
+              ESTADO_RESPUESTA_PROYECTOS.NO_APROBADO,
+            ]),
+          ),
         },
       });
       totalPorTipo.push({ tipo, count });
