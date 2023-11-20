@@ -42,7 +42,7 @@ export class Usuario extends BaseEntity {
   })
   rol: ROLES;
 
-  @ApiProperty({ example: 'N.N' })
+  @ApiProperty({ example: 'Juan' })
   @Column()
   nombres: string;
 
