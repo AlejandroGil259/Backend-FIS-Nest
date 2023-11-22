@@ -31,7 +31,17 @@ export class ProyectosService {
   ) {}
 
   async obtenerProyectosPorDirector(director: DIRECTOR): Promise<Proyecto[]> {
-    return await this.proyectoRepo.find({ where: { director } });
+    const proyectos = await this.proyectoRepo.find({
+      where: { director },
+    });
+
+    if (!proyectos || proyectos.length === 0) {
+      throw new NotFoundException(
+        `No se encontraron proyectos para el director ${director}`,
+      );
+    }
+
+    return proyectos;
   }
 
   async createProject(createProyectoDto: CreateProyectoDto) {
