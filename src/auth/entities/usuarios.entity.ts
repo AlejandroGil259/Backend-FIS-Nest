@@ -79,16 +79,6 @@ export class Usuario extends BaseEntity {
   @Column({ type: 'int8', nullable: true })
   telefono?: number;
 
-  @ApiProperty({
-    description: 'Estado del docente en el comite y en la plataforma',
-    default: true,
-  })
-  @Column({
-    type: 'bool',
-    default: false,
-  })
-  comite: boolean;
-
   @OneToMany(() => Solicitud, (solicitud) => solicitud.usuario, {
     cascade: true,
   })

@@ -17,14 +17,14 @@ export class Solicitud extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   idSolicitud: string;
 
-  @ApiProperty()
-  @Column()
-  nombres: string;
+  @ApiProperty({ example: 'Número de Acta' })
+  @Column({ nullable: true })
+  numActa?: string;
 
-  @ApiProperty()
-  @Column()
-  apellidos: string;
-
+  @ApiProperty({ example: new Date().toISOString() })
+  @Column({ nullable: true })
+  fechaActa?: Date;
+ 
   @ApiProperty({ enum: TIPO_SOLICITUD })
   @Column({
     type: 'varchar',
@@ -39,14 +39,6 @@ export class Solicitud extends BaseEntity {
   @ApiProperty()
   @Column()
   archivoCarta: string;
-
-  @ApiProperty({ example: 'Número de Acta' })
-  @Column({ nullable: true })
-  numActa?: string;
-
-  @ApiProperty({ example: new Date().toISOString() })
-  @Column({ nullable: true })
-  fechaActa?: Date;
 
   @ApiProperty({
     enum: ESTADO_RESPUESTA_SOLICITUD,

@@ -14,6 +14,8 @@ import { ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ProyectosService } from './proyectos.service';
 import { CreateProyectoDto } from './dto/create-proyecto.dto';
 import { UpdateProyectoDto } from './dto/update-proyecto.dto';
+import { DIRECTOR } from './constants';
+import { Proyecto } from './entities/proyecto.entity';
 @ApiTags('Proyectos')
 @Controller('proyectos')
 export class ProyectosController {
@@ -47,7 +49,14 @@ export class ProyectosController {
   findAllWithUserDetails() {
     return this.proyectosService.findAllWithUserDetails();
   }
- 
+
+  @Get('asociar/:director')
+  async obtenerProyectosPorDirector(
+    @Param('director') director: DIRECTOR,
+  ): Promise<Proyecto[]> {
+    return await this.proyectosService.obtenerProyectosPorDirector(director);
+  }
+
   @ApiResponse({
     status: 200,
     description: 'Se encontraron los siguientes tipos de entrega',

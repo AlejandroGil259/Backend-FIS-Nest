@@ -40,7 +40,14 @@ export class SolicitudesService {
       // Guarda la solicitud en la base de datos
       const solicitudGuardada = await this.solicitudRepo.save(solicitud);
 
-      return { solicitud: solicitudGuardada };
+      return {
+        solicitud: solicitudGuardada,
+        // usuario: {
+        //   nombres: usuarioSolicitudes.nombres,
+        //   apellidos: usuarioSolicitudes.apellidos,
+        //   documento: usuarioSolicitudes.documento,
+        // },
+      };
     } catch (error) {
       // Maneja las excepciones de la base de datos
       throw DBExceptionService.handleDBException(error);

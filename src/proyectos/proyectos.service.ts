@@ -30,11 +30,14 @@ export class ProyectosService {
     private readonly usuario: Repository<Usuario>,
   ) {}
 
+  async obtenerProyectosPorDirector(director: DIRECTOR): Promise<Proyecto[]> {
+    return await this.proyectoRepo.find({ where: { director } });
+  }
+
   async createProject(createProyectoDto: CreateProyectoDto) {
     const { usuarioDocumento, archivoProyecto, director, codirector } =
       createProyectoDto;
 
-    // Verificar que el director y el codirector no sean el mismo
     // Verificar que el director y el codirector no sean el mismo
     if (director.valueOf() === codirector?.valueOf()) {
       throw new BadRequestException(
@@ -50,8 +53,13 @@ export class ProyectosService {
         `No existe o se encuentra desactivado el usuario con el documento ${usuarioDocumento}`,
       );
 
+    // Asociar el proyecto con el director
+    const proyecto = this.proyectoRepo.create(createProyectoDto);
+    proyecto.director = director;
+    await this.proyectoRepo.save(proyecto);
+
     try {
-      const proyecto = await this.proyectoRepo.save(createProyectoDto);
+      //const proyecto = await this.proyectoRepo.save(createProyectoDto);
 
       const {
         proyecto: { idProyecto },
