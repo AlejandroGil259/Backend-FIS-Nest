@@ -18,10 +18,18 @@ export class UsuariosProyectos {
   @Column()
   archivoProyecto: string;
 
-  @ApiProperty()
+  @Column({ nullable: true })
+  director: string;
+
+  @Column({ nullable: true })
+  codirector: string;
+
+  @Column({ nullable: true })
+  segundoAutor: string;
+
   @ManyToOne(() => Usuario, { eager: true })
-  @JoinColumn({ name: 'Director' })
-  rolProyecto: Usuario;
+  @JoinColumn({ name: 'docente_id' })
+  docente: Usuario; // Relación con el docente
 
   @ManyToOne(() => Usuario, { eager: true })
   @JoinColumn({ name: 'usuario_id' })

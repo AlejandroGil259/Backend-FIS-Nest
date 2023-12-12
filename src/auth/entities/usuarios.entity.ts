@@ -36,7 +36,7 @@ export class Usuario extends BaseEntity {
     default: ROLES.ESTUDIANTE,
   })
   @Column({
-    type: 'varchar',
+    type: 'enum',
     enum: ROLES,
     default: ROLES.ESTUDIANTE,
   })
