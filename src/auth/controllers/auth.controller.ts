@@ -70,48 +70,20 @@ export class AuthController {
       };
     }
   }
+  @ApiResponse({
+    status: 200,
+    description: 'Se encontro el Docente',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'No hay registros en la base de datos',
+  })
 
-  // @Get('private')
-  // @UseGuards(AuthGuard())
-  // testingPrivateRoute(
-  //   @GetUsuario() usuario: Usuario,
-  //   @GetUsuario('correo') usuarioCorreo: string,
-  //   @RawHeaders('correo') rawHeaders: string[],
-  // ) {
-  //   return {
-  //     ok: true,
-  //     message: 'Hola mundo private',
-  //     usuario,
-  //     usuarioCorreo,
-  //     rawHeaders,
-  //   };
-  // }
-
-  //@SetMetadata('roles', ['Admin', 'Docente', 'Estudiante'])
-
-  // @Get('private2')
-  // @RolProtected(
-  //   ValidarRoles.Estudiante,
-  //   ValidarRoles.Docente,
-  //   ValidarRoles.Comite,
-  // )
-  // @UseGuards(AuthGuard(), UsuarioRolGuard)
-  // privateRoute2(@GetUsuario() usuario: Usuario) {
-  //   return {
-  //     ok: true,
-  //     usuario,
-  //   };
-  // }
-
-  // @Get('private2')
-  // @Auth()
-  // privateRoute3(@GetUsuario() usuario: Usuario) {
-  //   return {
-  //     ok: true,
-  //     usuario,
-  //   };
-  // }
-
+  @Get('docentes')
+  getDocentes() {
+    return this.authService.getDocentes();
+  }
+  
   @ApiResponse({
     status: 200,
     description: 'Se encontraron registros',

@@ -4,7 +4,7 @@ import { BaseEntity } from '../../commons/entities/base-entity.entity';
 import { Solicitud } from '../../solicitudes/entities/solicitud.entity';
 import { ROLES } from '../constants';
 import { UsuariosProyectos } from './usuarios-proyectos.entity';
-import { Notificacion } from '../../notificaciones/entities/notificacion.entity';
+// import { Notificacion } from '../../notificaciones/entities/notificacion.entity';
 
 @Entity('usuarios')
 export class Usuario extends BaseEntity {
@@ -58,10 +58,6 @@ export class Usuario extends BaseEntity {
   @Column()
   contrasena: string;
 
-  @ApiProperty({ example: new Date().toISOString() })
-  @Column({ type: 'date', nullable: true })
-  periodoIngreso?: Date;
-
   @ApiProperty({
     description: 'Estado del usuario en la plataforma',
     default: true,
@@ -71,6 +67,10 @@ export class Usuario extends BaseEntity {
     default: true,
   })
   estado: boolean;
+
+  @ApiProperty({ example: new Date().toISOString() })
+  @Column({ type: 'date', nullable: true })
+  periodoIngreso?: Date;
 
   @ApiProperty({
     example: 3126650202,
@@ -83,15 +83,6 @@ export class Usuario extends BaseEntity {
     cascade: true,
   })
   solicitudes: Solicitud[];
-
-  // @OneToOne(() => Notificacion)
-  // enviarNotificacion: Notificacion[];
-
-  @OneToMany(
-    () => Notificacion,
-    (notificacion) => notificacion.usuariosReceptores,
-  )
-  notificaciones: Notificacion[];
 
   @OneToMany(
     () => UsuariosProyectos,

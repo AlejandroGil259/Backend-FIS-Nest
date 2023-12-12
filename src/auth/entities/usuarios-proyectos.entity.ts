@@ -1,5 +1,11 @@
 import { Proyecto } from 'src/proyectos/entities/proyecto.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Usuario } from './usuarios.entity';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -12,13 +18,16 @@ export class UsuariosProyectos {
   @Column()
   archivoProyecto: string;
 
-  @ManyToOne(() => Usuario, (usuario) => usuario.usuariosProyectos, {
-    onDelete: 'CASCADE',
-  })
+  @ApiProperty()
+  @ManyToOne(() => Usuario, { eager: true })
+  @JoinColumn({ name: 'Director' })
+  rolProyecto: Usuario;
+
+  @ManyToOne(() => Usuario, { eager: true })
+  @JoinColumn({ name: 'usuario_id' })
   usuario: Usuario;
 
-  @ManyToOne(() => Proyecto, (proyecto) => proyecto.usuariosProyectos, {
-    onDelete: 'CASCADE',
-  })
+  @ManyToOne(() => Proyecto, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'proyecto_id' })
   proyecto: Proyecto;
 }

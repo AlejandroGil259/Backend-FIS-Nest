@@ -12,12 +12,16 @@ import { DBExceptionService } from '../../commons/services/db-exception.service'
 import { CreateUserDto, LoginUsuarioDto, UpdateUsuarioDto } from '../dto';
 import { Usuario } from '../entities/usuarios.entity';
 import { JwtPayload } from '../interfaces/jwt-payload.interface';
+import { UsuariosProyectos } from '../entities/usuarios-proyectos.entity';
+import { ROLES } from '../constants';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(Usuario)
     private readonly usuarioRepo: Repository<Usuario>,
+    @InjectRepository(UsuariosProyectos)
+    private readonly usuarioProyectoRepo: Repository<UsuariosProyectos>,
     private readonly jwtService: JwtService,
   ) {}
 
@@ -25,11 +29,18 @@ export class AuthService {
     try {
       const { contrasena, ...usuario } = createUserDto;
 
+      if (createUserDto.rol) {
+        usuario.rol = createUserDto.rol;
+      } else {
+        // Asigna un valor predeterminado (puede ser 'Estudiante' u otro valor predeterminado según tus necesidades)
+        usuario.rol = ROLES.ESTUDIANTE;
+      }
+
       const user = this.usuarioRepo.create({
         ...usuario,
         contrasena: bcrypt.hashSync(contrasena, 10),
       });
-
+      console.log('Usuario creado:', user);
       await this.usuarioRepo.save(user);
 
       delete user.contrasena;
@@ -99,15 +110,13 @@ export class AuthService {
     const user = await this.usuarioRepo.findOne({ where: { documento } });
 
     if (!user) {
-      throw new Error('Usuario no encontrado'); // Maneja el caso cuando el usuario no existe
+      throw new Error('Usuario no encontrado');
     }
 
     const hashedPassword = await bcrypt.hash(nuevaContrasena, 10);
 
     // Asigna la contraseña hasheada al usuario
     user.contrasena = hashedPassword;
-
-    // Luego, guarda los cambios en la base de datos
     await this.usuarioRepo.save(user);
   }
 
@@ -121,6 +130,12 @@ export class AuthService {
       .getOne();
   }
 
+  async getDocentes(): Promise<Usuario[]> {
+    return this.usuarioRepo.find({
+      where: { rol: ROLES.DOCENTE },
+      select: ['nombres', 'apellidos'],
+    });
+  }
   async findAll() {
     const usuarios = await this.usuarioRepo.find();
 
@@ -131,11 +146,8 @@ export class AuthService {
   }
 
   async findOne(documento: number) {
-    const usuario = await this.usuarioRepo.findOneBy({ documento });
-    // const usuario = await this.usuarioRepo.findOne({
-    //   where: { documento},
-    //   relations: ['solicitudes'],
-    // });
+    const usuario = await this.usuarioRepo.findOne({ where: { documento } });
+
     if (!usuario)
       throw new NotFoundException(
         `No se encontraron resultados para el documento "${documento}"`,
@@ -155,6 +167,30 @@ export class AuthService {
       return usuario;
     } catch (error) {}
   }
+
+  // async obtenerDocentesDisponibles(): Promise<string[]> {
+  //   try {
+  //     // Supongamos que 'rolProyecto' es una propiedad en tu modelo UsuarioProyecto
+  //     const docentes = await this.usuarioProyectoRepo.find({
+  //       where: { rolProyecto: 'Docente' },
+  //       relations: ['usuario'], // Incluye la relación con el usuario
+  //     });
+
+  //     console.log('Después de la consulta de docentes:', docentes);
+  //     if (!docentes || docentes.length === 0) {
+  //       console.warn('No se encontraron docentes disponibles.');
+  //     }
+
+  //     const nombresDocentes = docentes.map(
+  //       (docente) => `${docente.usuario.nombres} ${docente.usuario.apellidos}`,
+  //     );
+
+  //     return nombresDocentes;
+  //   } catch (error) {
+  //     console.error('Error al obtener los docentes', error);
+  //     throw new Error('Error interno del servidor');
+  //   }
+  // }
 
   async update(documento: number, updateUsuarioDto: UpdateUsuarioDto) {
     const usuario = await this.usuarioRepo.findOneBy({ documento });
