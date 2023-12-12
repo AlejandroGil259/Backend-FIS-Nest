@@ -10,6 +10,25 @@ import {
 import { ESTADO_RESPUESTA_SOLICITUD, TIPO_SOLICITUD } from '../constants';
 
 export class CreateSolicitudesDto {
+  @ApiProperty({ example: 'Nombres' })
+  @IsString()
+  nombres: string;
+
+  @ApiProperty({ example: 'Apellidos' })
+  @IsString()
+  apellidos: string;
+
+  @ApiProperty({ example: 'Número de Acta' })
+  @IsString()
+  @IsNotEmpty()
+  @IsOptional()
+  numActa?: string;
+
+  @ApiProperty({ type: Date, example: new Date().toISOString() })
+  @IsDateString()
+  @IsOptional()
+  @IsNotEmpty()
+  fechaActa?: Date;
 
   @ApiProperty({ enum: TIPO_SOLICITUD })
   @IsEnum(TIPO_SOLICITUD)
@@ -24,18 +43,6 @@ export class CreateSolicitudesDto {
   @IsOptional()
   archivoCarta: string;
 
-  @ApiProperty({ example: 'Número de Acta' })
-  @IsString()
-  @IsNotEmpty()
-  @IsOptional()
-  numActa?: string;
-
-  @ApiProperty({ type: Date, example: new Date().toISOString() })
-  @IsDateString()
-  @IsOptional()
-  @IsNotEmpty()
-  fechaActa?: Date;
-
   @ApiProperty({
     enum: ESTADO_RESPUESTA_SOLICITUD,
     description: 'Respuesta del estado de la solicitud',
@@ -47,5 +54,5 @@ export class CreateSolicitudesDto {
 
   @ApiProperty({ example: 123456789 })
   @IsNumber()
-  usuariosSolicitudesDocumento: number;
+  usuarioDocumento: number;
 }

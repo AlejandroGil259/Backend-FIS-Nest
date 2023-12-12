@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import {
   Column,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -17,6 +18,14 @@ export class Solicitud extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   idSolicitud: string;
 
+  @ApiProperty()
+  @Column()
+  nombres: string;
+
+  @ApiProperty()
+  @Column()
+  apellidos: string;
+
   @ApiProperty({ example: 'Número de Acta' })
   @Column({ nullable: true })
   numActa?: string;
@@ -24,7 +33,7 @@ export class Solicitud extends BaseEntity {
   @ApiProperty({ example: new Date().toISOString() })
   @Column({ nullable: true })
   fechaActa?: Date;
- 
+
   @ApiProperty({ enum: TIPO_SOLICITUD })
   @Column({
     type: 'varchar',
@@ -52,13 +61,10 @@ export class Solicitud extends BaseEntity {
   })
   respEstado: ESTADO_RESPUESTA_SOLICITUD;
 
-  @ApiProperty()
-  @Column()
-  usuariosSolicitudesDocumento: number;
-
   @ManyToOne(() => Usuario, (usuario) => usuario.solicitudes)
+  @JoinColumn({ name: 'usuarioDocumento' })
   usuario: Usuario;
 
-  @OneToMany(() => Archivo, (archivo) => archivo.proyectos, { cascade: true })
+  @OneToMany(() => Archivo, (archivo) => archivo.solicitud, { cascade: true })
   archivos: Archivo[];
 }
