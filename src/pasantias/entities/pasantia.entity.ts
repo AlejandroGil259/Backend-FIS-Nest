@@ -4,11 +4,9 @@ import {
   Column,
   Entity,
   JoinColumn,
-  ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Usuario } from '../../auth/entities/usuarios.entity';
 
 @Entity('pasantias')
 export class Pasantia {

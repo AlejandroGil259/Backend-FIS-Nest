@@ -14,8 +14,6 @@ import { ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ProyectosService } from './proyectos.service';
 import { CreateProyectoDto } from './dto/create-proyecto.dto';
 import { UpdateProyectoDto } from './dto/update-proyecto.dto';
-import { DIRECTOR } from './constants';
-import { Proyecto } from './entities/proyecto.entity';
 @ApiTags('Proyectos')
 @Controller('proyectos')
 export class ProyectosController {
@@ -34,9 +32,26 @@ export class ProyectosController {
     description: 'Error en el servidor, puede ser culpa del código o de la DB',
   })
   @Post()
-  create(@Body() createProyectoDto: CreateProyectoDto) {
-    return this.proyectosService.createProject(createProyectoDto);
+  async crearProyecto(@Body() createProyectoDto: CreateProyectoDto) {
+    const usuarioDocumento = createProyectoDto.usuarioDocumento;
+
+    try {
+      const nuevoProyecto = await this.proyectosService.crearProyecto(
+        createProyectoDto,
+        usuarioDocumento,
+      );
+      return {
+        message: 'Proyecto creado exitosamente',
+        proyecto: nuevoProyecto,
+      };
+    } catch (error) {
+      return {
+        message: 'Error al crear el proyecto',
+        error: error.message,
+      };
+    }
   }
+
   @ApiResponse({
     status: 200,
     description: 'Se encontraron proyectos',
@@ -50,26 +65,6 @@ export class ProyectosController {
     return this.proyectosService.findAllWithUserDetails();
   }
 
-  @Get('asociar/:director')
-  async obtenerProyectosPorDirector(
-    @Param('director') director: DIRECTOR,
-  ): Promise<Proyecto[]> {
-    return await this.proyectosService.obtenerProyectosPorDirector(director);
-  }
-
-  @ApiResponse({
-    status: 200,
-    description: 'Se encontraron los siguientes tipos de entrega',
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'No hay tipo de entregas en la base de datos',
-  })
-  @Get('cargarDocument/:tipoEntrega')
-  getTipoEntrega() {
-    return this.proyectosService.getTipoEntrega();
-  }
-
   @ApiResponse({
     status: 200,
     description: 'Se encontraron las siguientes opciones de grado',
@@ -78,22 +73,9 @@ export class ProyectosController {
     status: 404,
     description: 'No hay opciones de grado en la base de datos',
   })
-  @Get('cargarDocumentos/:opcionGrado')
+  @Get('cargar/:opcionGrado')
   getOpcionGrado() {
     return this.proyectosService.getOpcionGrado();
-  }
-
-  @ApiResponse({
-    status: 200,
-    description: 'Se encontraron los siguientes directores',
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'No hay directores en la base de datos',
-  })
-  @Get('cargar/:director')
-  getDirectores() {
-    return this.proyectosService.getDirectores();
   }
 
   @ApiResponse({

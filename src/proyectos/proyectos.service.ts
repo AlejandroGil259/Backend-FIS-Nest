@@ -11,78 +11,52 @@ import { CreateProyectoDto } from './dto/create-proyecto.dto';
 import { UpdateProyectoDto } from './dto/update-proyecto.dto';
 import { Proyecto } from './entities/proyecto.entity';
 import { UsuariosProyectos } from '../auth/entities/usuarios-proyectos.entity';
-import { Usuario } from '../auth/entities/usuarios.entity';
-import {
-  DIRECTOR,
-  OPCION_GRADO,
-  TIPO_ENTREGA,
-  ESTADO_RESPUESTA_PROYECTOS,
-} from './constants';
+import { OPCION_GRADO, ESTADO_RESPUESTA_PROYECTOS } from './constants';
+import { AuthService } from '../auth/services/auth.service';
 
 @Injectable()
 export class ProyectosService {
   constructor(
     @InjectRepository(Proyecto)
     private readonly proyectoRepo: Repository<Proyecto>,
+    private readonly authService: AuthService,
     @InjectRepository(UsuariosProyectos)
     private readonly usuariosProyectosRepo: Repository<UsuariosProyectos>,
-    @InjectRepository(Usuario)
-    private readonly usuario: Repository<Usuario>,
   ) {}
 
-  async obtenerProyectosPorDirector(director: DIRECTOR): Promise<Proyecto[]> {
-    const proyectos = await this.proyectoRepo.find({
-      where: { director },
-    });
-
-    if (!proyectos || proyectos.length === 0) {
-      throw new NotFoundException(
-        `No se encontraron proyectos para el director ${director}`,
-      );
-    }
-
-    return proyectos;
-  }
-
-  async createProject(createProyectoDto: CreateProyectoDto) {
-    const { usuarioDocumento, archivoProyecto, director, codirector } =
-      createProyectoDto;
-
-    // Verificar que el director y el codirector no sean el mismo
-    if (director.valueOf() === codirector?.valueOf()) {
-      throw new BadRequestException(
-        'El director y el codirector no pueden ser la misma persona.',
-      );
-    }
-    const usuario = await this.usuario.findOneBy({
-      documento: usuarioDocumento,
-    });
-
-    if (!usuario)
-      throw new BadRequestException(
-        `No existe o se encuentra desactivado el usuario con el documento ${usuarioDocumento}`,
-      );
-
-    // Asociar el proyecto con el director
-    const proyecto = this.proyectoRepo.create(createProyectoDto);
-    proyecto.director = director;
-    await this.proyectoRepo.save(proyecto);
+  async crearProyecto(
+    createProyectoDto: CreateProyectoDto,
+    usuarioDocumento: number,
+  ) {
+    const { rolProyecto, ...infoProyecto } = createProyectoDto;
 
     try {
-      //const proyecto = await this.proyectoRepo.save(createProyectoDto);
+      // Obtener el usuario (estudiante) por el documento
+      const usuario = await this.authService.findOne(usuarioDocumento);
 
-      const {
-        proyecto: { idProyecto },
-        usuario: { documento },
-        ...rest
-      } = await this.usuariosProyectosRepo.save({
-        proyecto,
+      if (!usuario) {
+        throw new NotFoundException(
+          `No se encontró al usuario con el documento ${usuarioDocumento}`,
+        );
+      }
+
+      // Crear el proyecto
+      const proyecto = this.proyectoRepo.create(infoProyecto);
+      const nuevoProyecto = await this.proyectoRepo.save(proyecto);
+
+      // Crear la relación UsuariosProyectos
+      const usuariosProyectos = this.usuariosProyectosRepo.create({
         usuario,
-        archivoProyecto,
+        proyecto: nuevoProyecto,
+        archivoProyecto: createProyectoDto.archivoProyecto,
+        rolProyecto: usuario, // Cambiado de rolProyecto.nombres + ' ' + rolProyecto.apellidos a usuario
       });
 
-      return { proyecto, usuarioProyecto: { idProyecto, documento, ...rest } };
+      await this.usuariosProyectosRepo.save(usuariosProyectos);
+
+      return nuevoProyecto;
     } catch (error) {
+      // Manejar excepciones como desees
       throw DBExceptionService.handleDBException(error);
     }
   }
@@ -105,15 +79,6 @@ export class ProyectosService {
     }
   }
 
-  // async findAll() {
-  //   const proyectos = await this.proyectoRepo.find();
-
-  //   if (!proyectos || !proyectos.length)
-  //     throw new NotFoundException('No se encontraron resultados');
-
-  //   return proyectos;
-  // }
-
   async findAllWithUserDetails() {
     const proyectos = await this.proyectoRepo
       .createQueryBuilder('proyecto')
@@ -131,10 +96,7 @@ export class ProyectosService {
   async findOne(idProyecto: string) {
     const proyecto = await this.proyectoRepo.findOne({
       where: { idProyecto },
-      relations: {
-        usuariosProyectos: { usuario: true },
-        archivos: true,
-      },
+      relations: ['usuariosProyectos', 'usuariosProyectos.usuario', 'entregas'],
     });
 
     if (!proyecto)
@@ -148,17 +110,6 @@ export class ProyectosService {
   async getOpcionGrado() {
     return Object.values(OPCION_GRADO);
   }
-  async getTipoEntrega() {
-    return Object.values(TIPO_ENTREGA);
-  }
-
-  async getDirectores() {
-    const directoresArray = Object.values(DIRECTOR);
-    const directoresOrdenados = directoresArray.sort((a, b) =>
-      a.localeCompare(b),
-    );
-    return directoresOrdenados;
-  }
 
   obtenerEstadosProyectos(): string[] {
     // Obtener y devolver un array con los valores del enum
@@ -171,10 +122,17 @@ export class ProyectosService {
         `No se encontró ningun proyecto con Id ${idProyecto}`,
       );
 
-    const { usuarioDocumento, archivoProyecto, ...infoProyecto } =
+    const { usuarioDocumento, archivoProyecto, rolProyecto, ...infoProyecto } =
       updateProyectoDto;
 
     try {
+      const usuario = await this.authService.findOne(usuarioDocumento);
+
+      if (!usuario) {
+        throw new NotFoundException(
+          `No se encontró ningun usuario con documento ${usuarioDocumento}`,
+        );
+      }
       const usuariosProyectos = await this.usuariosProyectosRepo.findOneBy({
         proyecto: { idProyecto },
         usuario: { documento: usuarioDocumento },
@@ -187,13 +145,12 @@ export class ProyectosService {
 
       await this.usuariosProyectosRepo.update(
         { id: usuariosProyectos.id },
-        { archivoProyecto },
+        { archivoProyecto, rolProyecto: usuario },
       );
 
-      return await this.proyectoRepo.update(
-        { idProyecto },
-        { ...infoProyecto },
-      );
+      await this.proyectoRepo.update({ idProyecto }, { ...infoProyecto });
+
+      return `El proyecto con ID ${idProyecto} ha sido actualizado`;
     } catch (error) {
       DBExceptionService.handleDBException(error);
     }
@@ -227,35 +184,39 @@ export class ProyectosService {
   }
 
   async restore(idProyecto: string) {
-    const proyecto = await this.proyectoRepo.findOne({
-      where: { idProyecto },
-      withDeleted: true,
-    });
+    try {
+      const proyecto = await this.proyectoRepo.findOne({
+        where: { idProyecto },
+        withDeleted: true,
+      });
 
-    if (!proyecto)
-      throw new NotFoundException(
-        `No se encontró un proyecto con el Id ${idProyecto} `,
+      if (!proyecto) {
+        throw new NotFoundException(
+          `No se encontró un proyecto con el Id ${idProyecto}`,
+        );
+      }
+
+      // Si ya está activo, no hay necesidad de restaurar
+      if (!proyecto.deletedAt) {
+        throw new BadRequestException(
+          `El proyecto con el Id ${idProyecto} ya está activo`,
+        );
+      }
+
+      // Restaurar el proyecto estableciendo deletedAt a null
+      await this.proyectoRepo.update(
+        { idProyecto },
+        {
+          deletedAt: null,
+        },
       );
 
-    if (proyecto.estado)
-      throw new BadRequestException(
-        `El proyecto con el Id ${idProyecto} ya se encuentra activo`,
-      );
-
-    const { affected } = await this.proyectoRepo.update(
-      { idProyecto },
-      {
-        estado: ESTADO_RESPUESTA_PROYECTOS.ENVIADO,
-        deletedAt: null,
-      },
-    );
-
-    if (!affected || affected === 0)
+      return 'El proyecto fue restaurado/activado correctamente';
+    } catch (error) {
       throw new BadRequestException(
         `No se pudo activar el proyecto con el Id ${idProyecto}`,
       );
-
-    return 'El proyecto fue restaurado/activado correctamente';
+    }
   }
 
   async remove(idProyecto: string) {
@@ -272,3 +233,60 @@ export class ProyectosService {
     return await this.proyectoRepo.remove(proyecto);
   }
 }
+
+/* ------- OBTENER TODOS LOS PROYECTOS --------
+  async findAll() {
+    const proyectos = await this.proyectoRepo.find();
+
+    if (!proyectos || !proyectos.length)
+      throw new NotFoundException('No se encontraron resultados');
+
+    return proyectos;
+  }
+  */
+
+/*  ---------- TRANSACCIONES ENTREGAS Y PROYECTOS-------
+  @Transaction()
+  async crearProyectoYEntrega(
+    datosProyecto: any,
+    datosEntrega: any,
+  ): Promise<any> {
+    const entityManager = getManager();
+    const transactionalEntityManager = entityManager.transaction(
+      async (transactionalEntityManager) => {
+        // Lógica para crear el proyecto
+        const proyecto = await transactionalEntityManager.save(
+          Proyecto,
+          datosProyecto,
+        );
+
+        // Lógica para crear la entrega
+        const entrega = await this.entregaService.crearEntregaEnTransaccion(
+          transactionalEntityManager,
+          proyecto,
+          datosEntrega,
+        );
+
+        // Puedes devolver el proyecto y la entrega si es necesario
+        return { proyecto, entrega };
+      },
+    );
+
+    try {
+      return await transactionalEntityManager;
+    } catch (error) {
+      // Manejar errores de transacción
+      console.error('Error en la transacción:', error);
+      throw new Error('Error en la transacción');
+    }
+  }
+
+  ------- OBTENER DIRECTORES -------
+  async getDirectores() {
+    const directoresArray = Object.values(DIRECTOR);
+    const directoresOrdenados = directoresArray.sort((a, b) =>
+      a.localeCompare(b),
+    );
+    return directoresOrdenados;
+  }
+  */
