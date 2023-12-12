@@ -11,16 +11,21 @@ import { SolicitudesService } from '../solicitudes/solicitudes.service';
 import { ProyectosService } from '../proyectos/proyectos.service';
 import { AuthService } from '../auth/services/auth.service';
 import { AuthModule } from '../auth/auth.module';
+import { CorreoService } from 'src/auth/services/correo.service';
 
 @Global()
 @Module({
-  imports: [TypeOrmModule.forFeature([Proyecto, Entregas, Archivo, Solicitud]), AuthModule],
+  imports: [
+    TypeOrmModule.forFeature([Proyecto, Entregas, Archivo, Solicitud]),
+    AuthModule,
+  ],
   providers: [
     EntregasService,
     ProyectosService,
     ArchivosService,
     SolicitudesService,
     AuthService,
+    CorreoService,
   ],
   exports: [
     TypeOrmModule,
@@ -29,6 +34,7 @@ import { AuthModule } from '../auth/auth.module';
     ArchivosService,
     SolicitudesService,
     AuthService,
+    CorreoService,
   ],
 })
 export class SharedModule {}

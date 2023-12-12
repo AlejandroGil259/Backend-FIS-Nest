@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  NotFoundException,
   Param,
   ParseIntPipe,
   Patch,
@@ -16,6 +17,7 @@ import {
   ChangePasswordDto,
 } from '../dto';
 import { AuthService } from '../services/auth.service';
+import { Usuario } from '../entities/usuarios.entity';
 @ApiTags('Usuarios')
 @Controller('auth')
 export class AuthController {
@@ -70,20 +72,7 @@ export class AuthController {
       };
     }
   }
-  @ApiResponse({
-    status: 200,
-    description: 'Se encontro el Docente',
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'No hay registros en la base de datos',
-  })
 
-  @Get('docentes')
-  getDocentes() {
-    return this.authService.getDocentes();
-  }
-  
   @ApiResponse({
     status: 200,
     description: 'Se encontraron registros',
@@ -95,6 +84,40 @@ export class AuthController {
   @Get()
   findAll() {
     return this.authService.findAll();
+  }
+
+  @ApiResponse({
+    status: 200,
+    description: 'Se encontro el Docente',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'No hay registros en la base de datos',
+  })
+  @Get('docentes')
+  async obtenerDocentes(): Promise<Usuario[]> {
+    return this.authService.getTeachers();
+  }
+
+  @ApiResponse({
+    status: 200,
+    description: 'Se encontro el usuario',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'No hay registros en la base de datos',
+  })
+  @Get('credenciales/:documento')
+  async obtenerCredenciales(@Param('documento') documento: number) {
+    try {
+      const credenciales = await this.authService.getCredentials(documento);
+      return credenciales;
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        return { mensaje: 'Usuario no encontrado' };
+      }
+      throw error;
+    }
   }
 
   @ApiResponse({

@@ -49,7 +49,6 @@ export class ProyectosService {
         usuario,
         proyecto: nuevoProyecto,
         archivoProyecto: createProyectoDto.archivoProyecto,
-        rolProyecto: usuario, // Cambiado de rolProyecto.nombres + ' ' + rolProyecto.apellidos a usuario
       });
 
       await this.usuariosProyectosRepo.save(usuariosProyectos);
@@ -115,6 +114,7 @@ export class ProyectosService {
     // Obtener y devolver un array con los valores del enum
     return Object.values(ESTADO_RESPUESTA_PROYECTOS);
   }
+
   async update(idProyecto: string, updateProyectoDto: UpdateProyectoDto) {
     const proyecto = await this.proyectoRepo.findOneBy({ idProyecto });
     if (!proyecto)
@@ -145,7 +145,7 @@ export class ProyectosService {
 
       await this.usuariosProyectosRepo.update(
         { id: usuariosProyectos.id },
-        { archivoProyecto, rolProyecto: usuario },
+        { archivoProyecto},
       );
 
       await this.proyectoRepo.update({ idProyecto }, { ...infoProyecto });
@@ -233,60 +233,3 @@ export class ProyectosService {
     return await this.proyectoRepo.remove(proyecto);
   }
 }
-
-/* ------- OBTENER TODOS LOS PROYECTOS --------
-  async findAll() {
-    const proyectos = await this.proyectoRepo.find();
-
-    if (!proyectos || !proyectos.length)
-      throw new NotFoundException('No se encontraron resultados');
-
-    return proyectos;
-  }
-  */
-
-/*  ---------- TRANSACCIONES ENTREGAS Y PROYECTOS-------
-  @Transaction()
-  async crearProyectoYEntrega(
-    datosProyecto: any,
-    datosEntrega: any,
-  ): Promise<any> {
-    const entityManager = getManager();
-    const transactionalEntityManager = entityManager.transaction(
-      async (transactionalEntityManager) => {
-        // Lógica para crear el proyecto
-        const proyecto = await transactionalEntityManager.save(
-          Proyecto,
-          datosProyecto,
-        );
-
-        // Lógica para crear la entrega
-        const entrega = await this.entregaService.crearEntregaEnTransaccion(
-          transactionalEntityManager,
-          proyecto,
-          datosEntrega,
-        );
-
-        // Puedes devolver el proyecto y la entrega si es necesario
-        return { proyecto, entrega };
-      },
-    );
-
-    try {
-      return await transactionalEntityManager;
-    } catch (error) {
-      // Manejar errores de transacción
-      console.error('Error en la transacción:', error);
-      throw new Error('Error en la transacción');
-    }
-  }
-
-  ------- OBTENER DIRECTORES -------
-  async getDirectores() {
-    const directoresArray = Object.values(DIRECTOR);
-    const directoresOrdenados = directoresArray.sort((a, b) =>
-      a.localeCompare(b),
-    );
-    return directoresOrdenados;
-  }
-  */

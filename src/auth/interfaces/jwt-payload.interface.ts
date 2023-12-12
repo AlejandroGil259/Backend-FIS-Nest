@@ -3,6 +3,6 @@ export interface JwtPayload {
   apellidos: string;
   documento: number;
   correo: string;
-  rol:string;
-  // TODO: Añadimos lo que vamos a grabar
+  //contrasena: string;
+  rol: string;
 }

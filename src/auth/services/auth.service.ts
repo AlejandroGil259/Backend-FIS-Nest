@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
-import * as bcrypt from 'bcrypt';
+//import * as bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';
 import { DBExceptionService } from '../../commons/services/db-exception.service';
 import { CreateUserDto, LoginUsuarioDto, UpdateUsuarioDto } from '../dto';
@@ -14,6 +14,8 @@ import { Usuario } from '../entities/usuarios.entity';
 import { JwtPayload } from '../interfaces/jwt-payload.interface';
 import { UsuariosProyectos } from '../entities/usuarios-proyectos.entity';
 import { ROLES } from '../constants';
+import { CorreoService } from './correo.service';
+import * as crypto from 'crypto';
 
 @Injectable()
 export class AuthService {
@@ -23,6 +25,7 @@ export class AuthService {
     @InjectRepository(UsuariosProyectos)
     private readonly usuarioProyectoRepo: Repository<UsuariosProyectos>,
     private readonly jwtService: JwtService,
+    private readonly correoService: CorreoService,
   ) {}
 
   async register(createUserDto: CreateUserDto) {
@@ -32,13 +35,13 @@ export class AuthService {
       if (createUserDto.rol) {
         usuario.rol = createUserDto.rol;
       } else {
-        // Asigna un valor predeterminado (puede ser 'Estudiante' u otro valor predeterminado según tus necesidades)
         usuario.rol = ROLES.ESTUDIANTE;
       }
 
       const user = this.usuarioRepo.create({
         ...usuario,
-        contrasena: bcrypt.hashSync(contrasena, 10),
+        contrasena: this.encryptPassword(contrasena),
+        //contrasena: bcrypt.hashSync(contrasena, 10),
       });
       console.log('Usuario creado:', user);
       await this.usuarioRepo.save(user);
@@ -54,12 +57,21 @@ export class AuthService {
           apellidos: usuario.apellidos,
           documento: usuario.documento,
           correo: usuario.correo,
+          // contrasena: contrasena,
           rol: usuario.rol,
         }),
       };
     } catch (error) {
       throw DBExceptionService.handleDBException(error);
     }
+  }
+  private encryptPassword(contrasena: string): string {
+    const claveSecreta = 'FisTrabajo2023';
+
+    const cipher = crypto.createCipher('aes-256-cbc', claveSecreta);
+    let encrypted = cipher.update(contrasena, 'utf8', 'hex');
+    encrypted += cipher.final('hex');
+    return encrypted;
   }
 
   async login(loginUsuarioDto: LoginUsuarioDto) {
@@ -81,10 +93,12 @@ export class AuthService {
         'Las credinciales no son validas (email)',
       );
 
-    if (!bcrypt.compareSync(contrasena, usuario.contrasena))
+    const encryptedPassword = this.encryptPassword(contrasena);
+    if (encryptedPassword !== usuario.contrasena) {
       throw new UnauthorizedException(
-        'Credinciales no son validas (contraseña)',
+        'Las credenciales no son válidas (contraseña)',
       );
+    }
 
     return {
       ...usuario,
@@ -93,10 +107,10 @@ export class AuthService {
         apellidos: usuario.apellidos,
         documento: usuario.documento,
         correo: usuario.correo,
+        //contrasena: usuario.contrasena,
         rol: usuario.rol,
       }),
     };
-
     // TODO: retornar el JWT de acceso
   }
 
@@ -113,10 +127,11 @@ export class AuthService {
       throw new Error('Usuario no encontrado');
     }
 
-    const hashedPassword = await bcrypt.hash(nuevaContrasena, 10);
+    // const hashedPassword = await bcrypt.hash(nuevaContrasena, 10);
+    const encryptedPassword = this.encryptPassword(nuevaContrasena);
 
     // Asigna la contraseña hasheada al usuario
-    user.contrasena = hashedPassword;
+    user.contrasena = encryptedPassword;
     await this.usuarioRepo.save(user);
   }
 
@@ -130,10 +145,39 @@ export class AuthService {
       .getOne();
   }
 
-  async getDocentes(): Promise<Usuario[]> {
+  async getCredentials(
+    documento: number,
+  ): Promise<{ correo: string; contrasena: string }> {
+    const usuario = await this.usuarioRepo.findOne({
+      where: { documento },
+      select: {
+        correo: true,
+        contrasena: true,
+      },
+    });
+
+    if (!usuario) {
+      throw new NotFoundException('Usuario no encontrado');
+    }
+
+    return {
+      correo: usuario.correo,
+      contrasena: this.decryptPassword(usuario.contrasena),
+    };
+  }
+
+  private decryptPassword(contrasenaEncriptada: string): string {
+    const claveSecreta = 'FisTrabajo2023'; // Cambia esto por la misma clave usada para encriptar
+    const decipher = crypto.createDecipher('aes-256-cbc', claveSecreta);
+    let decrypted = decipher.update(contrasenaEncriptada, 'hex', 'utf8');
+    decrypted += decipher.final('utf8');
+    return decrypted;
+  }
+
+  async getTeachers(): Promise<Usuario[]> {
     return this.usuarioRepo.find({
       where: { rol: ROLES.DOCENTE },
-      select: ['nombres', 'apellidos'],
+      select: ['documento', 'nombres', 'apellidos'],
     });
   }
   async findAll() {
@@ -167,30 +211,6 @@ export class AuthService {
       return usuario;
     } catch (error) {}
   }
-
-  // async obtenerDocentesDisponibles(): Promise<string[]> {
-  //   try {
-  //     // Supongamos que 'rolProyecto' es una propiedad en tu modelo UsuarioProyecto
-  //     const docentes = await this.usuarioProyectoRepo.find({
-  //       where: { rolProyecto: 'Docente' },
-  //       relations: ['usuario'], // Incluye la relación con el usuario
-  //     });
-
-  //     console.log('Después de la consulta de docentes:', docentes);
-  //     if (!docentes || docentes.length === 0) {
-  //       console.warn('No se encontraron docentes disponibles.');
-  //     }
-
-  //     const nombresDocentes = docentes.map(
-  //       (docente) => `${docente.usuario.nombres} ${docente.usuario.apellidos}`,
-  //     );
-
-  //     return nombresDocentes;
-  //   } catch (error) {
-  //     console.error('Error al obtener los docentes', error);
-  //     throw new Error('Error interno del servidor');
-  //   }
-  // }
 
   async update(documento: number, updateUsuarioDto: UpdateUsuarioDto) {
     const usuario = await this.usuarioRepo.findOneBy({ documento });
@@ -281,3 +301,99 @@ export class AuthService {
     return await this.usuarioRepo.remove(usuario);
   }
 }
+
+/*
+AUTH SERVICE
+------ METODO DE OBTENER CONSTRASEÑA POR CORREO OUTLOOK -------
+ async obtenerPorCorreo(correo: string): Promise<Usuario | undefined> {
+    return this.usuarioRepo.findOneBy({ correo });
+  }
+
+  async generarTokenRestablecimientoContrasena(
+    usuario: Usuario,
+  ): Promise<string> {
+    const payload = { sub: usuario.documento };
+    return this.jwtService.signAsync(payload, { expiresIn: '1h' });
+  }
+
+  async enviarCorreoRestablecimientoContrasena(
+    correo: string,
+    token: string,
+  ): Promise<void> {
+    const asunto = 'Recuperación de Credenciales';
+    const mensaje = `
+      De parte de la Plataforma de gestión de trabajos de grado de la Facultad de Ingeniería de Sistemas. 
+      Estas son sus instrucciones para restablecer su contraseña:
+
+      Haga clic en el siguiente enlace para restablecer su contraseña:
+      ${process.env.FRONTEND_URL}/restablecer-contrasena/${token}
+
+      Recuerde no compartir este enlace con nadie.
+
+      Que tenga un feliz día.
+    `;
+    await this.correoService.enviarCorreo(correo, asunto, mensaje);
+  }
+
+async restablecerContrasena(
+    token: string,
+    nuevaContrasena: string,
+  ): Promise<void> {
+    const payload = this.jwtService.verify(token);
+    const usuario = await this.usuarioRepo.findOne(payload.sub);
+
+    if (usuario) {
+      // Hashear la nueva contraseña antes de guardarla
+      const hashedPassword = await bcrypt.hash(nuevaContrasena, 10);
+      usuario.contrasena = hashedPassword;
+      await this.usuarioRepo.save(usuario);
+    }
+  }
+
+  ------OBTENER POR TOKEN ------
+  async obtenerCredencialesYTokenPorDocumento(documento: number,): Promise<{ correo: string; contrasena: string; token: string }> {
+    const usuario = await this.usuarioRepo.findOne({
+      where: { documento },
+      select: {
+        correo: true,
+        contrasena: true,
+        documento: true,
+        nombres: true,
+        apellidos: true,
+        rol: true,
+      },
+    });
+
+    if (!usuario) {
+      throw new NotFoundException('Usuario no encontrado');
+    }
+
+    const token = this.getJwtToken({
+      nombres: usuario.nombres,
+      apellidos: usuario.apellidos,
+      documento: usuario.documento,
+      correo: usuario.correo,
+      contrasena: usuario.contrasena,
+      rol: usuario.rol,
+    });
+
+    return { correo: usuario.correo, contrasena: usuario.contrasena, token };
+  }
+
+
+  -------OBTENER CREDENCIALES CORREO-CONTRASEÑA-------
+
+  async obtenerCredencialesPorDocumento(
+    documento: number,
+  ): Promise<{ correo: string; contrasena: string }> {
+    const usuario = await this.usuarioRepo.findOne({
+      where: { documento },
+    });
+
+    if (!usuario) {
+      throw new NotFoundException('Usuario no encontrado');
+    }
+
+    return { correo: usuario.correo, contrasena: usuario.contrasena };
+  }
+*/
