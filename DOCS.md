@@ -98,7 +98,7 @@ nest g s auth/services/auth --flat
 
 ```txt
  nest g res archivos
- nest g res notificaciones
+ nest g res entregas
  nest g res archivos
  nest g res proyectos
  nest g res solicitudes
