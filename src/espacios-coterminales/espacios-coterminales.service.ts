@@ -44,14 +44,14 @@ export class EspaciosCoterminalesService {
     return espaciosCo;
   }
 
-  async findOne(idPrograma: string) {
+  async findOne(idEspacioCoterminal: string) {
     const espaciosCo = await this.espaciosRepo.findOne({
-      where: { idPrograma },
+      where: { idEspacioCoterminal },
     });
 
     if (!espaciosCo)
       throw new NotFoundException(
-        `No se encontraron resultados para el espacio coterminal "${idPrograma}"`,
+        `No se encontraron resultados para el espacio coterminal "${idEspacioCoterminal}"`,
       );
 
     return espaciosCo;
@@ -62,18 +62,20 @@ export class EspaciosCoterminalesService {
   }
 
   async update(
-    idPrograma: string,
+    idEspacioCoterminal: string,
     updateEspaciosCoterminaleDto: UpdateEspaciosCoterminaleDto,
   ) {
-    const espaciosCo = await this.espaciosRepo.findOneBy({ idPrograma });
+    const espaciosCo = await this.espaciosRepo.findOneBy({
+      idEspacioCoterminal,
+    });
     if (!espaciosCo)
       return new NotFoundException(
-        `No se encontró ningun espacio coterminal con el Id programa ${idPrograma}`,
+        `No se encontró ningun espacio coterminal con el Id programa ${idEspacioCoterminal}`,
       );
 
     try {
       return await this.espaciosRepo.update(
-        { idPrograma },
+        { idEspacioCoterminal },
         { ...updateEspaciosCoterminaleDto },
       );
     } catch (error) {

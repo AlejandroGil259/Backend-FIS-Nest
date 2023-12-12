@@ -5,3 +5,9 @@ export enum SEDES {
   MEDELLIN = 'Sede Medellín',
   VILLAVICENCIO = 'Sede Villavicencio',
 }
+
+export enum NIVELFORMACION {
+  PREGRADO = 'Pregrado',
+  ESPECIALISTA = 'Especialización',
+  MAESTRIA = 'Maestría',
+}

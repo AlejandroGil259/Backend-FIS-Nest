@@ -64,9 +64,9 @@ export class EspaciosCoterminalesController {
     description:
       'No hay opcion de grado en la base de datos con espacio coterminal',
   })
-  @Get('id/:idPrograma')
-  findOne(@Param('idPrograma') idPrograma: string) {
-    return this.espaciosCoterminalesService.findOne(idPrograma);
+  @Get('id/:idEspacio')
+  findOne(@Param('idEspacio') idEspacio: string) {
+    return this.espaciosCoterminalesService.findOne(idEspacio);
   }
   @ApiResponse({
     status: 200,
@@ -77,13 +77,13 @@ export class EspaciosCoterminalesController {
     description:
       'No hay registros en la base de datos para ese espacio coterminal',
   })
-  @Patch(':idPrograma')
+  @Patch(':idEspacio')
   update(
-    @Param('idPrograma') idPrograma: string,
+    @Param('idEspacio') idEspacio: string,
     @Body() updateEspaciosCoterminaleDto: UpdateEspaciosCoterminaleDto,
   ) {
     return this.espaciosCoterminalesService.update(
-      idPrograma,
+      idEspacio,
       updateEspaciosCoterminaleDto,
     );
   }

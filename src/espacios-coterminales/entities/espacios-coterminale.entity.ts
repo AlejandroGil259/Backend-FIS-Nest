@@ -4,22 +4,22 @@ import {
   Column,
   Entity,
   JoinColumn,
-  OneToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { SEDES } from '../constants';
+import { NIVELFORMACION, SEDES } from '../constants';
 
-@Entity('espacio_coterminal')
+@Entity('espacios_coterminales')
 export class EspaciosCoterminale {
   @ApiProperty({ uniqueItems: true })
   @PrimaryGeneratedColumn('uuid')
-  idPrograma: string;
-  
+  idEspacioCoterminal: string;
+
   @ApiProperty({
-    example: 636402,
+    enum: NIVELFORMACION,
   })
-  @Column()
-  codigoPrograma: number;
+  @Column({ type: 'varchar', enum: NIVELFORMACION })
+  nivelFormacion: NIVELFORMACION;
 
   @ApiProperty()
   @Column()
@@ -33,7 +33,8 @@ export class EspaciosCoterminale {
   @Column()
   usuariosEspacioCoCedula: number;
 
-  @OneToOne(() => Proyecto)
-  @JoinColumn()
-  proyecto: Proyecto;
+  @OneToMany(() => Proyecto, (proyecto) => proyecto.espacioCoterminal, {
+    cascade: true,
+  })
+  proyecto: Proyecto[];
 }
