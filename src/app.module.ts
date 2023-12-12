@@ -5,13 +5,15 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
 import { ArchivosModule } from './archivos/archivos.module';
 import { JoiValidationSchema } from './config';
-import { NotificacionesModule } from './notificaciones/notificaciones.module';
+//import { NotificacionesModule } from './notificaciones/notificaciones.module';
 import { ProyectosModule } from './proyectos/proyectos.module';
 import { SolicitudesModule } from './solicitudes/solicitudes.module';
 import { AuthModule } from './auth/auth.module';
 import { PasantiasModule } from './pasantias/pasantias.module';
 import { EspaciosCoterminalesModule } from './espacios-coterminales/espacios-coterminales.module';
 import { EstadisticasModule } from './estadisticas/estadisticas.module';
+import { EntregasModule } from './entregas/entregas.module';
+import { SharedModule } from './shared/shared.module';
 
 @Module({
   imports: [
@@ -22,6 +24,7 @@ import { EstadisticasModule } from './estadisticas/estadisticas.module';
 
     // Conexión a la base de datos
     TypeOrmModule.forRoot({
+      name: 'default',
       type: 'postgres',
       host: process.env.DB_HOST,
       port: Number(process.env.DB_PORT),
@@ -41,13 +44,14 @@ import { EstadisticasModule } from './estadisticas/estadisticas.module';
 
     SolicitudesModule,
 
-    NotificacionesModule,
-
     PasantiasModule,
 
     EspaciosCoterminalesModule,
 
     EstadisticasModule,
+
+    EntregasModule,
+
   ],
 })
 export class AppModule {}
