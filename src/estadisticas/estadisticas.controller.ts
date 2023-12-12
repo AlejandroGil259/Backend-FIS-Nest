@@ -12,10 +12,10 @@ export class EstadisticasController {
     return this.estadisticasService.getTotalProyectosPorTipo();
   }
 
-  @Get('proyectos-por-director')
-  getProyectosPorDirector() {
-    return this.estadisticasService.getProyectosPorDirector();
-  }
+  // @Get('proyectos-por-director')
+  // getProyectosPorDirector() {
+  //   return this.estadisticasService.getProyectosPorDirector();
+  // }
 
   @Get('proyectos-finalizados')
   getProyectosFinalizadosPorAno() {

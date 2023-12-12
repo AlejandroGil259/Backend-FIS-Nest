@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { In, Not, Repository } from 'typeorm';
 import { Proyecto } from '../proyectos/entities/proyecto.entity';
 import {
-  DIRECTOR,
   ESTADO_RESPUESTA_PROYECTOS,
   OPCION_GRADO,
 } from '../proyectos/constants';
@@ -66,23 +65,23 @@ export class EstadisticasService {
     return proyectosFinalizadosPorAno;
   }
 
-  async getProyectosPorDirector() {
-    const proyectosPorDirector = [];
+  // async getProyectosPorDirector() {
+  //   const proyectosPorDirector = [];
 
-    // Itera sobre los directores del enum DIRECTOR
-    for (const director of Object.values(DIRECTOR)) {
-      const proyectosAsignados = await this.proyectoRepo.count({
-        where: {
-          director,
-        },
-      });
-      if (proyectosAsignados > 0) {
-        proyectosPorDirector.push({ director, proyectosAsignados });
-      }
-    }
+  //   // Itera sobre los directores del enum DIRECTOR
+  //   for (const director of Object.values(DIRECTOR)) {
+  //     const proyectosAsignados = await this.proyectoRepo.count({
+  //       where: {
+  //         director,
+  //       },
+  //     });
+  //     if (proyectosAsignados > 0) {
+  //       proyectosPorDirector.push({ director, proyectosAsignados });
+  //     }
+  //   }
 
-    return proyectosPorDirector;
-  }
+  //   return proyectosPorDirector;
+  // }
 
   async getProyectosExcluyendoEstados() {
     const proyectosExcluyendoEstados = [];
