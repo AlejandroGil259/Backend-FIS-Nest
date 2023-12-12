@@ -4,11 +4,13 @@ import {
   Column,
   Entity,
   JoinColumn,
+  ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { Usuario } from '../../auth/entities/usuarios.entity';
 
-@Entity('pasantia')
+@Entity('pasantias')
 export class Pasantia {
   @ApiProperty({ uniqueItems: true })
   @PrimaryGeneratedColumn('uuid')
@@ -30,11 +32,7 @@ export class Pasantia {
   @Column()
   ubicacion: string;
 
-  @ApiProperty()
-  @Column()
-  usuarioPasantiaCedula: number;
-
   @OneToOne(() => Proyecto)
-  @JoinColumn()
+  @JoinColumn({ name: 'idProyecto' })
   proyecto: Proyecto;
 }

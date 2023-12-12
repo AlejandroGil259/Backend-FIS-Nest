@@ -1,31 +1,49 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreatePasantiaDto } from './dto/create-pasantia.dto';
 import { UpdatePasantiaDto } from './dto/update-pasantia.dto';
 import { Pasantia } from './entities/pasantia.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Usuario } from 'src/auth/entities/usuarios.entity';
-import { DBExceptionService } from 'src/commons/services/db-exception.service';
+import { Usuario } from '../auth/entities/usuarios.entity';
+import { DBExceptionService } from '../commons/services/db-exception.service';
+import { Proyecto } from '../proyectos/entities/proyecto.entity';
 
 @Injectable()
 export class PasantiasService {
   constructor(
     @InjectRepository(Pasantia)
     private readonly pasantiaRepo: Repository<Pasantia>,
+    @InjectRepository(Proyecto)
+    private readonly proyectoRepo: Repository<Proyecto>,
     @InjectRepository(Usuario)
     private readonly usuarioRepo: Repository<Usuario>,
   ) {}
+
   async create(createPasantiaDto: CreatePasantiaDto) {
-    const { usuarioPasantiaCedula: usuarioPasantiaCedula } = createPasantiaDto;
+    const { idProyecto: idProyecto } = createPasantiaDto;
+
     try {
-      const usuarioPasantia = await this.usuarioRepo.findBy({
-        documento: usuarioPasantiaCedula,
+      // Verificar si el proyecto existe
+      const proyecto = await this.proyectoRepo.findOne({
+        where: { idProyecto: idProyecto },
+      });
+      if (!proyecto) {
+        throw new NotFoundException(
+          `Proyecto con ID ${idProyecto} no encontrado`,
+        );
+      }
+
+      // Crear la pasantía y asociarla al proyecto y usuario
+      const pasantia = this.pasantiaRepo.create({
+        ...createPasantiaDto,
+        proyecto,
       });
 
-      const pasantia = await this.pasantiaRepo.save({
-        ...createPasantiaDto,
-        usuarioPasantia,
-      });
+      await this.pasantiaRepo.save(pasantia);
 
       return { pasantia };
     } catch (error) {
@@ -70,5 +88,19 @@ export class PasantiasService {
     } catch (error) {
       throw DBExceptionService.handleDBException(error);
     }
+  }
+
+  async remove(idPasantia: string) {
+    const pasantia = await this.pasantiaRepo.findOne({
+      where: { idPasantia },
+      withDeleted: true,
+    });
+
+    if (!pasantia)
+      throw new NotFoundException(
+        `No se encontró ningun proyecto con el Id ${idPasantia} `,
+      );
+
+    return await this.pasantiaRepo.remove(pasantia);
   }
 }

@@ -2,6 +2,13 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsDateString, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreatePasantiaDto {
+  @ApiProperty({
+    description: 'IdProyecto',
+    example: '6ac6b17d-3466-45a4-a76e-f092c155037d',
+  })
+  @IsString()
+  idProyecto: string;
+
   @ApiProperty({ description: 'Nombre de la empresa' })
   @IsString()
   nombreEmpresa: string;
@@ -21,8 +28,4 @@ export class CreatePasantiaDto {
   })
   @IsString()
   ubicacion: string;
-
-  @ApiProperty({ example: 123456789 })
-  @IsNumber()
-  usuarioPasantiaCedula: number;
 }

@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   ParseUUIDPipe,
+  Delete,
 } from '@nestjs/common';
 import { PasantiasService } from './pasantias.service';
 import { CreatePasantiaDto } from './dto/create-pasantia.dto';
@@ -76,5 +77,18 @@ export class PasantiasController {
     @Body() updatePasantiaDto: UpdatePasantiaDto,
   ) {
     return this.pasantiasService.update(idPasantia, updatePasantiaDto);
+  }
+
+  @ApiResponse({
+    status: 200,
+    description: 'Se ha eliminado la pasantia',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'No se encontro la pasantia en la base de datos',
+  })
+  @Delete(':idPasantia')
+  remove(@Param('idPasantia', ParseUUIDPipe) idProyecto: string) {
+    return this.pasantiasService.remove(idProyecto);
   }
 }
