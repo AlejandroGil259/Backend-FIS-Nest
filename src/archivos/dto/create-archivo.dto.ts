@@ -1,12 +1,45 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateArchivoDto {
-  @ApiProperty({ example: 'nombre archivo' })
+  @ApiProperty({ example: 'nombre archivo servidor' })
   @IsString()
-  filename: string;
+  nombreArchivoServidor: string;
 
   @ApiProperty()
   @IsString()
-  originalname: string;
+  nombreArchivoOriginal: string;
+
+  @ApiProperty({
+    description: 'Escribe aqui tu IdEntrega ',
+    example: '0b77393d-95c6-45e4-a941-19db023bb623',
+  })
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  idEntrega: string;
+
+  @ApiProperty({
+    description: 'Escribe aqui tu IdEntrega ',
+    example: '0b77393d-95c6-45e4-a941-19db023bb623',
+  })
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  idSolicitud: string;
+
+  constructor(data: {
+    idEntrega?: string;
+    idSolicitud?: string;
+    nombreArchivoServidor: string;
+    nombreArchivoOriginal: string;
+  }) {
+    if (!data.idEntrega && !data.idSolicitud) {
+      throw new Error('Se requiere al menos idEntrega o idSolicitud.');
+    }
+    this.idEntrega = data.idEntrega;
+    this.idSolicitud = data.idSolicitud;
+    this.nombreArchivoServidor = data.nombreArchivoServidor;
+    this.nombreArchivoOriginal = data.nombreArchivoOriginal;
+  }
 }

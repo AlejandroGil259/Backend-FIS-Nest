@@ -20,6 +20,7 @@ import { ArchivosService } from './archivos.service';
 import { CreateArchivoDto } from './dto/create-archivo.dto';
 import { UpdateArchivoDto } from './dto/update-archivo.dto';
 import { filtrarArchivo, nombreArchivo } from './helpers';
+import { isUUID } from 'class-validator';
 
 @ApiTags('Archivos')
 @Controller('archivos')
@@ -28,10 +29,10 @@ export class ArchivosController {
     private readonly archivosService: ArchivosService,
     private readonly configService: ConfigService,
   ) {}
-
   @ApiResponse({
     status: 201,
-    description: 'Se creo correctamente el archivo en la base de datos',
+    description:
+      'Se creo correctamente el archivo de entregas en la base de datos',
   })
   @ApiResponse({
     status: 400,
@@ -41,7 +42,8 @@ export class ArchivosController {
     status: 500,
     description: 'Error en el servidor, puede ser culpa del código o de la DB',
   })
-  @Post('proyecto')
+  // En el controlador
+  @Post()
   @UseInterceptors(
     FileInterceptor('archivo', {
       fileFilter: filtrarArchivo,
@@ -51,27 +53,45 @@ export class ArchivosController {
       }),
     }),
   )
-  async uploadProject(@UploadedFile() archivo: Express.Multer.File) {
+  async uploadProject(
+    @UploadedFile() archivo: Express.Multer.File,
+    @Body('idEntrega') idEntrega: string, // Asegúrate de obtener el idEntrega del cuerpo de la solicitud
+  ) {
+    if (!idEntrega) {
+      throw new BadRequestException(
+        'El campo idEntrega es requerido en el cuerpo de la solicitud.',
+      );
+    }
+
     if (!archivo) {
       throw new BadRequestException(
         'Asegúrate de que sea un archivo Word (.docx), un archivo PDF (.pdf), o .zip',
       );
     }
-
+    const isValidUUID = isUUID(idEntrega);
+    if (!isValidUUID) {
+      throw new BadRequestException(
+        'El ID de entrega proporcionado no es válido.',
+      );
+    }
     // Llama al servicio para guardar el archivo en la base de datos
-    const createArchivoDto: CreateArchivoDto = {
-      filename: archivo.filename,
-      originalname: archivo.originalname,
-    };
+    const createArchivoDto = new CreateArchivoDto({
+      nombreArchivoServidor: archivo.filename,
+      nombreArchivoOriginal: archivo.originalname,
+      idEntrega: idEntrega,
+      // o
+      //idSolicitud: 'tu_id_solicitud',
+    });
 
     try {
-      const savedFile = await this.archivosService.createFile(createArchivoDto);
+      await this.archivosService.crearArchivo(createArchivoDto);
       return {
         secureUrl: `${this.configService.get('HOST_API')}/archivos/proyecto/${
           archivo.filename
         }`,
       };
     } catch (error) {
+      console.error(error);
       // Maneja errores específicos de la base de datos o personaliza el mensaje según sea necesario
       throw new BadRequestException(
         'No se pudo guardar el archivo en la base de datos.',
@@ -79,8 +99,65 @@ export class ArchivosController {
     }
   }
 
-  create(@Body() createArchivoDto: CreateArchivoDto) {
-    return this.archivosService.createFile(createArchivoDto);
+  @ApiResponse({
+    status: 201,
+    description:
+      'Se creo correctamente el archivo de entregas en la base de datos',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'El usuario no realizo de manera correcta la petición',
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Error en el servidor, puede ser culpa del código o de la DB',
+  })
+  @Post('solicitudes')
+  @UseInterceptors(
+    FileInterceptor('archivo', {
+      fileFilter: filtrarArchivo,
+      storage: diskStorage({
+        destination: './static/solicitudes',
+        filename: nombreArchivo,
+      }),
+    }),
+  )
+  async uploadSolicitud(
+    @UploadedFile() archivo: Express.Multer.File,
+    @Body('idSolicitud') idSolicitud: string, // Asegúrate de obtener el idSolicitud del cuerpo de la solicitud
+  ) {
+    if (!idSolicitud) {
+      throw new BadRequestException(
+        'El campo idSolicitud es requerido en el cuerpo de la solicitud.',
+      );
+    }
+
+    if (!archivo) {
+      throw new BadRequestException(
+        'Asegúrate de que sea un archivo Word (.docx), un archivo PDF (.pdf), o .zip',
+      );
+    }
+
+    // Llama al servicio para guardar el archivo en la base de datos
+    const createArchivoDto = new CreateArchivoDto({
+      nombreArchivoServidor: archivo.filename,
+      nombreArchivoOriginal: archivo.originalname,
+      idSolicitud: idSolicitud,
+    });
+
+    try {
+      await this.archivosService.crearArchivoSolicitud(createArchivoDto);
+      return {
+        secureUrl: `${this.configService.get(
+          'HOST_API',
+        )}/archivos/solicitudes/${archivo.filename}`,
+      };
+    } catch (error) {
+      // Maneja errores específicos de la base de datos o personaliza el mensaje según sea necesario
+      throw new BadRequestException(
+        'No se pudo encontrar el id para guardar el archivo en la base de datos.',
+      );
+    }
   }
 
   @ApiResponse({

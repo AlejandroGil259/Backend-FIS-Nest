@@ -1,8 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { BaseEntity } from '../../commons/entities/base-entity.entity';
-import { Proyecto } from '../../proyectos/entities/proyecto.entity';
 import { Solicitud } from '../../solicitudes/entities/solicitud.entity';
+import { Entregas } from '../../entregas/entities/entregas.entity';
 
 @Entity('archivos')
 export class Archivo extends BaseEntity {
@@ -12,20 +18,17 @@ export class Archivo extends BaseEntity {
 
   @ApiProperty()
   @Column({ type: 'text', nullable: false })
-  filename: string;
+  nombreArchivoOriginal: string;
 
   @ApiProperty()
   @Column({ type: 'text', nullable: false })
-  originalname: string;
+  nombreArchivoServidor: string;
 
-  // @ApiProperty()
-  // @Column({ type: 'text', nullable: false })
-  // extensionArchivo: string; // Extensión del archivo (por ejemplo, 'pdf', 'docx', 'doc')
-
-  @ManyToOne(() => Proyecto, (proyecto) => proyecto.archivos, {
+  @ManyToOne(() => Entregas, (entrega) => entrega.archivos, {
     onDelete: 'CASCADE',
   })
-  proyectos: Proyecto;
+  @JoinColumn({ name: 'idEntrega' })
+  entregas: Entregas;
 
   @ManyToOne(() => Solicitud, (solicitud) => solicitud.archivos, {
     onDelete: 'CASCADE',

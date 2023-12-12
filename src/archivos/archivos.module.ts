@@ -1,13 +1,24 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ArchivosController } from './archivos.controller';
-import { ArchivosService } from './archivos.service';
-import { Archivo } from './entities/archivo.entity';
 import { ConfigModule } from '@nestjs/config';
 
+import { Archivo } from './entities/archivo.entity';
+import { ArchivosController } from './archivos.controller';
+import { ArchivosService } from './archivos.service';
+
+import { EntregasService } from '../entregas/entregas.service';
+import { AuthModule } from '../auth/auth.module';
+//import { SolicitudesModule } from '../solicitudes/solicitudes.module';
+import { SharedModule } from '../shared/shared.module';
 @Module({
-  imports: [ConfigModule, TypeOrmModule.forFeature([Archivo])],
+  imports: [
+    ConfigModule,
+    TypeOrmModule.forFeature([Archivo]),
+    AuthModule,
+    //forwardRef(() => SolicitudesModule),
+    SharedModule,
+  ],
   controllers: [ArchivosController],
-  providers: [ArchivosService],
+  providers: [ArchivosService, EntregasService],
 })
 export class ArchivosModule {}

@@ -12,12 +12,16 @@ import { CreateArchivoDto } from './dto/create-archivo.dto';
 import { UpdateArchivoDto } from './dto/update-archivo.dto';
 import { Archivo } from './entities/archivo.entity';
 import * as fs from 'fs';
+import { EntregasService } from '../entregas/entregas.service';
+import { SolicitudesService } from 'src/solicitudes/solicitudes.service';
 
 @Injectable()
 export class ArchivosService {
   constructor(
     @InjectRepository(Archivo)
-    private readonly archivoRepo: Repository<Archivo>,
+    private readonly archivosRepo: Repository<Archivo>,
+    private readonly entregasService: EntregasService,
+    private readonly solicitudesService: SolicitudesService,
   ) {}
 
   getStaticProyecto(nombreProyecto: string) {
@@ -43,17 +47,64 @@ export class ArchivosService {
     return archivosFiltrados;
   }
 
-  async createFile(createArchivoDto: CreateArchivoDto): Promise<Archivo> {
+  async crearArchivo(createArchivoDto: CreateArchivoDto): Promise<Archivo> {
+    const { idEntrega, ...restoDto } = createArchivoDto;
+
+    // Verifica que la entrega exista
+    const entrega = await this.entregasService.findOne(idEntrega);
+
+    if (!entrega) {
+      throw new NotFoundException(
+        `No se encontró la entrega con ID ${idEntrega}`,
+      );
+    }
+
+    // Crea el archivo asociándolo a la entrega
     try {
-      const archivo = this.archivoRepo.create(createArchivoDto);
-      return await this.archivoRepo.save(archivo);
+      const archivo = this.archivosRepo.create({
+        ...restoDto,
+        entregas: entrega,
+      });
+
+      const nuevoArchivo = await this.archivosRepo.save(archivo);
+
+      return nuevoArchivo;
     } catch (error) {
-      throw new Error('No se pudo crear el archivo en la base de datos.');
+      throw DBExceptionService.handleDBException(error);
+    }
+  }
+
+  async crearArchivoSolicitud(
+    createArchivoDto: CreateArchivoDto,
+  ): Promise<Archivo> {
+    const { idSolicitud, ...restoDto } = createArchivoDto;
+
+    // Verifica que la solicitud exista
+    const solicitud = await this.solicitudesService.findOne(idSolicitud);
+
+    if (!solicitud) {
+      throw new NotFoundException(
+        `No se encontró la solicitud con ID ${idSolicitud}`,
+      );
+    }
+
+    // Crea el archivo asociándolo a la solicitud
+    try {
+      const archivo = this.archivosRepo.create({
+        ...restoDto,
+        solicitud: solicitud,
+      });
+
+      const nuevoArchivo = await this.archivosRepo.save(archivo);
+
+      return nuevoArchivo;
+    } catch (error) {
+      throw DBExceptionService.handleDBException(error);
     }
   }
 
   async findAll() {
-    const archivos = await this.archivoRepo.find();
+    const archivos = await this.archivosRepo.find();
 
     if (!archivos || !archivos.length)
       throw new NotFoundException('No se encontraron resultados');
@@ -62,9 +113,9 @@ export class ArchivosService {
   }
 
   async findOne(idArchivo: string) {
-    const archivo = await this.archivoRepo.findOne({
+    const archivo = await this.archivosRepo.findOne({
       where: { idArchivo },
-      relations: { solicitud: true, proyectos: true },
+      relations: { solicitud: true, entregas: true },
     });
 
     if (!archivo)
@@ -76,7 +127,7 @@ export class ArchivosService {
   }
 
   async getArchivoById(idArchivo: string): Promise<Archivo> {
-    const archivo = await this.archivoRepo.findOne({ where: { idArchivo } });
+    const archivo = await this.archivosRepo.findOne({ where: { idArchivo } });
 
     if (!archivo) {
       throw new NotFoundException(
@@ -88,7 +139,7 @@ export class ArchivosService {
   }
 
   async update(idArchivo: string, updateArchivoDto: UpdateArchivoDto) {
-    const archivo = await this.archivoRepo.findOne({ where: { idArchivo } });
+    const archivo = await this.archivosRepo.findOne({ where: { idArchivo } });
     if (!archivo) {
       throw new NotFoundException(
         `No se encontró ningún archivo con el ID ${idArchivo}`,
@@ -97,9 +148,9 @@ export class ArchivosService {
 
     try {
       // Actualiza las propiedades del archivo con los datos proporcionados en updateArchivoDto
-      this.archivoRepo.merge(archivo, updateArchivoDto);
+      this.archivosRepo.merge(archivo, updateArchivoDto);
 
-      return await this.archivoRepo.save(archivo);
+      return await this.archivosRepo.save(archivo);
     } catch (error) {
       throw DBExceptionService.handleDBException(error);
     }
@@ -139,7 +190,7 @@ export class ArchivosService {
   //   return archivo;
   // }
   async remove(idArchivo: string) {
-    const archivo = await this.archivoRepo.findOne({
+    const archivo = await this.archivosRepo.findOne({
       where: { idArchivo },
       withDeleted: true,
     });
@@ -148,6 +199,6 @@ export class ArchivosService {
       throw new NotFoundException(
         `El archivo no existe con el id ${idArchivo}`,
       );
-    return await this.archivoRepo.remove(archivo);
+    return await this.archivosRepo.remove(archivo);
   }
 }
