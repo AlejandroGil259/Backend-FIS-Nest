@@ -205,24 +205,32 @@ export class ArchivosController {
     res.sendFile(path);
   }
 
+  @ApiResponse({
+    status: 200,
+    description: 'Se encontró un archivo con el id ingresado ',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'No hay registros en la base de datos para ese archivo',
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'Id del archivo registrado',
+    example: 'b86d465f-4726-4068-80e8-26173238647f',
+  })
+  @Get('solicitud/:id')
+  findOneSolicitud(@Res() res: Response, @Param('id') id: string) {
+    const path = this.archivosService.getStaticSolicitud(id);
+
+    res.sendFile(path);
+  }
+
   @Get(':id')
   async getArchivoById(@Param('id') id: string) {
     const archivo = await this.archivosService.getArchivoById(id);
     return archivo;
   }
-  // @Put(':id')
-  // async updateArchivo(
-  //   @Param('id') id: string,
-  //   @Body() updateArchivoDto: UpdateArchivoDto,
-  // ) {
-  //   // Llama al servicio para actualizar el archivo con el ID proporcionado
-  //   const updatedArchivo = await this.archivosService.updateArchivo(
-  //     id,
-  //     updateArchivoDto,
-  //   );
-  //   return updatedArchivo;
-  // }
-
+  
   @ApiResponse({
     status: 200,
     description: 'Se ha actualizado el archivo',

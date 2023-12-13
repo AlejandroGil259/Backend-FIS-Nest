@@ -33,6 +33,15 @@ export class ArchivosService {
     return path;
   }
 
+  getStaticSolicitud(nombreSolicitud: string) {
+    const path = join(__dirname, '../../static/solicitudes', nombreSolicitud);
+    if (!existsSync(path))
+      throw new BadRequestException(
+        `No se encontro ningun archivo ${nombreSolicitud}`,
+      );
+    return path;
+  }
+
   getArchivosPdfDocx() {
     const rutaCarpetaArchivos = join(__dirname, '../../static/proyectos');
     const archivos = fs.readdirSync(rutaCarpetaArchivos);
