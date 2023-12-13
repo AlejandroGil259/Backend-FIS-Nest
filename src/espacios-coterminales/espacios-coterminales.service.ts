@@ -6,7 +6,7 @@ import { EspaciosCoterminale } from './entities/espacios-coterminale.entity';
 import { Repository } from 'typeorm';
 import { Usuario } from '../auth/entities/usuarios.entity';
 import { DBExceptionService } from 'src/commons/services/db-exception.service';
-import { SEDES } from './constants';
+import { NIVELFORMACION, SEDES } from './constants';
 
 @Injectable()
 export class EspaciosCoterminalesService {
@@ -59,6 +59,10 @@ export class EspaciosCoterminalesService {
 
   async getSede() {
     return Object.values(SEDES);
+  }
+
+  async getNivelFormacion() {
+    return Object.values(NIVELFORMACION);
   }
 
   async update(

@@ -55,6 +55,19 @@ export class EspaciosCoterminalesController {
   getSede() {
     return this.espaciosCoterminalesService.getSede();
   }
+
+  @ApiResponse({
+    status: 200,
+    description: 'Se encontraron las sedes',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'No hay sedes en la base de datos',
+  })
+  @Get('nivel/:formacion')
+  getNivelFormacion() {
+    return this.espaciosCoterminalesService.getNivelFormacion();
+  }
   @ApiResponse({
     status: 200,
     description: 'Se encontró el espacio coterminal con el id ingresado',

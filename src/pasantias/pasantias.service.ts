@@ -24,23 +24,10 @@ export class PasantiasService {
   ) {}
 
   async create(createPasantiaDto: CreatePasantiaDto) {
-    const { idProyecto: idProyecto } = createPasantiaDto;
-
     try {
-      // Verificar si el proyecto existe
-      const proyecto = await this.proyectoRepo.findOne({
-        where: { idProyecto: idProyecto },
-      });
-      if (!proyecto) {
-        throw new NotFoundException(
-          `Proyecto con ID ${idProyecto} no encontrado`,
-        );
-      }
-
       // Crear la pasantía y asociarla al proyecto y usuario
       const pasantia = this.pasantiaRepo.create({
         ...createPasantiaDto,
-        proyecto,
       });
 
       await this.pasantiaRepo.save(pasantia);
@@ -50,7 +37,6 @@ export class PasantiasService {
       throw DBExceptionService.handleDBException(error);
     }
   }
-
   async findAll() {
     const pasantias = await this.pasantiaRepo.find();
 
