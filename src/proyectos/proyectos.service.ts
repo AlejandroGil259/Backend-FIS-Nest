@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -28,7 +29,7 @@ export class ProyectosService {
     createProyectoDto: CreateProyectoDto,
     usuarioDocumento: number,
   ) {
-    const { rolProyecto, ...infoProyecto } = createProyectoDto;
+    const { ...infoProyecto } = createProyectoDto;
 
     try {
       // Obtener el usuario (estudiante) por el documento
@@ -37,6 +38,12 @@ export class ProyectosService {
       if (!usuario) {
         throw new NotFoundException(
           `No se encontró al usuario con el documento ${usuarioDocumento}`,
+        );
+      }
+      // Verificar el rol del usuario
+      if (usuario.rol !== 'Estudiante') {
+        throw new ForbiddenException(
+          'Lo sentimos solo los estudiantes pueden crear proyectos.',
         );
       }
 
@@ -49,14 +56,16 @@ export class ProyectosService {
         usuario,
         proyecto: nuevoProyecto,
         archivoProyecto: createProyectoDto.archivoProyecto,
+        director: createProyectoDto.director,
+        codirector: createProyectoDto.codirector,
+        segundoAutor: createProyectoDto.segundoAutor,
       });
 
       await this.usuariosProyectosRepo.save(usuariosProyectos);
 
       return nuevoProyecto;
     } catch (error) {
-      // Manejar excepciones como desees
-      throw DBExceptionService.handleDBException(error);
+      DBExceptionService.handleDBException(error);
     }
   }
 
@@ -122,7 +131,7 @@ export class ProyectosService {
         `No se encontró ningun proyecto con Id ${idProyecto}`,
       );
 
-    const { usuarioDocumento, archivoProyecto, rolProyecto, ...infoProyecto } =
+    const { usuarioDocumento, archivoProyecto, ...infoProyecto } =
       updateProyectoDto;
 
     try {
@@ -145,7 +154,7 @@ export class ProyectosService {
 
       await this.usuariosProyectosRepo.update(
         { id: usuariosProyectos.id },
-        { archivoProyecto},
+        { archivoProyecto },
       );
 
       await this.proyectoRepo.update({ idProyecto }, { ...infoProyecto });

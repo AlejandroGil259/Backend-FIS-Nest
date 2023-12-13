@@ -28,10 +28,6 @@ export class UsuariosProyectos {
   segundoAutor: string;
 
   @ManyToOne(() => Usuario, { eager: true })
-  @JoinColumn({ name: 'docente_id' })
-  docente: Usuario; // Relación con el docente
-
-  @ManyToOne(() => Usuario, { eager: true })
   @JoinColumn({ name: 'usuario_id' })
   usuario: Usuario;
 

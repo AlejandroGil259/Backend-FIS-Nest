@@ -75,19 +75,6 @@ export class AuthController {
 
   @ApiResponse({
     status: 200,
-    description: 'Se encontraron registros',
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'No hay registros en la base de datos',
-  })
-  @Get()
-  findAll() {
-    return this.authService.findAll();
-  }
-
-  @ApiResponse({
-    status: 200,
     description: 'Se encontro el Docente',
   })
   @ApiResponse({
@@ -118,6 +105,19 @@ export class AuthController {
       }
       throw error;
     }
+  }
+
+  @ApiResponse({
+    status: 200,
+    description: 'Se encontraron registros',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'No hay registros en la base de datos',
+  })
+  @Get()
+  findAll() {
+    return this.authService.findAll();
   }
 
   @ApiResponse({
@@ -224,3 +224,48 @@ export class AuthController {
     return this.authService.remove(documento);
   }
 }
+/**
+ -------RECUPERAR CONTRASEÑA POR ENLACE ------ 
+  @Post('recuperar-contrasena')
+  async solicitarRestablecimientoContrasena(@Body() body: { correo: string }) {
+    const usuario = await this.authService.obtenerPorCorreo(body.correo);
+
+    if (usuario) {
+      // Generar y enviar token de restablecimiento de contraseña
+      const token =
+        await this.authService.generarTokenRestablecimientoContrasena(usuario);
+      await this.authService.enviarCorreoRestablecimientoContrasena(
+        usuario.correo,
+        token,
+      );
+    }
+
+    // Puedes enviar una respuesta genérica para no revelar si el correo existe o no
+    return { mensaje: 'Se ha enviado un correo si la cuenta existe.' };
+  }
+
+  @Post('restablecer-contrasena/:token')
+  async restablecerContrasena(
+    @Param('token') token: string,
+    @Body() body: { nuevaContrasena: string },
+  ) {
+    await this.authService.restablecerContrasena(token, body.nuevaContrasena);
+    return { mensaje: 'Contraseña restablecida con éxito.' };
+  }
+
+
+---CREDENCIALES POR TOKEN ------- 
+   @Get('obtener-credenciales-y-token/:documento')
+  async obtenerCredencialesYToken(@Param('documento') documento: number) {
+    try {
+      const credencialesYToken =
+        await this.authService.obtenerCredencialesYTokenPorDocumento(documento);
+      return credencialesYToken;
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        return { mensaje: 'Usuario no encontrado' };
+      }
+      throw error;
+    }
+  }
+ */

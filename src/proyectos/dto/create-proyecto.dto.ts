@@ -1,25 +1,18 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsOptional,
-  IsString,
-  IsEnum,
-  IsNumber,
-  IsObject,
-  IsNotEmpty,
-} from 'class-validator';
+import { IsOptional, IsString, IsEnum, IsNumber } from 'class-validator';
 import { ESTADO_RESPUESTA_PROYECTOS, OPCION_GRADO } from '../constants';
 
-class RolProyectoDto {
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  nombres: string;
+// class RolProyectoDto {
+//   @ApiProperty()
+//   @IsString()
+//   @IsNotEmpty()
+//   nombres: string;
 
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  apellidos: string;
-}
+//   @ApiProperty()
+//   @IsString()
+//   @IsNotEmpty()
+//   apellidos: string;
+// }
 
 export class CreateProyectoDto {
   @ApiProperty({
@@ -48,15 +41,27 @@ export class CreateProyectoDto {
   @IsNumber()
   usuarioDocumento: number;
 
-  @ApiProperty({ description: '?????', example: '-----' })
+  @ApiProperty({ description: 'Archivo adjunto al proyecto', example: '-----' })
   @IsString()
   archivoProyecto: string;
 
-  @ApiProperty({
-    description: 'Información del Docente (Rol Proyecto)',
-    type: RolProyectoDto,
-  })
-  @IsObject()
-  @IsNotEmpty()
-  rolProyecto: RolProyectoDto;
+  @ApiProperty()
+  @IsString()
+  director: string;
+
+  @ApiProperty()
+  @IsString()
+  codirector: string;
+
+  @ApiProperty()
+  @IsString()
+  segundoAutor: string;
+
+  // @ApiProperty({
+  //   description: 'Información del Docente (Rol Proyecto)',
+  //   type: RolProyectoDto,
+  // })
+  // @IsObject()
+  // @IsNotEmpty()
+  // rolProyecto: RolProyectoDto;
 }
