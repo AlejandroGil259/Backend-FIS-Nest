@@ -3,7 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  NotFoundException,
   Param,
   ParseIntPipe,
   Patch,
@@ -85,27 +84,60 @@ export class AuthController {
   async obtenerDocentes(): Promise<Usuario[]> {
     return this.authService.getTeachers();
   }
+  @Post('recuperar-contrasena')
+  async recuperarContrasena(@Body('correo') correo: string): Promise<any> {
+    // Implementa la lógica para generar el enlace de recuperación
+    const enlaceRecuperacion = 'http://tu-app.com/recuperar-contrasena/123456';
 
-  @ApiResponse({
-    status: 200,
-    description: 'Se encontro el usuario',
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'No hay registros en la base de datos',
-  })
-  @Get('credenciales/:documento')
-  async obtenerCredenciales(@Param('documento') documento: number) {
     try {
-      const credenciales = await this.authService.getCredentials(documento);
-      return credenciales;
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        return { mensaje: 'Usuario no encontrado' };
+      // Obtiene el usuario por correo
+      const usuario = await this.authService.obtenerUsuarioPorCorreo(correo);
+
+      // Si el usuario existe, envía el enlace de recuperación por correo
+      if (usuario) {
+        await this.authService.enviarCorreoRecuperacion(
+          correo,
+          enlaceRecuperacion,
+        );
+
+        return {
+          mensaje:
+            'Se ha enviado un enlace de recuperación a su correo electrónico.',
+        };
+      } else {
+        // Puedes manejar el caso en el que el correo no está registrado
+        return {
+          mensaje: 'El correo proporcionado no está registrado.',
+        };
       }
-      throw error;
+    } catch (error) {
+      // Manejo de errores generales
+      console.error(error);
+      return {
+        mensaje: 'Hubo un error al procesar la solicitud.',
+      };
     }
   }
+  // @ApiResponse({
+  //   status: 200,
+  //   description: 'Se encontro el usuario',
+  // })
+  // @ApiResponse({
+  //   status: 404,
+  //   description: 'No hay registros en la base de datos',
+  // })
+  // @Get('credenciales/:documento')
+  // async obtenerCredenciales(@Param('documento') documento: number) {
+  //   try {
+  //     const credenciales = await this.authService.getCredentials(documento);
+  //     return credenciales;
+  //   } catch (error) {
+  //     if (error instanceof NotFoundException) {
+  //       return { mensaje: 'Usuario no encontrado' };
+  //     }
+  //     throw error;
+  //   }
+  // }
 
   @ApiResponse({
     status: 200,

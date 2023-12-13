@@ -7,10 +7,15 @@ export class CorreoService {
 
   constructor() {
     this.transporter = nodemailer.createTransport({
-      service: 'gmail',
+      service: 'outlook',
       auth: {
-        user: 'tu-correo@gmail.com',
-        pass: 'tu-contrasena',
+        type: 'OAuth2',
+        user: 'tucorreo@outlook.com',
+        clientId: '0a068aad-5ff3-48f5-ace1-a56da66587f7',
+        clientSecret: '3a2558bd-cc5b-4cf4-9cac-0e047050e682',
+        refreshToken: 'tu-refresh-token',
+        accessToken: 'tu-access-token',
+        expires: 3599,
       },
     });
   }
@@ -21,7 +26,7 @@ export class CorreoService {
     mensaje: string,
   ): Promise<void> {
     const opcionesCorreo = {
-      from: 'tu-correo@gmail.com',
+      from: 'tucorreo@outlook.com',
       to: destinatario,
       subject: asunto,
       text: mensaje,

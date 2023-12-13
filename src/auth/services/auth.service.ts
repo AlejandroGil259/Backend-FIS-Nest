@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
-//import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';
 import { DBExceptionService } from '../../commons/services/db-exception.service';
 import { CreateUserDto, LoginUsuarioDto, UpdateUsuarioDto } from '../dto';
@@ -15,10 +15,10 @@ import { JwtPayload } from '../interfaces/jwt-payload.interface';
 import { UsuariosProyectos } from '../entities/usuarios-proyectos.entity';
 import { ROLES } from '../constants';
 import { CorreoService } from './correo.service';
-import * as crypto from 'crypto';
 
 @Injectable()
 export class AuthService {
+  private transporter;
   constructor(
     @InjectRepository(Usuario)
     private readonly usuarioRepo: Repository<Usuario>,
@@ -28,6 +28,29 @@ export class AuthService {
     private readonly correoService: CorreoService,
   ) {}
 
+  async enviarCorreoRecuperacion(
+    destinatario: string,
+    enlaceRecuperacion: string,
+  ): Promise<void> {
+    const opcionesCorreo = {
+      from: 'tu-correo@dominio.com',
+      to: destinatario,
+      subject: 'Recuperación de contraseña',
+      text: `Haga clic en el siguiente enlace para restablecer su contraseña: ${enlaceRecuperacion}`,
+    };
+
+    await this.transporter.sendMail(opcionesCorreo);
+  }
+
+  async obtenerUsuarioPorCorreo(correo: string): Promise<any> {
+    const usuario = await this.usuarioRepo.findOneBy({ correo });
+
+    if (!usuario) {
+      throw new NotFoundException('Usuario no encontrado');
+    }
+
+    return usuario;
+  }
   async register(createUserDto: CreateUserDto) {
     try {
       const { contrasena, ...usuario } = createUserDto;
@@ -38,11 +61,19 @@ export class AuthService {
         usuario.rol = ROLES.ESTUDIANTE;
       }
 
+      const hashedPassword = await bcrypt.hash(contrasena, 10);
+
       const user = this.usuarioRepo.create({
         ...usuario,
-        contrasena: this.encryptPassword(contrasena),
-        //contrasena: bcrypt.hashSync(contrasena, 10),
+        contrasena: hashedPassword,
       });
+
+      // const user = this.usuarioRepo.create({
+      //   ...usuario,
+      //   // contrasena: this.encryptPassword(contrasena),
+      //   contrasena: bcrypt.hashSync(contrasena, 10),
+      // });
+
       console.log('Usuario creado:', user);
       await this.usuarioRepo.save(user);
 
@@ -65,14 +96,15 @@ export class AuthService {
       throw DBExceptionService.handleDBException(error);
     }
   }
-  private encryptPassword(contrasena: string): string {
-    const claveSecreta = 'FisTrabajo2023';
 
-    const cipher = crypto.createCipher('aes-256-cbc', claveSecreta);
-    let encrypted = cipher.update(contrasena, 'utf8', 'hex');
-    encrypted += cipher.final('hex');
-    return encrypted;
-  }
+  // private encryptPassword(contrasena: string): string {
+  //   const claveSecreta = 'FisTrabajo2023';
+
+  //   const cipher = crypto.createCipher('aes-256-cbc', claveSecreta);
+  //   let encrypted = cipher.update(contrasena, 'utf8', 'hex');
+  //   encrypted += cipher.final('hex');
+  //   return encrypted;
+  // }
 
   async login(loginUsuarioDto: LoginUsuarioDto) {
     const { contrasena, correo } = loginUsuarioDto;
@@ -90,11 +122,15 @@ export class AuthService {
 
     if (!usuario)
       throw new UnauthorizedException(
-        'Las credinciales no son validas (email)',
+        'Las credenciales no son válidas (email)',
       );
 
-    const encryptedPassword = this.encryptPassword(contrasena);
-    if (encryptedPassword !== usuario.contrasena) {
+    const contrasenaValida = await bcrypt.compare(
+      contrasena,
+      usuario.contrasena,
+    );
+
+    if (!contrasenaValida) {
       throw new UnauthorizedException(
         'Las credenciales no son válidas (contraseña)',
       );
@@ -120,18 +156,18 @@ export class AuthService {
   }
 
   async change(documento: number, nuevaContrasena: string): Promise<void> {
-    // Busca al usuario por el número de documento
     const user = await this.usuarioRepo.findOne({ where: { documento } });
 
     if (!user) {
       throw new Error('Usuario no encontrado');
     }
 
-    // const hashedPassword = await bcrypt.hash(nuevaContrasena, 10);
-    const encryptedPassword = this.encryptPassword(nuevaContrasena);
+    const hashedPassword = await bcrypt.hash(nuevaContrasena, 10);
+
+    //const encryptedPassword = this.encryptPassword(nuevaContrasena);
 
     // Asigna la contraseña hasheada al usuario
-    user.contrasena = encryptedPassword;
+    user.contrasena = hashedPassword;
     await this.usuarioRepo.save(user);
   }
 
@@ -145,34 +181,34 @@ export class AuthService {
       .getOne();
   }
 
-  async getCredentials(
-    documento: number,
-  ): Promise<{ correo: string; contrasena: string }> {
-    const usuario = await this.usuarioRepo.findOne({
-      where: { documento },
-      select: {
-        correo: true,
-        contrasena: true,
-      },
-    });
+  // async getCredentials(
+  //   documento: number,
+  // ): Promise<{ correo: string; contrasena: string }> {
+  //   const usuario = await this.usuarioRepo.findOne({
+  //     where: { documento },
+  //     select: {
+  //       correo: true,
+  //       contrasena: true,
+  //     },
+  //   });
 
-    if (!usuario) {
-      throw new NotFoundException('Usuario no encontrado');
-    }
+  //   if (!usuario) {
+  //     throw new NotFoundException('Usuario no encontrado');
+  //   }
 
-    return {
-      correo: usuario.correo,
-      contrasena: this.decryptPassword(usuario.contrasena),
-    };
-  }
+  //   return {
+  //     correo: usuario.correo,
+  //     contrasena: this.decryptPassword(usuario.contrasena),
+  //   };
+  // }
 
-  private decryptPassword(contrasenaEncriptada: string): string {
-    const claveSecreta = 'FisTrabajo2023'; // Cambia esto por la misma clave usada para encriptar
-    const decipher = crypto.createDecipher('aes-256-cbc', claveSecreta);
-    let decrypted = decipher.update(contrasenaEncriptada, 'hex', 'utf8');
-    decrypted += decipher.final('utf8');
-    return decrypted;
-  }
+  // private decryptPassword(contrasenaEncriptada: string): string {
+  //   const claveSecreta = 'FisTrabajo2023'; // Cambia esto por la misma clave usada para encriptar
+  //   const decipher = crypto.createDecipher('aes-256-cbc', claveSecreta);
+  //   let decrypted = decipher.update(contrasenaEncriptada, 'hex', 'utf8');
+  //   decrypted += decipher.final('utf8');
+  //   return decrypted;
+  // }
 
   async getTeachers(): Promise<Usuario[]> {
     return this.usuarioRepo.find({
