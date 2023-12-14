@@ -136,17 +136,23 @@ export class ProyectosService {
   }
 
   async findAllWithUserDetails() {
-    const proyectos = await this.proyectoRepo
-      .createQueryBuilder('proyecto')
-      .leftJoinAndSelect('proyecto.usuariosProyectos', 'usuariosProyectos')
-      .leftJoinAndSelect('usuariosProyectos.usuario', 'usuario')
-      .getMany();
+    try {
+      const proyectos = await this.proyectoRepo
+        .createQueryBuilder('proyecto')
+        .leftJoinAndSelect('proyecto.usuariosProyectos', 'usuariosProyectos')
+        .leftJoinAndSelect('usuariosProyectos.usuario', 'usuario')
+        .leftJoinAndSelect('proyecto.entregas', 'entregas')
+        .getMany();
 
-    if (!proyectos || !proyectos.length) {
-      throw new NotFoundException('No se encontraron resultados');
+      if (!proyectos || !proyectos.length) {
+        throw new NotFoundException('No se encontraron resultados');
+      }
+
+      return proyectos;
+    } catch (error) {
+      // Manejar otros errores si es necesario
+      throw DBExceptionService.handleDBException(error);
     }
-
-    return proyectos;
   }
 
   async findOne(idProyecto: string) {
