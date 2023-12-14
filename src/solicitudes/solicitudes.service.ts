@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityNotFoundError, Repository } from 'typeorm';
 import { Usuario } from '../auth/entities/usuarios.entity';
@@ -30,7 +34,13 @@ export class SolicitudesService {
       });
 
       if (!usuarioSolicitudes) {
-        throw new Error('Usuario no encontrado');
+        throw new NotFoundException('Usuario no encontrado');
+      }
+      // Verificar el rol del usuario
+      if (usuarioSolicitudes.rol !== 'Estudiante') {
+        throw new ForbiddenException(
+          'Lo sentimos solo los estudiantes pueden crear solicitudes.',
+        );
       }
 
       // Crea una nueva instancia de Solicitud
@@ -47,9 +57,7 @@ export class SolicitudesService {
       };
     } catch (error) {
       // Maneja las excepciones de la base de datos
-      throw new NotFoundException(
-        `No se encontro al usuario registrado con documento: "${usuarioDocumento}"`,
-      );
+      DBExceptionService.handleDBException(error);
     }
   }
   async findAll() {

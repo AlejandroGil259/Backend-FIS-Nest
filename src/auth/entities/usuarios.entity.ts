@@ -84,9 +84,7 @@ export class Usuario extends BaseEntity {
   })
   solicitudes: Solicitud[];
 
-  @OneToMany(
-    () => UsuariosProyectos,
-    (usuarioProyecto) => usuarioProyecto.usuario,
+  @OneToMany(() => UsuariosProyectos, (usuarioProyecto) => usuarioProyecto.usuario,
     { cascade: true },
   )
   usuariosProyectos: UsuariosProyectos[];

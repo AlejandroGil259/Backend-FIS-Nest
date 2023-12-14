@@ -9,6 +9,7 @@ import {
   ParseUUIDPipe,
   NotFoundException,
   ParseIntPipe,
+  ForbiddenException,
 } from '@nestjs/common';
 import { ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ProyectosService } from './proyectos.service';
@@ -49,6 +50,27 @@ export class ProyectosController {
         message: 'Error al crear el proyecto',
         error: error.message,
       };
+    }
+  }
+
+  @Get('/director/:documentoDirector')
+  async obtenerProyectosPorDirector(
+    @Param('documentoDirector', ParseIntPipe) documentoDirector: number,
+  ) {
+    // Asegúrate de manejar el error adecuadamente si el usuario no tiene permisos
+    // para acceder a los proyectos de este director
+    try {
+      const proyectos =
+        await this.proyectosService.obtenerProyectosYEntregasPorDirector(
+          documentoDirector,
+        );
+      return proyectos;
+    } catch (error) {
+      // Maneja el error según tus necesidades
+      console.error(error);
+      throw new ForbiddenException(
+        'No tienes permisos para acceder a estos proyectos.',
+      );
     }
   }
 

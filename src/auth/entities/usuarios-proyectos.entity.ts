@@ -18,11 +18,11 @@ export class UsuariosProyectos {
   @Column()
   archivoProyecto: string;
 
-  @Column({ nullable: true })
-  director: string;
+  @Column({nullable: true })
+  director: number;
 
-  @Column({ nullable: true })
-  codirector: string;
+  @Column({nullable: true })
+  codirector: number;
 
   @Column({ nullable: true })
   segundoAutor: string;

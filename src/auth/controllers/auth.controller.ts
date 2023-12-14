@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  NotFoundException,
   Param,
   ParseIntPipe,
   Patch,
@@ -84,60 +85,27 @@ export class AuthController {
   async obtenerDocentes(): Promise<Usuario[]> {
     return this.authService.getTeachers();
   }
-  @Post('recuperar-contrasena')
-  async recuperarContrasena(@Body('correo') correo: string): Promise<any> {
-    // Implementa la lógica para generar el enlace de recuperación
-    const enlaceRecuperacion = 'http://tu-app.com/recuperar-contrasena/123456';
 
+  @ApiResponse({
+    status: 200,
+    description: 'Se encontro el usuario',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'No hay registros en la base de datos',
+  })
+  @Get('credenciales/:documento')
+  async obtenerCredenciales(@Param('documento') documento: number) {
     try {
-      // Obtiene el usuario por correo
-      const usuario = await this.authService.obtenerUsuarioPorCorreo(correo);
-
-      // Si el usuario existe, envía el enlace de recuperación por correo
-      if (usuario) {
-        await this.authService.enviarCorreoRecuperacion(
-          correo,
-          enlaceRecuperacion,
-        );
-
-        return {
-          mensaje:
-            'Se ha enviado un enlace de recuperación a su correo electrónico.',
-        };
-      } else {
-        // Puedes manejar el caso en el que el correo no está registrado
-        return {
-          mensaje: 'El correo proporcionado no está registrado.',
-        };
-      }
+      const credenciales = await this.authService.getCredentials(documento);
+      return credenciales;
     } catch (error) {
-      // Manejo de errores generales
-      console.error(error);
-      return {
-        mensaje: 'Hubo un error al procesar la solicitud.',
-      };
+      if (error instanceof NotFoundException) {
+        return { mensaje: 'Usuario no encontrado' };
+      }
+      throw error;
     }
   }
-  // @ApiResponse({
-  //   status: 200,
-  //   description: 'Se encontro el usuario',
-  // })
-  // @ApiResponse({
-  //   status: 404,
-  //   description: 'No hay registros en la base de datos',
-  // })
-  // @Get('credenciales/:documento')
-  // async obtenerCredenciales(@Param('documento') documento: number) {
-  //   try {
-  //     const credenciales = await this.authService.getCredentials(documento);
-  //     return credenciales;
-  //   } catch (error) {
-  //     if (error instanceof NotFoundException) {
-  //       return { mensaje: 'Usuario no encontrado' };
-  //     }
-  //     throw error;
-  //   }
-  // }
 
   @ApiResponse({
     status: 200,
@@ -256,48 +224,3 @@ export class AuthController {
     return this.authService.remove(documento);
   }
 }
-/**
- -------RECUPERAR CONTRASEÑA POR ENLACE ------ 
-  @Post('recuperar-contrasena')
-  async solicitarRestablecimientoContrasena(@Body() body: { correo: string }) {
-    const usuario = await this.authService.obtenerPorCorreo(body.correo);
-
-    if (usuario) {
-      // Generar y enviar token de restablecimiento de contraseña
-      const token =
-        await this.authService.generarTokenRestablecimientoContrasena(usuario);
-      await this.authService.enviarCorreoRestablecimientoContrasena(
-        usuario.correo,
-        token,
-      );
-    }
-
-    // Puedes enviar una respuesta genérica para no revelar si el correo existe o no
-    return { mensaje: 'Se ha enviado un correo si la cuenta existe.' };
-  }
-
-  @Post('restablecer-contrasena/:token')
-  async restablecerContrasena(
-    @Param('token') token: string,
-    @Body() body: { nuevaContrasena: string },
-  ) {
-    await this.authService.restablecerContrasena(token, body.nuevaContrasena);
-    return { mensaje: 'Contraseña restablecida con éxito.' };
-  }
-
-
----CREDENCIALES POR TOKEN ------- 
-   @Get('obtener-credenciales-y-token/:documento')
-  async obtenerCredencialesYToken(@Param('documento') documento: number) {
-    try {
-      const credencialesYToken =
-        await this.authService.obtenerCredencialesYTokenPorDocumento(documento);
-      return credencialesYToken;
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        return { mensaje: 'Usuario no encontrado' };
-      }
-      throw error;
-    }
-  }
- */

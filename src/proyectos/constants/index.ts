@@ -24,6 +24,10 @@ export enum DIRECTOR {
 }
 
 export enum ESTADO_RESPUESTA_PROYECTOS {
+  ENVIADO = 'Enviado',
+  REVISION = 'En revisión',
+  APROBADO = 'Aprobado',
+  APROBADO_OBSERVACIONES = 'Aprobado con observaciones',
   NO_APROBADO = 'No aprobado',
   CANCELADO = 'Cancelado',
   FINALIZADO = 'Finalizado',

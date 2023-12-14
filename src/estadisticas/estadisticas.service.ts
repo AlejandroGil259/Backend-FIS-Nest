@@ -18,7 +18,7 @@ export class EstadisticasService {
   async getTotalProyectosPorTipo() {
     const totalPorTipo = [];
 
-    // Itera sobre los valores de OPCION_GRADO y cuenta proyectos por tipo
+    // Filtra por cada tipo de OPCION_GRADO
     for (const tipo of Object.values(OPCION_GRADO)) {
       const count = await this.proyectoRepo.count({
         where: {

@@ -40,6 +40,7 @@ export class ProyectosService {
           `No se encontró al usuario con el documento ${usuarioDocumento}`,
         );
       }
+
       // Verificar el rol del usuario
       if (usuario.rol !== 'Estudiante') {
         throw new ForbiddenException(
@@ -55,11 +56,15 @@ export class ProyectosService {
       const usuariosProyectos = this.usuariosProyectosRepo.create({
         usuario,
         proyecto: nuevoProyecto,
-        archivoProyecto: createProyectoDto.archivoProyecto,
         director: createProyectoDto.director,
         codirector: createProyectoDto.codirector,
         segundoAutor: createProyectoDto.segundoAutor,
       });
+
+      // Verificar si se proporcionó un archivoProyecto
+      if (createProyectoDto.archivoProyecto) {
+        usuariosProyectos.archivoProyecto = createProyectoDto.archivoProyecto;
+      }
 
       await this.usuariosProyectosRepo.save(usuariosProyectos);
 
@@ -83,6 +88,49 @@ export class ProyectosService {
     } else {
       throw new NotFoundException(
         `El usuario "${documento}" no existe en la base de datos o no tiene proyectos asociados.`,
+      );
+    }
+  }
+
+  async obtenerProyectosYEntregasPorDirector(documentoDirector: number) {
+    try {
+      // Obtenemos todos los proyectos con sus relaciones
+      const proyectos = await this.proyectoRepo.find({
+        relations: ['usuariosProyectos', 'entregas'],
+      });
+
+      // Filtramos los proyectos que tienen al director buscado
+      const proyectosFiltrados = proyectos.filter((proyecto) =>
+        proyecto.usuariosProyectos.some((usuarioProyecto) => {
+          return (
+            usuarioProyecto.director.toString() === documentoDirector.toString()
+          );
+        }),
+      );
+
+      if (proyectosFiltrados.length === 0) {
+        throw new NotFoundException(
+          `No se encontraron proyectos para el director con documento ${documentoDirector}`,
+        );
+      }
+
+      // Ajustamos el resultado para que el director y codirector sean de tipo number
+      const proyectosAjustados = proyectosFiltrados.map((proyecto) => ({
+        ...proyecto,
+        usuariosProyectos: proyecto.usuariosProyectos.map(
+          (usuarioProyecto) => ({
+            ...usuarioProyecto,
+            director: usuarioProyecto.director,
+            codirector: usuarioProyecto.codirector,
+            //entregas: proyecto.entregas,
+          }),
+        ),
+      }));
+
+      return proyectosAjustados;
+    } catch (error) {
+      throw new NotFoundException(
+        `No se encontraron proyectos para el director con documento ${documentoDirector}`,
       );
     }
   }

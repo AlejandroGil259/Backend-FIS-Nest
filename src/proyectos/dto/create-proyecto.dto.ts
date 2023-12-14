@@ -2,18 +2,6 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsOptional, IsString, IsEnum, IsNumber } from 'class-validator';
 import { ESTADO_RESPUESTA_PROYECTOS, OPCION_GRADO } from '../constants';
 
-// class RolProyectoDto {
-//   @ApiProperty()
-//   @IsString()
-//   @IsNotEmpty()
-//   nombres: string;
-
-//   @ApiProperty()
-//   @IsString()
-//   @IsNotEmpty()
-//   apellidos: string;
-// }
-
 export class CreateProyectoDto {
   @ApiProperty({
     enum: ESTADO_RESPUESTA_PROYECTOS,
@@ -46,22 +34,17 @@ export class CreateProyectoDto {
   archivoProyecto: string;
 
   @ApiProperty()
-  @IsString()
-  director: string;
+  @IsNumber()
+  @IsOptional()
+  director?: number;
+
+  @ApiProperty()
+  @IsNumber()
+  @IsOptional()
+  codirector?: number;
 
   @ApiProperty()
   @IsString()
-  codirector: string;
-
-  @ApiProperty()
-  @IsString()
-  segundoAutor: string;
-
-  // @ApiProperty({
-  //   description: 'Información del Docente (Rol Proyecto)',
-  //   type: RolProyectoDto,
-  // })
-  // @IsObject()
-  // @IsNotEmpty()
-  // rolProyecto: RolProyectoDto;
+  @IsOptional()
+  segundoAutor?: string;
 }
