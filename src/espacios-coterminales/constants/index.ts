@@ -7,7 +7,6 @@ export enum SEDES {
 }
 
 export enum NIVELFORMACION {
-  PREGRADO = 'Pregrado',
   ESPECIALISTA = 'Especialización',
   MAESTRIA = 'Maestría',
 }

@@ -42,7 +42,6 @@ export class ArchivosController {
     status: 500,
     description: 'Error en el servidor, puede ser culpa del código o de la DB',
   })
-  // En el controlador
   @Post()
   @UseInterceptors(
     FileInterceptor('archivo', {
@@ -55,7 +54,7 @@ export class ArchivosController {
   )
   async uploadProject(
     @UploadedFile() archivo: Express.Multer.File,
-    @Body('idEntrega') idEntrega: string, // Asegúrate de obtener el idEntrega del cuerpo de la solicitud
+    @Body('idEntrega') idEntrega: string, //el idEntrega debe ir del cuerpo de la solicitud
   ) {
     if (!idEntrega) {
       throw new BadRequestException(
@@ -74,13 +73,13 @@ export class ArchivosController {
         'El ID de entrega proporcionado no es válido.',
       );
     }
-    // Llama al servicio para guardar el archivo en la base de datos
+    // Servicio para guardar el archivo en la base de datos
     const createArchivoDto = new CreateArchivoDto({
       nombreArchivoServidor: archivo.filename,
       nombreArchivoOriginal: archivo.originalname,
       idEntrega: idEntrega,
       // o
-      //idSolicitud: 'tu_id_solicitud',
+      //idSolicitud: 'IdSolicitud',
     });
 
     try {
@@ -92,7 +91,6 @@ export class ArchivosController {
       };
     } catch (error) {
       console.error(error);
-      // Maneja errores específicos de la base de datos o personaliza el mensaje según sea necesario
       throw new BadRequestException(
         'No se pudo guardar el archivo en la base de datos.',
       );
@@ -124,7 +122,7 @@ export class ArchivosController {
   )
   async uploadSolicitud(
     @UploadedFile() archivo: Express.Multer.File,
-    @Body('idSolicitud') idSolicitud: string, // Asegúrate de obtener el idSolicitud del cuerpo de la solicitud
+    @Body('idSolicitud') idSolicitud: string, // El idSolicitud debe ir en el cuerpo de la solicitud
   ) {
     if (!idSolicitud) {
       throw new BadRequestException(
@@ -138,7 +136,7 @@ export class ArchivosController {
       );
     }
 
-    // Llama al servicio para guardar el archivo en la base de datos
+    // Servicio para guardar el archivo en la base de datos
     const createArchivoDto = new CreateArchivoDto({
       nombreArchivoServidor: archivo.filename,
       nombreArchivoOriginal: archivo.originalname,
@@ -153,7 +151,6 @@ export class ArchivosController {
         )}/archivos/solicitudes/${archivo.filename}`,
       };
     } catch (error) {
-      // Maneja errores específicos de la base de datos o personaliza el mensaje según sea necesario
       throw new BadRequestException(
         'No se pudo encontrar el id para guardar el archivo en la base de datos.',
       );
@@ -230,7 +227,7 @@ export class ArchivosController {
     const archivo = await this.archivosService.getArchivoById(id);
     return archivo;
   }
-  
+
   @ApiResponse({
     status: 200,
     description: 'Se ha actualizado el archivo',

@@ -8,14 +8,12 @@ import { ArchivosService } from './archivos.service';
 
 import { EntregasService } from '../entregas/entregas.service';
 import { AuthModule } from '../auth/auth.module';
-//import { SolicitudesModule } from '../solicitudes/solicitudes.module';
 import { SharedModule } from '../shared/shared.module';
 @Module({
   imports: [
     ConfigModule,
     TypeOrmModule.forFeature([Archivo]),
     AuthModule,
-    //forwardRef(() => SolicitudesModule),
     SharedModule,
   ],
   controllers: [ArchivosController],

@@ -59,7 +59,7 @@ export class ArchivosService {
   async crearArchivo(createArchivoDto: CreateArchivoDto): Promise<Archivo> {
     const { idEntrega, ...restoDto } = createArchivoDto;
 
-    // Verifica que la entrega exista
+    // Verificar que la entrega exista
     const entrega = await this.entregasService.findOne(idEntrega);
 
     if (!entrega) {
@@ -68,7 +68,7 @@ export class ArchivosService {
       );
     }
 
-    // Crea el archivo asociándolo a la entrega
+    // Arrchivo asociado a la entrega
     try {
       const archivo = this.archivosRepo.create({
         ...restoDto,
@@ -97,7 +97,7 @@ export class ArchivosService {
       );
     }
 
-    // Crea el archivo asociándolo a la solicitud
+    // Archivo asociado a la solicitud
     try {
       const archivo = this.archivosRepo.create({
         ...restoDto,
@@ -156,7 +156,6 @@ export class ArchivosService {
     }
 
     try {
-      // Actualiza las propiedades del archivo con los datos proporcionados en updateArchivoDto
       this.archivosRepo.merge(archivo, updateArchivoDto);
 
       return await this.archivosRepo.save(archivo);

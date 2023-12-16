@@ -4,7 +4,6 @@ import { BaseEntity } from '../../commons/entities/base-entity.entity';
 import { Solicitud } from '../../solicitudes/entities/solicitud.entity';
 import { ROLES } from '../constants';
 import { UsuariosProyectos } from './usuarios-proyectos.entity';
-// import { Notificacion } from '../../notificaciones/entities/notificacion.entity';
 
 @Entity('usuarios')
 export class Usuario extends BaseEntity {

@@ -24,9 +24,6 @@ async function bootstrap() {
     }),
   );
 
-  //   const reflector = app.get(Reflector);
-  //   app.useGlobalInterceptors(new ClassSerializerInterceptor(reflector));
-
   // Uso de Swagger para documentación interactiva: http://localhost:3000/docs
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Gestión Documental Proyectos de Grado - FIS')
