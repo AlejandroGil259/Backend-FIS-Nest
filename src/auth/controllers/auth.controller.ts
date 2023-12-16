@@ -65,7 +65,6 @@ export class AuthController {
       await this.authService.change(documento, nuevaContrasena);
       return { message: 'Contraseña cambiada con éxito' };
     } catch (error) {
-      // Maneja los errores apropiadamente, por ejemplo, si el usuario no existe
       return {
         error: 'No se pudo cambiar la contraseña',
         message: error.message,

@@ -140,7 +140,7 @@ export class AuthService {
     //const hashedPassword = await bcrypt.hash(nuevaContrasena, 10);
     const encryptedPassword = this.encryptPassword(nuevaContrasena);
 
-    // Asigna la contraseña hasheada al usuario
+    // Asigna la contraseña hasheada 
     user.contrasena = encryptedPassword;
     await this.usuarioRepo.save(user);
   }

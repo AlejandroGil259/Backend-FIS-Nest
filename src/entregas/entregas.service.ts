@@ -47,7 +47,6 @@ export class EntregasService {
   }
 
   obtenerEstadosEntregas(): string[] {
-    // Obtener y devolver un array con los valores del enum
     return Object.values(ESTADO_ENTREGAS);
   }
 
@@ -125,18 +124,3 @@ export class EntregasService {
     return await this.entregasRepo.remove(entrega);
   }
 }
-/* ------- METODO CREAR ENTREGA CON TRANSACCION -------
-async crearEntregaEnTransaccion(
-    transactionalEntityManager: EntityManager,
-    proyecto: Proyecto,
-    datosEntrega: any,
-  ): Promise<Entregas> {
-    // Lógica para crear la entrega utilizando el EntityManager transaccional
-    const entrega = await transactionalEntityManager.save(Entregas, {
-      ...datosEntrega,
-      proyecto,
-    });
-
-    return entrega;
-  }
-  */

@@ -1,5 +1,5 @@
 // entregas.module.ts
-import { forwardRef, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Entregas } from './entities/entregas.entity';
 import { EntregasController } from './entregas.controller';

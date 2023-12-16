@@ -23,7 +23,6 @@ export class CreateEntregasDto {
   estado: ESTADO_ENTREGAS;
 
   @ApiProperty({
-    description: 'descripcion',
     example:
       'Hola buen dia, adjunto el proyecto con mi compañero Julian Duarte',
   })
