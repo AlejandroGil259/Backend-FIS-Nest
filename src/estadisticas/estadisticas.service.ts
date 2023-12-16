@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Not, Repository } from 'typeorm';
 import { Proyecto } from '../proyectos/entities/proyecto.entity';
@@ -12,7 +8,6 @@ import {
 } from '../proyectos/constants';
 import { LessThan } from 'typeorm';
 import { AuthService } from '../auth/services/auth.service';
-import { Usuario } from 'src/auth/entities/usuarios.entity';
 
 @Injectable()
 export class EstadisticasService {
