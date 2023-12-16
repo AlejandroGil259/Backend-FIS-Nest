@@ -42,7 +42,7 @@ export class ArchivosController {
     status: 500,
     description: 'Error en el servidor, puede ser culpa del código o de la DB',
   })
-  @Post()
+  @Post(':idEntrega')
   @UseInterceptors(
     FileInterceptor('archivo', {
       fileFilter: filtrarArchivo,
@@ -54,11 +54,11 @@ export class ArchivosController {
   )
   async uploadProject(
     @UploadedFile() archivo: Express.Multer.File,
-    @Body('idEntrega') idEntrega: string, //el idEntrega debe ir del cuerpo de la solicitud
+    @Param('idEntrega') idEntrega: string,
   ) {
     if (!idEntrega) {
       throw new BadRequestException(
-        'El campo idEntrega es requerido en el cuerpo de la solicitud.',
+        'El campo idEntrega es requerido en los parámetros de la URL.',
       );
     }
 
@@ -67,12 +67,14 @@ export class ArchivosController {
         'Asegúrate de que sea un archivo Word (.docx), un archivo PDF (.pdf), o .zip',
       );
     }
+
     const isValidUUID = isUUID(idEntrega);
     if (!isValidUUID) {
       throw new BadRequestException(
         'El ID de entrega proporcionado no es válido.',
       );
     }
+
     // Servicio para guardar el archivo en la base de datos
     const createArchivoDto = new CreateArchivoDto({
       nombreArchivoServidor: archivo.filename,
@@ -83,7 +85,7 @@ export class ArchivosController {
     });
 
     try {
-      await this.archivosService.crearArchivo(createArchivoDto);
+      await this.archivosService.crearArchivo(idEntrega, createArchivoDto);
       return {
         secureUrl: `${this.configService.get('HOST_API')}/archivos/proyecto/${
           archivo.filename

@@ -56,9 +56,10 @@ export class ArchivosService {
     return archivosFiltrados;
   }
 
-  async crearArchivo(createArchivoDto: CreateArchivoDto): Promise<Archivo> {
-    const { idEntrega, ...restoDto } = createArchivoDto;
-
+  async crearArchivo(
+    idEntrega: string,
+    createArchivoDto: CreateArchivoDto,
+  ): Promise<Archivo> {
     // Verificar que la entrega exista
     const entrega = await this.entregasService.findOne(idEntrega);
 
@@ -68,10 +69,10 @@ export class ArchivosService {
       );
     }
 
-    // Arrchivo asociado a la entrega
+    // Archivo asociado a la entrega
     try {
       const archivo = this.archivosRepo.create({
-        ...restoDto,
+        ...createArchivoDto,
         entregas: entrega,
       });
 
