@@ -17,6 +17,11 @@ export class EstadisticasController {
   //   return this.estadisticasService.getProyectosPorDirector();
   // }
 
+  @Get('proyectos-por-director')
+  async cuentaProyectosDocentes() {
+    return this.estadisticasService.cuentaProyectosDocentes();
+  }
+
   @Get('proyectos-finalizados')
   getProyectosFinalizadosPorAno() {
     return this.estadisticasService.getProyectosFinalizadosPorAno();

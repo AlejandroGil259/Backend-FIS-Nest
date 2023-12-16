@@ -64,7 +64,6 @@ export class EspaciosCoterminalesService {
   async getNivelFormacion() {
     return Object.values(NIVELFORMACION);
   }
-
   async update(
     idEspacioCoterminal: string,
     updateEspaciosCoterminaleDto: UpdateEspaciosCoterminaleDto,
@@ -73,17 +72,33 @@ export class EspaciosCoterminalesService {
       idEspacioCoterminal,
     });
     if (!espaciosCo)
-      return new NotFoundException(
-        `No se encontró ningun espacio coterminal con el Id programa ${idEspacioCoterminal}`,
+      throw new NotFoundException(
+        `No se encontró ningún espacio coterminal con el Id programa ${idEspacioCoterminal}`,
       );
 
     try {
-      return await this.espaciosRepo.update(
+      const updatedEspaciosCo = await this.espaciosRepo.update(
         { idEspacioCoterminal },
         { ...updateEspaciosCoterminaleDto },
       );
+
+      if (!updatedEspaciosCo.affected) {
+        throw new NotFoundException(
+          `No se encontró ningún espacio coterminal con el Id ${idEspacioCoterminal}`,
+        );
+      }
+
+      return {
+        success: true,
+        message: `El espacio coterminal con el ID ${idEspacioCoterminal} ha sido actualizado`,
+      };
     } catch (error) {
-      throw DBExceptionService.handleDBException(error);
+      throw {
+        success: false,
+        message:
+          DBExceptionService.handleDBException(error) ||
+          'Error al actualizar el espacio coterminal',
+      };
     }
   }
 }

@@ -3,7 +3,6 @@ import { Proyecto } from '../../proyectos/entities/proyecto.entity';
 import {
   Column,
   Entity,
-  JoinColumn,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
