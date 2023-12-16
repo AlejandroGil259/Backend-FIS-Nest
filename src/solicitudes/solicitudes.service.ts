@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EntityNotFoundError, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Usuario } from '../auth/entities/usuarios.entity';
 import { DBExceptionService } from '../commons/services/db-exception.service';
 import { CreateSolicitudesDto } from './dto/create-solicitudes.dto';
@@ -36,7 +36,6 @@ export class SolicitudesService {
       if (!usuarioSolicitudes) {
         throw new NotFoundException('Usuario no encontrado');
       }
-      // Verificar el rol del usuario
       if (usuarioSolicitudes.rol !== 'Estudiante') {
         throw new ForbiddenException(
           'Lo sentimos solo los estudiantes pueden crear solicitudes.',
@@ -49,14 +48,12 @@ export class SolicitudesService {
       // Establece la relación entre la solicitud y el usuario
       solicitud.usuario = usuarioSolicitudes;
 
-      // Guarda la solicitud en la base de datos
       const solicitudGuardada = await this.solicitudRepo.save(solicitud);
 
       return {
         solicitud: solicitudGuardada,
       };
     } catch (error) {
-      // Maneja las excepciones de la base de datos
       DBExceptionService.handleDBException(error);
     }
   }

@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePasantiaDto } from './dto/create-pasantia.dto';
 import { UpdatePasantiaDto } from './dto/update-pasantia.dto';
 import { Pasantia } from './entities/pasantia.entity';
@@ -62,17 +58,34 @@ export class PasantiasService {
   async update(idPasantia: string, updatePasantiaDto: UpdatePasantiaDto) {
     const pasantia = await this.pasantiaRepo.findOneBy({ idPasantia });
     if (!pasantia)
-      return new NotFoundException(
-        `No se encontró ninguna pasantia con el Id ${idPasantia}`,
+      throw new NotFoundException(
+        `No se encontró ninguna pasantía con el Id ${idPasantia}`,
       );
 
     try {
-      return await this.pasantiaRepo.update(
+      const updatedPasantia = await this.pasantiaRepo.update(
         { idPasantia },
         { ...updatePasantiaDto },
       );
+
+      if (!updatedPasantia.affected) {
+        throw new NotFoundException(
+          `No se encontró ninguna pasantía con el Id ${idPasantia}`,
+        );
+      }
+
+      return {
+        success: true,
+        message: `La pasantía con el ID ${idPasantia} ha sido actualizada`,
+      };
     } catch (error) {
-      throw DBExceptionService.handleDBException(error);
+      // Manejo específico de excepciones
+      throw {
+        success: false,
+        message:
+          DBExceptionService.handleDBException(error) ||
+          'Error al actualizar la pasantía',
+      };
     }
   }
 

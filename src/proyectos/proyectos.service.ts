@@ -41,14 +41,23 @@ export class ProyectosService {
         );
       }
 
-      // Verificar el rol del usuario
       if (usuario.rol !== 'Estudiante') {
         throw new ForbiddenException(
           'Lo sentimos solo los estudiantes pueden crear proyectos.',
         );
       }
 
-      // Crear el proyecto
+      // Verificar si el director está registrado en la base de datos
+      const director = await this.authService.findOne(
+        createProyectoDto.director,
+      );
+
+      if (!director) {
+        throw new NotFoundException(
+          `No se encontró al director con el documento ${createProyectoDto.director}`,
+        );
+      }
+
       const proyecto = this.proyectoRepo.create(infoProyecto);
       const nuevoProyecto = await this.proyectoRepo.save(proyecto);
 
@@ -70,14 +79,25 @@ export class ProyectosService {
 
       return nuevoProyecto;
     } catch (error) {
-      DBExceptionService.handleDBException(error);
+      if (
+        error instanceof NotFoundException ||
+        error instanceof ForbiddenException
+      ) {
+        throw error;
+      } else {
+        const errorMessage = DBExceptionService.handleDBException(error);
+        throw {
+          success: false,
+          message: errorMessage || 'Error al crear el proyecto',
+        };
+      }
     }
   }
 
   async getProjectsByUserDocument(documento: number): Promise<Proyecto[]> {
     const usuariosProyectos = await this.usuariosProyectosRepo.find({
-      where: { usuario: { documento: documento } }, // Buscar en UsuariosProyectos por el número de documento del usuario
-      relations: ['proyecto'], // Incluir la relación 'proyecto'
+      where: { usuario: { documento: documento } },
+      relations: ['proyecto'],
     });
 
     if (usuariosProyectos && usuariosProyectos.length > 0) {
@@ -94,7 +114,6 @@ export class ProyectosService {
 
   async obtenerProyectosYEntregasPorDirector(documentoDirector: number) {
     try {
-      // Obtenemos todos los proyectos con sus relaciones
       const proyectos = await this.proyectoRepo.find({
         relations: ['usuariosProyectos', 'entregas'],
       });
@@ -114,7 +133,7 @@ export class ProyectosService {
         );
       }
 
-      // Ajustamos el resultado para que el director y codirector sean de tipo number
+      // Director y codirector sean de tipo number
       const proyectosAjustados = proyectosFiltrados.map((proyecto) => ({
         ...proyecto,
         usuariosProyectos: proyecto.usuariosProyectos.map(
@@ -150,7 +169,6 @@ export class ProyectosService {
 
       return proyectos;
     } catch (error) {
-      // Manejar otros errores si es necesario
       throw DBExceptionService.handleDBException(error);
     }
   }
@@ -174,7 +192,6 @@ export class ProyectosService {
   }
 
   obtenerEstadosProyectos(): string[] {
-    // Obtener y devolver un array con los valores del enum
     return Object.values(ESTADO_RESPUESTA_PROYECTOS);
   }
 
@@ -213,9 +230,23 @@ export class ProyectosService {
 
       await this.proyectoRepo.update({ idProyecto }, { ...infoProyecto });
 
-      return `El proyecto con ID ${idProyecto} ha sido actualizado`;
+      return {
+        success: true,
+        message: `El proyecto con ID ${idProyecto} ha sido actualizado`,
+      };
     } catch (error) {
-      DBExceptionService.handleDBException(error);
+      if (
+        error instanceof NotFoundException ||
+        error instanceof BadRequestException
+      ) {
+        throw error;
+      } else {
+        const errorMessage = DBExceptionService.handleDBException(error);
+        throw {
+          success: false,
+          message: errorMessage || 'Error al actualizar el proyecto',
+        };
+      }
     }
   }
 
@@ -266,7 +297,7 @@ export class ProyectosService {
         );
       }
 
-      // Restaurar el proyecto estableciendo deletedAt a null
+      // Restaurar el proyecto pasando deletedAt a null
       await this.proyectoRepo.update(
         { idProyecto },
         {

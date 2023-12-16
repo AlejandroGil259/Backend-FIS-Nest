@@ -57,8 +57,6 @@ export class ProyectosController {
   async obtenerProyectosPorDirector(
     @Param('documentoDirector', ParseIntPipe) documentoDirector: number,
   ) {
-    // Asegúrate de manejar el error adecuadamente si el usuario no tiene permisos
-    // para acceder a los proyectos de este director
     try {
       const proyectos =
         await this.proyectosService.obtenerProyectosYEntregasPorDirector(
@@ -66,7 +64,6 @@ export class ProyectosController {
         );
       return proyectos;
     } catch (error) {
-      // Maneja el error según tus necesidades
       console.error(error);
       throw new ForbiddenException(
         'No tienes permisos para acceder a estos proyectos.',
