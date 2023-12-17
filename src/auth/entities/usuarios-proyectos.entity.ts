@@ -14,16 +14,19 @@ export class UsuariosProyectos {
   @PrimaryGeneratedColumn('identity')
   id: number;
 
-  @ApiProperty()
-  @Column()
-  archivoProyecto: string;
+  // @ApiProperty()
+  // @Column()
+  // archivoProyecto: string;
 
-  @Column({nullable: true })
+  @ApiProperty()
+  @Column({ nullable: true })
   director: number;
 
-  @Column({nullable: true })
+  @ApiProperty()
+  @Column({ nullable: true })
   codirector: number;
 
+  @ApiProperty()
   @Column({ nullable: true })
   segundoAutor: string;
 
