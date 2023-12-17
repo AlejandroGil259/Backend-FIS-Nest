@@ -3,6 +3,7 @@ import {
   IsDateString,
   IsEnum,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
 } from 'class-validator';
@@ -31,14 +32,14 @@ export class CreateEntregasDto {
   descripcion?: string;
 
   @ApiProperty({ example: 'Nombre evaluador1' })
-  @IsString()
+  @IsNumber()
   @IsOptional()
-  evaluador1?: string;
+  evaluador1?: number;
 
   @ApiProperty({ example: 'Nombre evaluador2' })
-  @IsString()
+  @IsNumber()
   @IsOptional()
-  evaluador2?: string;
+  evaluador2?: number;
 
   @ApiProperty({ example: 'Número de Acta' })
   @IsString()

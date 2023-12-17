@@ -110,6 +110,16 @@ export class EntregasService {
     }
   }
 
+  async save(entrega: Entregas): Promise<Entregas> {
+    try {
+      const savedEntrega = await this.entregasRepo.save(entrega);
+      return savedEntrega;
+    } catch (error) {
+      // Manejar errores específicos de la base de datos si es necesario
+      throw error;
+    }
+  }
+
   async remove(idEntrega: string) {
     const entrega = await this.entregasRepo.findOne({
       where: { idEntrega },

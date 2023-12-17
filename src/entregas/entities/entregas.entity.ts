@@ -43,11 +43,11 @@ export class Entregas extends BaseEntity {
 
   @ApiProperty({ example: 'Nombre evaluador1' })
   @Column({ nullable: true })
-  evaluador1?: string;
+  evaluador1?: number;
 
   @ApiProperty({ example: 'Nombre evaluador2' })
   @Column({ nullable: true })
-  evaluador2?: string;
+  evaluador2?: number;
 
   @ApiProperty({ example: 'Número de Acta' })
   @Column({ nullable: true })
