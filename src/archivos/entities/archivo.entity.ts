@@ -24,6 +24,10 @@ export class Archivo extends BaseEntity {
   @Column({ type: 'text', nullable: false })
   nombreArchivoServidor: string;
 
+  @ApiProperty()
+  @Column({ type: 'text', nullable: true })
+  rolOrigen?: string;
+
   @ManyToOne(() => Entregas, (entrega) => entrega.archivos, {
     onDelete: 'CASCADE',
   })

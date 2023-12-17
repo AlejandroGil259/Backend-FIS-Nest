@@ -10,6 +10,11 @@ export class CreateArchivoDto {
   @IsString()
   nombreArchivoOriginal: string;
 
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  rolOrigen?: string;
+
   @ApiProperty({
     description: 'Escribe aqui tu IdEntrega ',
     example: '0b77393d-95c6-45e4-a941-19db023bb623',

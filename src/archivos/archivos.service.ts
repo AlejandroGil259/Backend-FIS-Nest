@@ -13,48 +13,22 @@ import { UpdateArchivoDto } from './dto/update-archivo.dto';
 import { Archivo } from './entities/archivo.entity';
 import * as fs from 'fs';
 import { EntregasService } from '../entregas/entregas.service';
-import { SolicitudesService } from 'src/solicitudes/solicitudes.service';
+import { SolicitudesService } from '../solicitudes/solicitudes.service';
+import { Proyecto } from '../proyectos/entities/proyecto.entity';
+import { UsuariosProyectos } from '../auth/entities/usuarios-proyectos.entity';
 
 @Injectable()
 export class ArchivosService {
   constructor(
     @InjectRepository(Archivo)
     private readonly archivosRepo: Repository<Archivo>,
+    @InjectRepository(Proyecto)
+    private readonly proyectosRepo: Repository<Proyecto>,
+    @InjectRepository(UsuariosProyectos)
+    private readonly usuariosProyectosRepo: Repository<UsuariosProyectos>,
     private readonly entregasService: EntregasService,
     private readonly solicitudesService: SolicitudesService,
   ) {}
-
-  getStaticProyecto(nombreProyecto: string) {
-    const path = join(__dirname, '../../static/proyectos', nombreProyecto);
-    if (!existsSync(path))
-      throw new BadRequestException(
-        `No se encontro ningun archivo ${nombreProyecto}`,
-      );
-    return path;
-  }
-
-  getStaticSolicitud(nombreSolicitud: string) {
-    const path = join(__dirname, '../../static/solicitudes', nombreSolicitud);
-    if (!existsSync(path))
-      throw new BadRequestException(
-        `No se encontro ningun archivo ${nombreSolicitud}`,
-      );
-    return path;
-  }
-
-  getArchivosPdfDocx() {
-    const rutaCarpetaArchivos = join(__dirname, '../../static/proyectos');
-    const archivos = fs.readdirSync(rutaCarpetaArchivos);
-    const archivosFiltrados = archivos.filter(
-      (archivo) => archivo.endsWith('.pdf') || archivo.endsWith('.docx'),
-    );
-
-    if (archivosFiltrados.length === 0) {
-      throw new NotFoundException('No se encontraron archivos PDF o DOCX.');
-    }
-
-    return archivosFiltrados;
-  }
 
   async crearArchivo(
     idEntrega: string,
@@ -77,6 +51,21 @@ export class ArchivosService {
       });
 
       const nuevoArchivo = await this.archivosRepo.save(archivo);
+
+      // Asociar el archivo a la entrega
+      entrega.archivos.push(nuevoArchivo);
+      await this.entregasService.save(entrega);
+
+      // Obtener el proyecto asociado a la entrega
+      const proyecto = await this.proyectosRepo
+        .createQueryBuilder('proyecto')
+        .leftJoinAndSelect('proyecto.entregas', 'entregas')
+        .where('entregas.idEntrega = :idEntrega', {
+          idEntrega: entrega.idEntrega,
+        })
+        .getOne();
+
+      // Realizar cualquier lógica adicional según sea necesario
 
       return nuevoArchivo;
     } catch (error) {
@@ -111,6 +100,38 @@ export class ArchivosService {
     } catch (error) {
       throw DBExceptionService.handleDBException(error);
     }
+  }
+
+  getStaticProyecto(nombreProyecto: string) {
+    const path = join(__dirname, '../../static/proyectos', nombreProyecto);
+    if (!existsSync(path))
+      throw new BadRequestException(
+        `No se encontro ningun archivo ${nombreProyecto}`,
+      );
+    return path;
+  }
+
+  getStaticSolicitud(nombreSolicitud: string) {
+    const path = join(__dirname, '../../static/solicitudes', nombreSolicitud);
+    if (!existsSync(path))
+      throw new BadRequestException(
+        `No se encontro ningun archivo ${nombreSolicitud}`,
+      );
+    return path;
+  }
+
+  getArchivosPdfDocx() {
+    const rutaCarpetaArchivos = join(__dirname, '../../static/proyectos');
+    const archivos = fs.readdirSync(rutaCarpetaArchivos);
+    const archivosFiltrados = archivos.filter(
+      (archivo) => archivo.endsWith('.pdf') || archivo.endsWith('.docx'),
+    );
+
+    if (archivosFiltrados.length === 0) {
+      throw new NotFoundException('No se encontraron archivos PDF o DOCX.');
+    }
+
+    return archivosFiltrados;
   }
 
   async findAll() {
