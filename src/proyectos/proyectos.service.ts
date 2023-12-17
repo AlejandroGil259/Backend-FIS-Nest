@@ -70,11 +70,6 @@ export class ProyectosService {
         segundoAutor: createProyectoDto.segundoAutor,
       });
 
-      // Verificar si se proporcionó un archivoProyecto
-      if (createProyectoDto.archivoProyecto) {
-        usuariosProyectos.archivoProyecto = createProyectoDto.archivoProyecto;
-      }
-
       await this.usuariosProyectosRepo.save(usuariosProyectos);
 
       return nuevoProyecto;
@@ -202,8 +197,7 @@ export class ProyectosService {
         `No se encontró ningun proyecto con Id ${idProyecto}`,
       );
 
-    const { usuarioDocumento, archivoProyecto, ...infoProyecto } =
-      updateProyectoDto;
+    const { usuarioDocumento, ...infoProyecto } = updateProyectoDto;
 
     try {
       const usuario = await this.authService.findOne(usuarioDocumento);
@@ -223,10 +217,7 @@ export class ProyectosService {
           `No existe la relacion con el proyecto ${idProyecto}, y el usuario ${usuarioDocumento}`,
         );
 
-      await this.usuariosProyectosRepo.update(
-        { id: usuariosProyectos.id },
-        { archivoProyecto },
-      );
+      //await this.usuariosProyectosRepo.update({ id: usuariosProyectos.id });
 
       await this.proyectoRepo.update({ idProyecto }, { ...infoProyecto });
 

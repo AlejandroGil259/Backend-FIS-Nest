@@ -28,10 +28,6 @@ export class EspaciosCoterminale {
   @Column({ type: 'varchar', enum: SEDES })
   institucion: SEDES;
 
-  @ApiProperty()
-  @Column()
-  usuariosEspacioCoCedula: number;
-
   @OneToMany(() => Proyecto, (proyecto) => proyecto.espacioCoterminal, {
     cascade: true,
   })

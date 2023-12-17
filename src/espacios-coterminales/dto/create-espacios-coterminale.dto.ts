@@ -18,8 +18,4 @@ export class CreateEspaciosCoterminaleDto {
   })
   @IsEnum(SEDES)
   institucion: SEDES;
-
-  @ApiProperty({ example: 123456789 })
-  @IsNumber()
-  usuariosEspacioCoCedula: number;
 }

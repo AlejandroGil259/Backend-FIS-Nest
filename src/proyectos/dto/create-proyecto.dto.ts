@@ -29,9 +29,9 @@ export class CreateProyectoDto {
   @IsNumber()
   usuarioDocumento: number;
 
-  @ApiProperty({ description: 'Archivo adjunto al proyecto', example: '-----' })
-  @IsString()
-  archivoProyecto: string;
+  // @ApiProperty({ description: 'Archivo adjunto al proyecto', example: '-----' })
+  // @IsString()
+  // archivoProyecto: string;
 
   @ApiProperty()
   @IsNumber()

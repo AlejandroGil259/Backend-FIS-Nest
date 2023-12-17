@@ -17,16 +17,9 @@ export class EspaciosCoterminalesService {
     private readonly usuarioRepo: Repository<Usuario>,
   ) {}
   async create(createEspaciosCoterminaleDto: CreateEspaciosCoterminaleDto) {
-    const { usuariosEspacioCoCedula: usuariosEspacioCoCedula } =
-      createEspaciosCoterminaleDto;
     try {
-      const usuarioEspacioCo = await this.usuarioRepo.findBy({
-        documento: usuariosEspacioCoCedula,
-      });
-
       const espacioCo = await this.espaciosRepo.save({
         ...createEspaciosCoterminaleDto,
-        usuarioEspacioCo,
       });
 
       return { espacioCo };
