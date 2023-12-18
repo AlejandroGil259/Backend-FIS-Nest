@@ -192,34 +192,40 @@ export class ProyectosService {
 
   async update(idProyecto: string, updateProyectoDto: UpdateProyectoDto) {
     const proyecto = await this.proyectoRepo.findOneBy({ idProyecto });
-    if (!proyecto)
+
+    if (!proyecto) {
       throw new NotFoundException(
-        `No se encontró ningun proyecto con Id ${idProyecto}`,
+        `No se encontró ningún proyecto con Id ${idProyecto}`,
       );
+    }
 
     const { usuarioDocumento, ...infoProyecto } = updateProyectoDto;
 
     try {
-      const usuario = await this.authService.findOne(usuarioDocumento);
-
-      if (!usuario) {
-        throw new NotFoundException(
-          `No se encontró ningun usuario con documento ${usuarioDocumento}`,
-        );
-      }
-      const usuariosProyectos = await this.usuariosProyectosRepo.findOneBy({
-        proyecto: { idProyecto },
-        usuario: { documento: usuarioDocumento },
+      // Obtener la relación usuariosProyectos
+      const usuariosProyectos = await this.usuariosProyectosRepo.findOne({
+        where: {
+          proyecto: { idProyecto },
+          usuario: { documento: usuarioDocumento },
+        },
       });
 
-      if (!usuariosProyectos)
+      // Verificar si existe la relación
+      if (!usuariosProyectos) {
         throw new BadRequestException(
-          `No existe la relacion con el proyecto ${idProyecto}, y el usuario ${usuarioDocumento}`,
+          `No existe la relación con el proyecto ${idProyecto} y el usuario ${usuarioDocumento}`,
         );
+      }
 
-      //await this.usuariosProyectosRepo.update({ id: usuariosProyectos.id });
+      // Actualizar propiedades director, codirector y segundoAutor en UsuariosProyectos
+      usuariosProyectos.director = updateProyectoDto.director;
+      usuariosProyectos.codirector = updateProyectoDto.codirector;
+      usuariosProyectos.segundoAutor = updateProyectoDto.segundoAutor;
 
-      await this.proyectoRepo.update({ idProyecto }, { ...infoProyecto });
+      // Guardar la actualización de usuariosProyectos
+      await this.usuariosProyectosRepo.save(usuariosProyectos);
+
+      // No actualizamos directamente la entidad Proyecto
 
       return {
         success: true,
