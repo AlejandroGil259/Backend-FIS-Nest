@@ -238,10 +238,18 @@ export class ArchivosController {
     status: 404,
     description: 'No hay registros en la base de datos de este archivo',
   })
-  @Patch(':id')
+  @Patch(':idArchivo')
   update(@Param('id') id: string, @Body() updateArchivoDto: UpdateArchivoDto) {
     return this.archivosService.update(id, updateArchivoDto);
   }
+
+  // @Patch(':idArchivo')
+  // async actualizarArchivo(
+  //   @Param('idArchivo') idArchivo: string,
+  //   @Body() updateArchivoDto: UpdateArchivoDto,
+  // ) {
+  //   return this.archivosService.update(idArchivo, updateArchivoDto);
+  // }
 
   @ApiResponse({
     status: 200,

@@ -57,6 +57,10 @@ export class Entregas extends BaseEntity {
   @Column({ nullable: true })
   fechaActa?: Date;
 
+  @ApiProperty()
+  @Column({ nullable: true })
+  archivoEntrega?: string;
+
   @ManyToOne(() => Proyecto, (proyecto) => proyecto.entregas, {
     onDelete: 'CASCADE',
   })

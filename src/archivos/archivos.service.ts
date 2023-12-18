@@ -185,40 +185,7 @@ export class ArchivosService {
       throw DBExceptionService.handleDBException(error);
     }
   }
-  //PRUEBA PATCH1
-  // async updateExtension(id: string, newExtension: string): Promise<Archivo> {
-  //   const archivo = await this.archivoRepo.findOne({ where: { id } });
-  //   if (!archivo) {
-  //     throw new NotFoundException('Archivo no encontrado');
-  //   }
-
-  //   archivo.extensionArchivo = newExtension;
-  //   return this.archivoRepo.save(archivo);
-  // }
-
-  // PRUEBA PUT 2
-  // async updateArchivo(
-  //   idArchivo: string,
-  //   updateArchivoDto: UpdateArchivoDto,
-  // ): Promise<Archivo> {
-  //   // Encuentra el archivo por ID
-  //   const archivo = await this.archivoRepo.findOne({
-  //     where: { idArchivo: idArchivo },
-  //   });
-
-  //   if (!archivo) {
-  //     // Manejar el caso en que el archivo no existe
-  //     throw new Error('Archivo no encontrado');
-  //   }
-
-  //   // Aplica las actualizaciones desde el DTO
-  //   archivo.filename = updateArchivoDto.filename;
-
-  //   // Guarda el archivo actualizado en la base de datos
-  //   await this.archivoRepo.save(archivo);
-
-  //   return archivo;
-  // }
+  
   async remove(idArchivo: string) {
     const archivo = await this.archivosRepo.findOne({
       where: { idArchivo },

@@ -31,12 +31,12 @@ export class CreateEntregasDto {
   @IsOptional()
   descripcion?: string;
 
-  @ApiProperty({ example: 'Nombre evaluador1' })
+  @ApiProperty({ example: 987654321 })
   @IsNumber()
   @IsOptional()
   evaluador1?: number;
 
-  @ApiProperty({ example: 'Nombre evaluador2' })
+  @ApiProperty({ example: 123456789 })
   @IsNumber()
   @IsOptional()
   evaluador2?: number;
@@ -52,6 +52,10 @@ export class CreateEntregasDto {
   @IsOptional()
   @IsNotEmpty()
   fechaActa?: Date;
+
+  @ApiProperty()
+  @IsString()
+  archivoEntrega?: string;
 
   @ApiProperty({
     description: 'Escribe aqui tu IdProyecto ',
