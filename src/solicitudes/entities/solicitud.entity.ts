@@ -18,13 +18,13 @@ export class Solicitud extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   idSolicitud: string;
 
-  // @ApiProperty()
-  // @Column()
-  // nombres: string;
+  @ApiProperty()
+  @Column()
+  nombres: string;
 
-  // @ApiProperty()
-  // @Column()
-  // apellidos: string;
+  @ApiProperty()
+  @Column()
+  apellidos: string;
 
   @ApiProperty({ example: 'Número de Acta' })
   @Column({ nullable: true })

@@ -10,13 +10,13 @@ import {
 import { ESTADO_RESPUESTA_SOLICITUD, TIPO_SOLICITUD } from '../constants';
 
 export class CreateSolicitudesDto {
-  // @ApiProperty({ example: 'Nombres' })
-  // @IsString()
-  // nombres: string;
+  @ApiProperty({ example: 'Nombres' })
+  @IsString()
+  nombres: string;
 
-  // @ApiProperty({ example: 'Apellidos' })
-  // @IsString()
-  // apellidos: string;
+  @ApiProperty({ example: 'Apellidos' })
+  @IsString()
+  apellidos: string;
 
   @ApiProperty({ example: 'Número de Acta' })
   @IsString()

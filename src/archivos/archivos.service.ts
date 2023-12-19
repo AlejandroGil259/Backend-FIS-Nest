@@ -98,6 +98,7 @@ export class ArchivosService {
 
       return nuevoArchivo;
     } catch (error) {
+      console.error('Error en crearArchivoSolicitud:', error);
       throw DBExceptionService.handleDBException(error);
     }
   }
@@ -120,19 +121,19 @@ export class ArchivosService {
     return path;
   }
 
-  getArchivosPdfDocx() {
-    const rutaCarpetaArchivos = join(__dirname, '../../static/proyectos');
-    const archivos = fs.readdirSync(rutaCarpetaArchivos);
-    const archivosFiltrados = archivos.filter(
-      (archivo) => archivo.endsWith('.pdf') || archivo.endsWith('.docx'),
-    );
+  // getArchivosPdfDocx() {
+  //   const rutaCarpetaArchivos = join(__dirname, '../../static/proyectos');
+  //   const archivos = fs.readdirSync(rutaCarpetaArchivos);
+  //   const archivosFiltrados = archivos.filter(
+  //     (archivo) => archivo.endsWith('.pdf') || archivo.endsWith('.docx'),
+  //   );
 
-    if (archivosFiltrados.length === 0) {
-      throw new NotFoundException('No se encontraron archivos PDF o DOCX.');
-    }
+  //   if (archivosFiltrados.length === 0) {
+  //     throw new NotFoundException('No se encontraron archivos PDF o DOCX.');
+  //   }
 
-    return archivosFiltrados;
-  }
+  //   return archivosFiltrados;
+  // }
 
   async findAll() {
     const archivos = await this.archivosRepo.find();
@@ -185,7 +186,45 @@ export class ArchivosService {
       throw DBExceptionService.handleDBException(error);
     }
   }
-  
+
+  async actualizarArchivoSolicitud(
+    idSolicitud: string,
+    archivo: Express.Multer.File,
+  ): Promise<Archivo> {
+    // Verificar que la solicitud exista
+    const solicitud = await this.solicitudesService.findOne(idSolicitud);
+
+    if (!solicitud) {
+      throw new NotFoundException(
+        `No se encontró la solicitud con ID ${idSolicitud}`,
+      );
+    }
+
+    // Verificar si ya existe un archivo asociado a la solicitud
+    const archivoExistente = await this.archivosRepo.findOne({
+      where: {
+        solicitud: {
+          idSolicitud: solicitud.idSolicitud,
+        },
+      },
+    });
+
+    if (archivoExistente) {
+      // Si existe, actualizar el nombre del archivo y guardar
+      archivoExistente.nombreArchivoOriginal = archivo.originalname;
+      await this.archivosRepo.save(archivoExistente);
+      return archivoExistente;
+    } else {
+      // Si no existe, crear un nuevo archivo asociado a la solicitud
+      const nuevoArchivo = this.archivosRepo.create({
+        nombreArchivoOriginal: archivo.originalname,
+        solicitud: solicitud,
+      });
+
+      return await this.archivosRepo.save(nuevoArchivo);
+    }
+  }
+
   async remove(idArchivo: string) {
     const archivo = await this.archivosRepo.findOne({
       where: { idArchivo },

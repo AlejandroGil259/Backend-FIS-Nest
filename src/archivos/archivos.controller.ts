@@ -124,7 +124,7 @@ export class ArchivosController {
   )
   async uploadSolicitud(
     @UploadedFile() archivo: Express.Multer.File,
-    @Body('idSolicitud') idSolicitud: string, // El idSolicitud debe ir en el cuerpo de la solicitud
+    @Body('idSolicitud') idSolicitud: string,
   ) {
     if (!idSolicitud) {
       throw new BadRequestException(
@@ -154,7 +154,7 @@ export class ArchivosController {
       };
     } catch (error) {
       throw new BadRequestException(
-        'No se pudo encontrar el id para guardar el archivo en la base de datos.',
+        `No se pudo guardar el archivo en la base de datos. Detalles: ${error.message}`,
       );
     }
   }
@@ -179,11 +179,11 @@ export class ArchivosController {
     status: 404,
     description: 'No hay archivos en la base de datos',
   })
-  @Get('pdf-y-docx')
-  async getArchivosPdfDocx(@Res() res: Response) {
-    const archivos = await this.archivosService.getArchivosPdfDocx();
-    res.json(archivos);
-  }
+  // @Get('pdf-y-docx')
+  // async getArchivosPdfDocx(@Res() res: Response) {
+  //   const archivos = await this.archivosService.getArchivosPdfDocx();
+  //   res.json(archivos);
+  // }
   @ApiResponse({
     status: 200,
     description: 'Se encontró un archivo con el id ingresado ',
@@ -243,13 +243,66 @@ export class ArchivosController {
     return this.archivosService.update(id, updateArchivoDto);
   }
 
-  // @Patch(':idArchivo')
-  // async actualizarArchivo(
-  //   @Param('idArchivo') idArchivo: string,
-  //   @Body() updateArchivoDto: UpdateArchivoDto,
-  // ) {
-  //   return this.archivosService.update(idArchivo, updateArchivoDto);
-  // }
+  @ApiResponse({
+    status: 200,
+    description: 'Se ha eliminado el archivo',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'No hay archivos en la base de datos',
+  })
+  @Patch('actualizar/:idSolicitud')
+  @UseInterceptors(
+    FileInterceptor('archivo', {
+      fileFilter: filtrarArchivo,
+      storage: diskStorage({
+        destination: './static/solicitudes',
+        filename: nombreArchivo,
+      }),
+    }),
+  )
+  async actualizarArchivoSolicitud(
+    @Param('idSolicitud') idSolicitud: string,
+    @UploadedFile() archivo: Express.Multer.File,
+  ) {
+    if (!idSolicitud) {
+      throw new BadRequestException(
+        'El campo idSolicitud es requerido en los parámetros de la URL.',
+      );
+    }
+
+    if (!archivo) {
+      throw new BadRequestException(
+        'Asegúrate de que sea un archivo Word (.docx), un archivo PDF (.pdf), o .zip',
+      );
+    }
+
+    const isValidUUID = isUUID(idSolicitud);
+    if (!isValidUUID) {
+      throw new BadRequestException(
+        'El ID de solicitud proporcionado no es válido.',
+      );
+    }
+
+    // Servicio para actualizar o sobrescribir el archivo en la base de datos
+    try {
+      const updatedArchivo =
+        await this.archivosService.actualizarArchivoSolicitud(
+          idSolicitud,
+          archivo,
+        );
+      return {
+        secureUrl: `${this.configService.get('HOST_API')}/archivos/proyecto/${
+          updatedArchivo.nombreArchivoOriginal
+        }`,
+      };
+    } catch (error) {
+      console.error(error);
+      throw new BadRequestException(
+        'No se pudo actualizar el archivo en la base de datos.',
+      );
+    }
+  }
 
   @ApiResponse({
     status: 200,
