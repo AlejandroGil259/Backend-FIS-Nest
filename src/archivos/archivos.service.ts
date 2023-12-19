@@ -73,11 +73,19 @@ export class ArchivosService {
     }
   }
 
+  getStaticProyecto(nombreProyecto: string) {
+    const path = join(__dirname, '../../static/proyectos', nombreProyecto);
+    if (!existsSync(path))
+      throw new BadRequestException(
+        `No se encontro ningun archivo ${nombreProyecto}`,
+      );
+    return path;
+  }
+  
   async crearArchivoSolicitud(
+    idSolicitud: string,
     createArchivoDto: CreateArchivoDto,
   ): Promise<Archivo> {
-    const { idSolicitud, ...restoDto } = createArchivoDto;
-
     // Verifica que la solicitud exista
     const solicitud = await this.solicitudesService.findOne(idSolicitud);
 
@@ -90,8 +98,8 @@ export class ArchivosService {
     // Archivo asociado a la solicitud
     try {
       const archivo = this.archivosRepo.create({
-        ...restoDto,
-        solicitud: solicitud,
+        ...createArchivoDto,
+        solicitud: solicitud, // Asegúrate de que la relación esté configurada correctamente
       });
 
       const nuevoArchivo = await this.archivosRepo.save(archivo);
@@ -101,15 +109,6 @@ export class ArchivosService {
       console.error('Error en crearArchivoSolicitud:', error);
       throw DBExceptionService.handleDBException(error);
     }
-  }
-
-  getStaticProyecto(nombreProyecto: string) {
-    const path = join(__dirname, '../../static/proyectos', nombreProyecto);
-    if (!existsSync(path))
-      throw new BadRequestException(
-        `No se encontro ningun archivo ${nombreProyecto}`,
-      );
-    return path;
   }
 
   getStaticSolicitud(nombreSolicitud: string) {

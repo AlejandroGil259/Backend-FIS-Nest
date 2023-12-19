@@ -112,7 +112,7 @@ export class ArchivosController {
     status: 500,
     description: 'Error en el servidor, puede ser culpa del código o de la DB',
   })
-  @Post('solicitudes')
+  @Post('solicitudes/:idSolicitud')
   @UseInterceptors(
     FileInterceptor('archivo', {
       fileFilter: filtrarArchivo,
@@ -124,11 +124,11 @@ export class ArchivosController {
   )
   async uploadSolicitud(
     @UploadedFile() archivo: Express.Multer.File,
-    @Body('idSolicitud') idSolicitud: string,
+    @Param('idSolicitud') idSolicitud: string,
   ) {
     if (!idSolicitud) {
       throw new BadRequestException(
-        'El campo idSolicitud es requerido en el cuerpo de la solicitud.',
+        'El campo idSolicitud es requerido en los parámetros de la URL.',
       );
     }
 
@@ -140,25 +140,27 @@ export class ArchivosController {
 
     // Servicio para guardar el archivo en la base de datos
     const createArchivoDto = new CreateArchivoDto({
-      // nombreArchivoServidor: archivo.filename,
       nombreArchivoOriginal: archivo.originalname,
       idSolicitud: idSolicitud,
     });
 
     try {
-      await this.archivosService.crearArchivoSolicitud(createArchivoDto);
+      await this.archivosService.crearArchivoSolicitud(
+        idSolicitud,
+        createArchivoDto,
+      );
       return {
         secureUrl: `${this.configService.get(
           'HOST_API',
         )}/archivos/solicitudes/${archivo.filename}`,
       };
     } catch (error) {
+      console.error(error);
       throw new BadRequestException(
-        `No se pudo guardar el archivo en la base de datos. Detalles: ${error.message}`,
+        'No se pudo guardar el archivo en la base de datos.',
       );
     }
   }
-
   @ApiResponse({
     status: 200,
     description: 'Se encontraron todos los archivos',
