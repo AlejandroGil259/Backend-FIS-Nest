@@ -61,8 +61,12 @@ export class Solicitud extends BaseEntity {
   })
   respEstado: ESTADO_RESPUESTA_SOLICITUD;
 
+  @ApiProperty()
+  @Column()
+  usuarioDocumento: number;
+
   @ManyToOne(() => Usuario, (usuario) => usuario.solicitudes)
-  @JoinColumn({ name: 'usuarioDocumento' })
+  //@JoinColumn({ name: 'usuarioDocumento' })
   usuario: Usuario;
 
   @OneToMany(() => Archivo, (archivo) => archivo.solicitud, { cascade: true })
