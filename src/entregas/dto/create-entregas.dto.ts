@@ -55,6 +55,7 @@ export class CreateEntregasDto {
 
   @ApiProperty()
   @IsString()
+  @IsOptional()
   archivoEntrega?: string;
 
   @ApiProperty({

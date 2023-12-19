@@ -77,7 +77,7 @@ export class ArchivosController {
 
     // Servicio para guardar el archivo en la base de datos
     const createArchivoDto = new CreateArchivoDto({
-      nombreArchivoServidor: archivo.filename,
+      // nombreArchivoServidor: archivo.filename,
       nombreArchivoOriginal: archivo.originalname,
       idEntrega: idEntrega,
       // o
@@ -140,7 +140,7 @@ export class ArchivosController {
 
     // Servicio para guardar el archivo en la base de datos
     const createArchivoDto = new CreateArchivoDto({
-      nombreArchivoServidor: archivo.filename,
+      // nombreArchivoServidor: archivo.filename,
       nombreArchivoOriginal: archivo.originalname,
       idSolicitud: idSolicitud,
     });
