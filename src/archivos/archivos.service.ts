@@ -11,7 +11,6 @@ import { DBExceptionService } from '../commons/services/db-exception.service';
 import { CreateArchivoDto } from './dto/create-archivo.dto';
 import { UpdateArchivoDto } from './dto/update-archivo.dto';
 import { Archivo } from './entities/archivo.entity';
-import * as fs from 'fs';
 import { EntregasService } from '../entregas/entregas.service';
 import { SolicitudesService } from '../solicitudes/solicitudes.service';
 import { Proyecto } from '../proyectos/entities/proyecto.entity';
@@ -81,7 +80,7 @@ export class ArchivosService {
       );
     return path;
   }
-  
+
   async crearArchivoSolicitud(
     idSolicitud: string,
     createArchivoDto: CreateArchivoDto,

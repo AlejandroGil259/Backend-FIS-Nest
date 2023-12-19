@@ -150,9 +150,9 @@ export class ArchivosController {
         createArchivoDto,
       );
       return {
-        secureUrl: `${this.configService.get(
-          'HOST_API',
-        )}/archivos/solicitudes/${archivo.filename}`,
+        secureUrl: `${this.configService.get('HOST_API')}/archivos/solicitud/${
+          archivo.filename
+        }`,
       };
     } catch (error) {
       console.error(error);
@@ -294,7 +294,7 @@ export class ArchivosController {
           archivo,
         );
       return {
-        secureUrl: `${this.configService.get('HOST_API')}/archivos/proyecto/${
+        secureUrl: `${this.configService.get('HOST_API')}/archivos/solicitud/${
           updatedArchivo.nombreArchivoOriginal
         }`,
       };
