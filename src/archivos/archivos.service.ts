@@ -27,6 +27,7 @@ export class ArchivosService {
     private readonly usuariosProyectosRepo: Repository<UsuariosProyectos>,
     private readonly entregasService: EntregasService,
     private readonly solicitudesService: SolicitudesService,
+    private readonly proyectosService: EntregasService,
   ) {}
 
   async crearArchivo(
@@ -217,6 +218,44 @@ export class ArchivosService {
       const nuevoArchivo = this.archivosRepo.create({
         nombreArchivoOriginal: archivo.originalname,
         solicitud: solicitud,
+      });
+
+      return await this.archivosRepo.save(nuevoArchivo);
+    }
+  }
+
+  async actualizarArchivoEntrega(
+    idEntrega: string,
+    archivo: Express.Multer.File,
+  ): Promise<Archivo> {
+    // Verificar que la entrega exista
+    const entrega = await this.entregasService.findOne(idEntrega);
+
+    if (!entrega) {
+      throw new NotFoundException(
+        `No se encontró la entrega con ID ${idEntrega}`,
+      );
+    }
+
+    // Verificar si ya existe un archivo asociado a la entrega
+    const archivoExistente = await this.archivosRepo.findOne({
+      where: {
+        entregas: {
+          idEntrega: entrega.idEntrega,
+        },
+      },
+    });
+
+    if (archivoExistente) {
+      // Si existe, actualizar el nombre del archivo y guardar
+      archivoExistente.nombreArchivoOriginal = archivo.originalname;
+      await this.archivosRepo.save(archivoExistente);
+      return archivoExistente;
+    } else {
+      // Si no existe, crear un nuevo archivo asociado a la entrega
+      const nuevoArchivo = this.archivosRepo.create({
+        nombreArchivoOriginal: archivo.originalname,
+        entregas: entrega,
       });
 
       return await this.archivosRepo.save(nuevoArchivo);

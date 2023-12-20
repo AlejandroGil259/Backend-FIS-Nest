@@ -306,6 +306,55 @@ export class ArchivosController {
     }
   }
 
+  @Patch('actualizarEntrega/:idEntrega')
+  @UseInterceptors(
+    FileInterceptor('archivo', {
+      fileFilter: filtrarArchivo,
+      storage: diskStorage({
+        destination: './static/proyectos',
+        filename: nombreArchivo,
+      }),
+    }),
+  )
+  async actualizarArchivoEntrega(
+    @Param('idEntrega') idEntrega: string,
+    @UploadedFile() archivo: Express.Multer.File,
+  ) {
+    if (!idEntrega) {
+      throw new BadRequestException(
+        'El campo idEntrega es requerido en los parámetros de la URL.',
+      );
+    }
+
+    if (!archivo) {
+      throw new BadRequestException(
+        'Asegúrate de que sea un archivo Word (.docx), un archivo PDF (.pdf), o .zip',
+      );
+    }
+
+    const isValidUUID = isUUID(idEntrega);
+    if (!isValidUUID) {
+      throw new BadRequestException(
+        'El ID de entrega proporcionado no es válido.',
+      );
+    }
+
+    try {
+      const updatedArchivo =
+        await this.archivosService.actualizarArchivoEntrega(idEntrega, archivo);
+      return {
+        secureUrl: `${this.configService.get('HOST_API')}/archivos/proyectos/${
+          updatedArchivo.nombreArchivoOriginal
+        }`,
+      };
+    } catch (error) {
+      console.error(error);
+      throw new BadRequestException(
+        'No se pudo actualizar el archivo en la base de datos.',
+      );
+    }
+  }
+
   @ApiResponse({
     status: 200,
     description: 'Se ha eliminado el archivo',
