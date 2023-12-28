@@ -9,4 +9,5 @@ export enum ESTADO_ENTREGAS {
   APROBADO = 'Aprobado',
   APROBADO_OBSERVACIONES = 'Aprobado con observaciones',
   NO_APROBADO = 'No aprobado',
+  FINALIZADO = 'Finalizado',
 }

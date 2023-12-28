@@ -130,10 +130,10 @@ export class EstadisticasService {
         });
       });
 
-      console.log(
-        'Conteo de proyectos por director:',
-        countProyectosPorDocente,
-      );
+      // console.log(
+      //   'Conteo de proyectos por director:',
+      //   countProyectosPorDocente,
+      // );
 
       // Formatear el resultado como un arreglo de objetos
       const resultado = await Promise.all(
@@ -143,7 +143,7 @@ export class EstadisticasService {
         })),
       );
 
-      console.log('Resultado final:', resultado);
+      //console.log('Resultado final:', resultado);
 
       return resultado;
     } catch (error) {
