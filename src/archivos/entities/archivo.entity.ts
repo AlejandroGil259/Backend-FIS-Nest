@@ -16,13 +16,13 @@ export class Archivo extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   idArchivo: string;
 
-  // @ApiProperty()
-  // @Column({ type: 'text', nullable: false })
-  // nombreArchivoServidor: string;
-
-  @ApiProperty()Ñ
+  @ApiProperty()
   @Column({ type: 'text', nullable: false })
   nombreArchivoOriginal: string;
+
+  @ApiProperty()
+  @Column({ type: 'text', nullable: false })
+  nombreArchivoServidor: string;
 
   @ApiProperty()
   @Column({ type: 'text', nullable: true })
@@ -35,7 +35,7 @@ export class Archivo extends BaseEntity {
   entregas: Entregas;
 
   @ManyToOne(() => Solicitud, (solicitud) => solicitud.archivos, {
-    onDelete: 'CASCADE',  
+    onDelete: 'CASCADE',
   })
   solicitud: Solicitud;
 }

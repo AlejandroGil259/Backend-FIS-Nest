@@ -15,6 +15,10 @@ import { EntregasService } from '../entregas/entregas.service';
 import { SolicitudesService } from '../solicitudes/solicitudes.service';
 import { Proyecto } from '../proyectos/entities/proyecto.entity';
 import { UsuariosProyectos } from '../auth/entities/usuarios-proyectos.entity';
+import { rename } from 'fs/promises';
+import { promisify } from 'util';
+
+const renameAsync = promisify(rename);
 
 @Injectable()
 export class ArchivosService {
@@ -106,7 +110,7 @@ export class ArchivosService {
 
       return nuevoArchivo;
     } catch (error) {
-      console.error('Error en crearArchivoSolicitud:', error);
+      console.error('Error en crear Archivo Solicitud:', error);
       throw DBExceptionService.handleDBException(error);
     }
   }
@@ -157,7 +161,7 @@ export class ArchivosService {
     return archivo;
   }
 
-  async getArchivoById(idArchivo: string): Promise<Archivo> {
+  async findById(idArchivo: string): Promise<Archivo> {
     const archivo = await this.archivosRepo.findOne({ where: { idArchivo } });
 
     if (!archivo) {
@@ -187,40 +191,27 @@ export class ArchivosService {
   }
 
   async actualizarArchivoSolicitud(
-    idSolicitud: string,
-    archivo: Express.Multer.File,
+    idArchivo: string,
+    nuevoArchivoDto: UpdateArchivoDto,
   ): Promise<Archivo> {
-    // Verificar que la solicitud exista
-    const solicitud = await this.solicitudesService.findOne(idSolicitud);
-
-    if (!solicitud) {
-      throw new NotFoundException(
-        `No se encontró la solicitud con ID ${idSolicitud}`,
-      );
-    }
-
-    // Verificar si ya existe un archivo asociado a la solicitud
-    const archivoExistente = await this.archivosRepo.findOne({
-      where: {
-        solicitud: {
-          idSolicitud: solicitud.idSolicitud,
-        },
-      },
-    });
-
-    if (archivoExistente) {
-      // Si existe, actualizar el nombre del archivo y guardar
-      archivoExistente.nombreArchivoOriginal = archivo.originalname;
-      await this.archivosRepo.save(archivoExistente);
-      return archivoExistente;
-    } else {
-      // Si no existe, crear un nuevo archivo asociado a la solicitud
-      const nuevoArchivo = this.archivosRepo.create({
-        nombreArchivoOriginal: archivo.originalname,
-        solicitud: solicitud,
+    try {
+      const archivo = await this.archivosRepo.findOne({
+        where: { idArchivo },
+        relations: ['solicitud'],
       });
 
-      return await this.archivosRepo.save(nuevoArchivo);
+      // Actualizar propiedades del archivo
+      archivo.nombreArchivoOriginal =
+        nuevoArchivoDto.nombreArchivoOriginal || archivo.nombreArchivoOriginal;
+      archivo.nombreArchivoServidor =
+        nuevoArchivoDto.nombreArchivoServidor || archivo.nombreArchivoServidor;
+
+      await this.archivosRepo.save(archivo);
+
+      return archivo;
+    } catch (error) {
+      console.error('Error al actualizar el archivo:', error);
+      throw DBExceptionService.handleDBException(error);
     }
   }
 

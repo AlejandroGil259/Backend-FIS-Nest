@@ -2,9 +2,9 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateArchivoDto {
-  // @ApiProperty({ example: 'nombre archivo servidor' })
-  // @IsString()
-  // nombreArchivoServidor: string;
+  @ApiProperty({ example: 'nombre archivo servidor' })
+  @IsString()
+  nombreArchivoServidor: string;
 
   @ApiProperty({ example: 'Nombre archivo' })
   @IsString()
@@ -22,7 +22,7 @@ export class CreateArchivoDto {
   @IsOptional()
   @IsString()
   @IsNotEmpty()
-  idEntrega: string;
+  idEntrega?: string;
 
   @ApiProperty({
     description: 'Escribe aqui tu IdEntrega ',
@@ -31,12 +31,12 @@ export class CreateArchivoDto {
   @IsOptional()
   @IsString()
   @IsNotEmpty()
-  idSolicitud: string;
+  idSolicitud?: string;
 
   constructor(data: {
     idEntrega?: string;
     idSolicitud?: string;
-    //nombreArchivoServidor: string;
+    nombreArchivoServidor: string;
     nombreArchivoOriginal: string;
   }) {
     if (!data.idEntrega && !data.idSolicitud) {
@@ -44,7 +44,7 @@ export class CreateArchivoDto {
     }
     this.idEntrega = data.idEntrega;
     this.idSolicitud = data.idSolicitud;
-    //this.nombreArchivoServidor = data.nombreArchivoServidor;
+    this.nombreArchivoServidor = data.nombreArchivoServidor;
     this.nombreArchivoOriginal = data.nombreArchivoOriginal;
   }
 }

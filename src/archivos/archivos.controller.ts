@@ -1,9 +1,9 @@
 import {
   BadRequestException,
-  Body,
   Controller,
   Delete,
   Get,
+  NotFoundException,
   Param,
   Patch,
   Post,
@@ -18,9 +18,9 @@ import { Response } from 'express';
 import { diskStorage } from 'multer';
 import { ArchivosService } from './archivos.service';
 import { CreateArchivoDto } from './dto/create-archivo.dto';
-import { UpdateArchivoDto } from './dto/update-archivo.dto';
 import { filtrarArchivo, nombreArchivo } from './helpers';
 import { isUUID } from 'class-validator';
+import * as fs from 'fs';
 
 @ApiTags('Archivos')
 @Controller('archivos')
@@ -77,7 +77,7 @@ export class ArchivosController {
 
     // Servicio para guardar el archivo en la base de datos
     const createArchivoDto = new CreateArchivoDto({
-      // nombreArchivoServidor: archivo.filename,
+      nombreArchivoServidor: archivo.filename,
       nombreArchivoOriginal: archivo.originalname,
       idEntrega: idEntrega,
       // o
@@ -114,7 +114,7 @@ export class ArchivosController {
   })
   @Post('solicitudes/:idSolicitud')
   @UseInterceptors(
-    FileInterceptor('archivo', {
+    FileInterceptor('archivoSolicitud', {
       fileFilter: filtrarArchivo,
       storage: diskStorage({
         destination: './static/solicitudes',
@@ -141,6 +141,7 @@ export class ArchivosController {
     // Servicio para guardar el archivo en la base de datos
     const createArchivoDto = new CreateArchivoDto({
       nombreArchivoOriginal: archivo.originalname,
+      nombreArchivoServidor: archivo.filename,
       idSolicitud: idSolicitud,
     });
 
@@ -228,7 +229,7 @@ export class ArchivosController {
 
   @Get(':id')
   async getArchivoById(@Param('id') id: string) {
-    const archivo = await this.archivosService.getArchivoById(id);
+    const archivo = await this.archivosService.findById(id);
     return archivo;
   }
 
@@ -238,24 +239,11 @@ export class ArchivosController {
   })
   @ApiResponse({
     status: 404,
-    description: 'No hay registros en la base de datos de este archivo',
-  })
-  @Patch(':idArchivo')
-  update(@Param('id') id: string, @Body() updateArchivoDto: UpdateArchivoDto) {
-    return this.archivosService.update(id, updateArchivoDto);
-  }
-
-  @ApiResponse({
-    status: 200,
-    description: 'Se ha eliminado el archivo',
-  })
-  @ApiResponse({
-    status: 404,
     description: 'No hay archivos en la base de datos',
   })
-  @Patch('actualizar/:idSolicitud')
+  @Patch('actualizar/solicitud/:idArchivo')
   @UseInterceptors(
-    FileInterceptor('archivo', {
+    FileInterceptor('archivoSolicitud', {
       fileFilter: filtrarArchivo,
       storage: diskStorage({
         destination: './static/solicitudes',
@@ -264,12 +252,12 @@ export class ArchivosController {
     }),
   )
   async actualizarArchivoSolicitud(
-    @Param('idSolicitud') idSolicitud: string,
     @UploadedFile() archivo: Express.Multer.File,
+    @Param('idArchivo') idArchivo: string,
   ) {
-    if (!idSolicitud) {
+    if (!idArchivo) {
       throw new BadRequestException(
-        'El campo idSolicitud es requerido en los parámetros de la URL.',
+        'El campo idArchivo es requerido en los parámetros de la URL.',
       );
     }
 
@@ -279,23 +267,35 @@ export class ArchivosController {
       );
     }
 
-    const isValidUUID = isUUID(idSolicitud);
+    const isValidUUID = isUUID(idArchivo);
     if (!isValidUUID) {
-      throw new BadRequestException(
-        'El ID de solicitud proporcionado no es válido.',
+      throw new NotFoundException(
+        `El ID Archivo proporcionado no es válido ID: ${idArchivo}`,
       );
     }
 
-    // Servicio para actualizar o sobrescribir el archivo en la base de datos
+    const updateArchivoDto = {
+      nombreArchivoOriginal: archivo.originalname,
+      nombreArchivoServidor: archivo.filename,
+    };
+
     try {
-      const updatedArchivo =
+      const archivoActualizado =
         await this.archivosService.actualizarArchivoSolicitud(
-          idSolicitud,
-          archivo,
+          idArchivo,
+          updateArchivoDto,
         );
+
+      const rutaArchivoAntiguo = `./static/solicitudes/${archivoActualizado.nombreArchivoServidor}`;
+      const rutaNuevoArchivo = `./static/solicitudes/${archivo.filename}`;
+
+      // fs.promises para copiar o reemplazar el archivo
+      await fs.promises.copyFile(rutaNuevoArchivo, rutaArchivoAntiguo);
+      //await fs.promises.unlink(rutaNuevoArchivo); // Opcional: Eliminar el archivo antiguo
+
       return {
         secureUrl: `${this.configService.get('HOST_API')}/archivos/solicitud/${
-          updatedArchivo.nombreArchivoOriginal
+          archivoActualizado.nombreArchivoServidor
         }`,
       };
     } catch (error) {
