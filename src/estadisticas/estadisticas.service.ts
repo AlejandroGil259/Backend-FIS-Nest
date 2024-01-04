@@ -8,12 +8,16 @@ import {
 } from '../proyectos/constants';
 import { LessThan } from 'typeorm';
 import { AuthService } from '../auth/services/auth.service';
+import { Entregas } from '../entregas/entities/entregas.entity';
+import { ESTADO_ENTREGAS } from '../entregas/constants';
 
 @Injectable()
 export class EstadisticasService {
   constructor(
     @InjectRepository(Proyecto)
     private proyectoRepo: Repository<Proyecto>,
+    @InjectRepository(Entregas)
+    private entregasRepo: Repository<Entregas>,
     private authService: AuthService,
   ) {}
 
@@ -42,7 +46,7 @@ export class EstadisticasService {
   async getProyectosFinalizadosPorAno() {
     const proyectosFinalizadosPorAno = [];
 
-    const hoy = new Date(); // Obtén la fecha actual
+    const hoy = new Date(); // Obtener fecha actual
 
     for (let i = 0; i < 3; i++) {
       const fechaLimite = new Date(
@@ -155,14 +159,14 @@ export class EstadisticasService {
   async getProyectosExcluyendoEstados() {
     const proyectosExcluyendoEstados = [];
 
-    // Itera sobre los estados del enum ESTADO_RESPUESTA_PROYECTOS
-    for (const estado of Object.values(ESTADO_RESPUESTA_PROYECTOS)) {
+    // Itera sobre los estados del enum ESTADO_ENTREGAS
+    for (const estado of Object.values(ESTADO_ENTREGAS)) {
       if (
-        estado !== ESTADO_RESPUESTA_PROYECTOS.CANCELADO &&
-        estado !== ESTADO_RESPUESTA_PROYECTOS.NO_APROBADO &&
-        estado !== ESTADO_RESPUESTA_PROYECTOS.FINALIZADO
+        estado !== ESTADO_ENTREGAS.CANCELADO &&
+        estado !== ESTADO_ENTREGAS.NO_APROBADO &&
+        estado !== ESTADO_ENTREGAS.FINALIZADO
       ) {
-        const proyectos = await this.proyectoRepo.find({
+        const proyectos = await this.entregasRepo.find({
           where: {
             estado,
           },

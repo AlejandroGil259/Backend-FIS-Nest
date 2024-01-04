@@ -156,9 +156,9 @@ export class ProyectosController {
     status: 404,
     description: 'No hay proyectos en la base de datos para este usuario',
   })
-  @Patch(':id_proyecto')
+  @Patch(':idProyecto')
   update(
-    @Param('id_proyecto', ParseUUIDPipe) idProyecto: string,
+    @Param('idProyecto', ParseUUIDPipe) idProyecto: string,
     @Body() updateProyectoDto: UpdateProyectoDto,
   ) {
     return this.proyectosService.update(idProyecto, updateProyectoDto);

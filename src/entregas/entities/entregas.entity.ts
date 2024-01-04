@@ -1,6 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
-  BaseEntity,
   Column,
   Entity,
   JoinColumn,
@@ -10,7 +9,8 @@ import {
 } from 'typeorm';
 import { ESTADO_ENTREGAS, TIPO_ENTREGA } from '../constants';
 import { Archivo } from '../../archivos/entities/archivo.entity';
-import { Proyecto } from 'src/proyectos/entities/proyecto.entity';
+import { Proyecto } from '../../proyectos/entities/proyecto.entity';
+import { BaseEntity } from '../../commons/entities/base-entity.entity';
 
 @Entity('entregas')
 export class Entregas extends BaseEntity {

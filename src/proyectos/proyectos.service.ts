@@ -202,6 +202,14 @@ export class ProyectosService {
     const { usuarioDocumento, ...infoProyecto } = updateProyectoDto;
 
     try {
+      // Actualizar propiedades en la entidad Proyecto
+      proyecto.estado = updateProyectoDto.estado;
+      proyecto.opcionGrado = updateProyectoDto.opcionGrado;
+      proyecto.tituloVigente = updateProyectoDto.tituloVigente;
+
+      // Guardar la actualización de la entidad Proyecto
+      await this.proyectoRepo.save(proyecto);
+
       // Obtener la relación usuariosProyectos
       const usuariosProyectos = await this.usuariosProyectosRepo.findOne({
         where: {
@@ -224,8 +232,6 @@ export class ProyectosService {
 
       // Guardar la actualización de usuariosProyectos
       await this.usuariosProyectosRepo.save(usuariosProyectos);
-
-      // No actualizamos directamente la entidad Proyecto
 
       return {
         success: true,
