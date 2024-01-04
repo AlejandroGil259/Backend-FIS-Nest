@@ -216,40 +216,31 @@ export class ArchivosService {
   }
 
   async actualizarArchivoEntrega(
-    idEntrega: string,
-    archivo: Express.Multer.File,
+    idArchivo: string,
+    nuevoArchivoDto: UpdateArchivoDto,
   ): Promise<Archivo> {
-    // Verificar que la entrega exista
-    const entrega = await this.entregasService.findOne(idEntrega);
-
-    if (!entrega) {
-      throw new NotFoundException(
-        `No se encontró la entrega con ID ${idEntrega}`,
-      );
-    }
-
-    // Verificar si ya existe un archivo asociado a la entrega
-    const archivoExistente = await this.archivosRepo.findOne({
-      where: {
-        entregas: {
-          idEntrega: entrega.idEntrega,
-        },
-      },
-    });
-
-    if (archivoExistente) {
-      // Si existe, actualizar el nombre del archivo y guardar
-      archivoExistente.nombreArchivoOriginal = archivo.originalname;
-      await this.archivosRepo.save(archivoExistente);
-      return archivoExistente;
-    } else {
-      // Si no existe, crear un nuevo archivo asociado a la entrega
-      const nuevoArchivo = this.archivosRepo.create({
-        nombreArchivoOriginal: archivo.originalname,
-        entregas: entrega,
+    try {
+      const archivo = await this.archivosRepo.findOne({
+        where: { idArchivo },
+        relations: ['entregas'],
       });
 
-      return await this.archivosRepo.save(nuevoArchivo);
+      if (!archivo) {
+        throw new NotFoundException('Archivo no encontrado');
+      }
+
+      // Actualizar propiedades del archivo
+      archivo.nombreArchivoOriginal =
+        nuevoArchivoDto.nombreArchivoOriginal || archivo.nombreArchivoOriginal;
+      archivo.nombreArchivoServidor =
+        nuevoArchivoDto.nombreArchivoServidor || archivo.nombreArchivoServidor;
+
+      await this.archivosRepo.save(archivo);
+
+      return archivo;
+    } catch (error) {
+      console.error('Error al actualizar el archivo de entrega:', error);
+      throw DBExceptionService.handleDBException(error);
     }
   }
 

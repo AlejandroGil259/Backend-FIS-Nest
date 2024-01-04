@@ -255,31 +255,31 @@ export class ArchivosController {
     @UploadedFile() archivo: Express.Multer.File,
     @Param('idArchivo') idArchivo: string,
   ) {
-    if (!idArchivo) {
-      throw new BadRequestException(
-        'El campo idArchivo es requerido en los parámetros de la URL.',
-      );
-    }
-
-    if (!archivo) {
-      throw new BadRequestException(
-        'Asegúrate de que sea un archivo Word (.docx), un archivo PDF (.pdf), o .zip',
-      );
-    }
-
-    const isValidUUID = isUUID(idArchivo);
-    if (!isValidUUID) {
-      throw new NotFoundException(
-        `El ID Archivo proporcionado no es válido ID: ${idArchivo}`,
-      );
-    }
-
-    const updateArchivoDto = {
-      nombreArchivoOriginal: archivo.originalname,
-      nombreArchivoServidor: archivo.filename,
-    };
-
     try {
+      if (!idArchivo) {
+        throw new BadRequestException(
+          'El campo idArchivo es requerido en los parámetros de la URL.',
+        );
+      }
+
+      if (!archivo) {
+        throw new BadRequestException(
+          'Asegúrate de que sea un archivo Word (.docx), un archivo PDF (.pdf), o .zip',
+        );
+      }
+
+      const isValidUUID = isUUID(idArchivo);
+      if (!isValidUUID) {
+        throw new NotFoundException(
+          `El ID Archivo proporcionado no es válido ID: ${idArchivo}`,
+        );
+      }
+
+      const updateArchivoDto = {
+        nombreArchivoOriginal: archivo.originalname,
+        nombreArchivoServidor: archivo.filename,
+      };
+
       const archivoActualizado =
         await this.archivosService.actualizarArchivoSolicitud(
           idArchivo,
@@ -306,7 +306,7 @@ export class ArchivosController {
     }
   }
 
-  @Patch('actualizarEntrega/:idEntrega')
+  @Patch('actualizarEntrega/:idArchivo')
   @UseInterceptors(
     FileInterceptor('archivo', {
       fileFilter: filtrarArchivo,
@@ -317,40 +317,54 @@ export class ArchivosController {
     }),
   )
   async actualizarArchivoEntrega(
-    @Param('idEntrega') idEntrega: string,
     @UploadedFile() archivo: Express.Multer.File,
+    @Param('idArchivo') idArchivo: string,
   ) {
-    if (!idEntrega) {
-      throw new BadRequestException(
-        'El campo idEntrega es requerido en los parámetros de la URL.',
-      );
-    }
-
-    if (!archivo) {
-      throw new BadRequestException(
-        'Asegúrate de que sea un archivo Word (.docx), un archivo PDF (.pdf), o .zip',
-      );
-    }
-
-    const isValidUUID = isUUID(idEntrega);
-    if (!isValidUUID) {
-      throw new BadRequestException(
-        'El ID de entrega proporcionado no es válido.',
-      );
-    }
-
     try {
-      const updatedArchivo =
-        await this.archivosService.actualizarArchivoEntrega(idEntrega, archivo);
+      if (!idArchivo) {
+        throw new BadRequestException(
+          'El campo idArchivo es requerido en los parámetros de la URL.',
+        );
+      }
+
+      if (!archivo) {
+        throw new BadRequestException(
+          'Asegúrate de que sea un archivo Word (.docx), un archivo PDF (.pdf), o .zip',
+        );
+      }
+
+      const isValidUUID = isUUID(idArchivo);
+      if (!isValidUUID) {
+        throw new NotFoundException(
+          `El ID Archivo proporcionado no es válido ID: ${idArchivo}`,
+        );
+      }
+
+      const updateArchivoDto = {
+        nombreArchivoOriginal: archivo.originalname,
+        nombreArchivoServidor: archivo.filename,
+      };
+
+      const archivoActualizado =
+        await this.archivosService.actualizarArchivoEntrega(
+          idArchivo,
+          updateArchivoDto,
+        );
+
+      const rutaArchivoAntiguo = `./static/proyectos/${archivoActualizado.nombreArchivoServidor}`;
+      const rutaNuevoArchivo = `./static/proyectos/${archivo.filename}`;
+
+      await fs.promises.copyFile(rutaNuevoArchivo, rutaArchivoAntiguo);
+
       return {
-        secureUrl: `${this.configService.get('HOST_API')}/archivos/proyectos/${
-          updatedArchivo.nombreArchivoOriginal
+        secureUrl: `${this.configService.get('HOST_API')}/archivos/proyecto/${
+          archivoActualizado.nombreArchivoServidor
         }`,
       };
     } catch (error) {
       console.error(error);
       throw new BadRequestException(
-        'No se pudo actualizar el archivo en la base de datos.',
+        'No se pudo actualizar el archivo Entregas en la base de datos.',
       );
     }
   }
