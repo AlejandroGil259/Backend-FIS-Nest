@@ -115,7 +115,6 @@ export class EntregasService {
       const savedEntrega = await this.entregasRepo.save(entrega);
       return savedEntrega;
     } catch (error) {
-      // Manejar errores específicos de la base de datos si es necesario
       throw error;
     }
   }

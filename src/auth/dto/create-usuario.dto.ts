@@ -7,7 +7,6 @@ import {
   IsOptional,
   IsString,
   Matches,
-  MaxLength,
   MinLength,
 } from 'class-validator';
 import { ROLES } from '../constants';

@@ -4,7 +4,7 @@ import { IsOptional, IsPositive, Min } from 'class-validator';
 export class PaginationDto {
   @IsOptional()
   @IsPositive()
-  @Type(() => Number) //EnableImplicitConversions:true
+  @Type(() => Number)
   limit?: number;
 
   @IsOptional()

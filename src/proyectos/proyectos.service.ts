@@ -128,7 +128,6 @@ export class ProyectosService {
         );
       }
 
-      // Director y codirector sean de tipo number
       const proyectosAjustados = proyectosFiltrados.map((proyecto) => ({
         ...proyecto,
         usuariosProyectos: proyecto.usuariosProyectos.map(

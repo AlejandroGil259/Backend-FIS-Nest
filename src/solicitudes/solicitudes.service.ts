@@ -28,7 +28,7 @@ export class SolicitudesService {
     const { usuarioDocumento } = createSolicitudesDto;
 
     try {
-      // Busca el usuario por número de documento
+      // Buscamos usuario por número de documento
       const usuarioSolicitudes = await this.usuarioRepo.findOne({
         where: { documento: usuarioDocumento },
       });
@@ -42,10 +42,10 @@ export class SolicitudesService {
         );
       }
 
-      // Crea una nueva instancia de Solicitud
+      // Creamos una nueva instancia de Solicitud
       const solicitud = this.solicitudRepo.create(createSolicitudesDto);
 
-      // Establece la relación entre la solicitud y el usuario
+      // Establecemos la relación entre la solicitud y el usuario
       solicitud.usuario = usuarioSolicitudes;
 
       const solicitudGuardada = await this.solicitudRepo.save(solicitud);

@@ -140,12 +140,12 @@ export class ProyectosController {
     description: 'No hay proyectos en la base de datos con es id',
   })
   @ApiParam({
-    name: 'id_proyecto',
+    name: 'idProyecto',
     description: 'id del proyecto registrado',
     example: '1e63d902-b3f0-406c-9a37-d46eece2e016',
   })
-  @Get(':id_proyecto')
-  findOne(@Param('id_proyecto', ParseUUIDPipe) idProyecto: string) {
+  @Get(':idProyecto')
+  findOne(@Param('idProyecto', ParseUUIDPipe) idProyecto: string) {
     return this.proyectosService.findOne(idProyecto);
   }
   @ApiResponse({
@@ -207,8 +207,8 @@ export class ProyectosController {
     status: 404,
     description: 'No se encontro el proyectos en la base de datos',
   })
-  @Delete(':id_proyecto')
-  remove(@Param('id_proyecto', ParseUUIDPipe) idProyecto: string) {
+  @Delete(':idProyecto')
+  remove(@Param('idProyecto', ParseUUIDPipe) idProyecto: string) {
     return this.proyectosService.remove(idProyecto);
   }
 }

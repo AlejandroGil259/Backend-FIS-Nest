@@ -13,7 +13,7 @@ import { PasantiasModule } from './pasantias/pasantias.module';
 import { EspaciosCoterminalesModule } from './espacios-coterminales/espacios-coterminales.module';
 import { EstadisticasModule } from './estadisticas/estadisticas.module';
 import { EntregasModule } from './entregas/entregas.module';
-import { SharedModule } from './shared/shared.module';
+//import { SharedModule } from './shared/shared.module';
 
 @Module({
   imports: [

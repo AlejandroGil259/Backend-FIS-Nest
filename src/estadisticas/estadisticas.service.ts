@@ -24,7 +24,7 @@ export class EstadisticasService {
   async getTotalProyectosPorTipo() {
     const totalPorTipo = [];
 
-    // Filtra por cada tipo de OPCION_GRADO
+    // Filtramos por cada tipo de OPCION_GRADO
     for (const tipo of Object.values(OPCION_GRADO)) {
       const count = await this.proyectoRepo.count({
         where: {
@@ -46,7 +46,7 @@ export class EstadisticasService {
   async getProyectosFinalizadosPorAno() {
     const proyectosFinalizadosPorAno = [];
 
-    const hoy = new Date(); // Obtener fecha actual
+    const hoy = new Date();
 
     for (let i = 0; i < 3; i++) {
       const fechaLimite = new Date(
@@ -70,24 +70,6 @@ export class EstadisticasService {
 
     return proyectosFinalizadosPorAno;
   }
-
-  // async getProyectosPorDirector() {
-  //   const proyectosPorDirector = [];
-
-  //   // Itera sobre los directores del enum DIRECTOR
-  //   for (const director of Object.values(DIRECTOR)) {
-  //     const proyectosAsignados = await this.proyectoRepo.count({
-  //       where: {
-  //         director,
-  //       },
-  //     });
-  //     if (proyectosAsignados > 0) {
-  //       proyectosPorDirector.push({ director, proyectosAsignados });
-  //     }
-  //   }
-
-  //   return proyectosPorDirector;
-  // }
 
   async cuentaProyectosDocentes() {
     try {

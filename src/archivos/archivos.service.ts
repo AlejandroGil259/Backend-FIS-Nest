@@ -69,8 +69,6 @@ export class ArchivosService {
         })
         .getOne();
 
-      // Realizar cualquier lógica adicional según sea necesario
-
       return nuevoArchivo;
     } catch (error) {
       throw DBExceptionService.handleDBException(error);
@@ -103,7 +101,7 @@ export class ArchivosService {
     try {
       const archivo = this.archivosRepo.create({
         ...createArchivoDto,
-        solicitud: solicitud, // Asegúrate de que la relación esté configurada correctamente
+        solicitud: solicitud,
       });
 
       const nuevoArchivo = await this.archivosRepo.save(archivo);
@@ -229,7 +227,6 @@ export class ArchivosService {
         throw new NotFoundException('Archivo no encontrado');
       }
 
-      // Actualizar propiedades del archivo
       archivo.nombreArchivoOriginal =
         nuevoArchivoDto.nombreArchivoOriginal || archivo.nombreArchivoOriginal;
       archivo.nombreArchivoServidor =

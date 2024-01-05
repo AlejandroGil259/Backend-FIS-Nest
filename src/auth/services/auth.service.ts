@@ -48,7 +48,7 @@ export class AuthService {
 
       delete user.contrasena;
 
-      // TODO: Crear JWT con información de autorización
+      //Crear JWT con información de autorización
       return {
         ...usuario,
         token: this.getJwtToken({
@@ -122,7 +122,7 @@ export class AuthService {
         rol: usuario.rol,
       }),
     };
-    // TODO: retornar el JWT de acceso
+    // retornar el JWT de acceso
   }
 
   private getJwtToken(payload: JwtPayload) {
@@ -177,7 +177,7 @@ export class AuthService {
   }
 
   private decryptPassword(contrasenaEncriptada: string): string {
-    const claveSecreta = 'FisTrabajo2023'; // Cambia esto por la misma clave usada para encriptar
+    const claveSecreta = 'FisTrabajo2023'; // Cambiar por la misma clave usada para encriptar
     const decipher = crypto.createDecipher('aes-256-cbc', claveSecreta);
     let decrypted = decipher.update(contrasenaEncriptada, 'hex', 'utf8');
     decrypted += decipher.final('utf8');

@@ -21,7 +21,6 @@ export class PasantiasService {
 
   async create(createPasantiaDto: CreatePasantiaDto) {
     try {
-      // Crear la pasantía y asociarla al proyecto y usuario
       const pasantia = this.pasantiaRepo.create({
         ...createPasantiaDto,
       });
@@ -79,7 +78,6 @@ export class PasantiasService {
         message: `La pasantía con el ID ${idPasantia} ha sido actualizada`,
       };
     } catch (error) {
-      // Manejo específico de excepciones
       throw {
         success: false,
         message:
