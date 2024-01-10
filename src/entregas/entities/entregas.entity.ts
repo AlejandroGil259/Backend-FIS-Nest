@@ -69,7 +69,7 @@ export class Entregas extends BaseEntity {
 
   @OneToMany(() => Archivo, (archivo) => archivo.entregas, {
     cascade: true,
-    // eager: true,
+    eager: true,
   })
   archivos: Archivo[];
 }

@@ -57,7 +57,7 @@ export class Proyecto extends BaseEntity {
   espacioCoterminal: EspaciosCoterminale;
 
   @OneToMany(() => Entregas, (entrega) => entrega.proyecto, {
-    cascade: true,
+    cascade: true, eager:true
   })
   entregas: Entregas[];
 
