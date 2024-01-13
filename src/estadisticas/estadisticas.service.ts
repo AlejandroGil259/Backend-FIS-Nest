@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Not, Repository } from 'typeorm';
+import { In, MoreThan, Not, Repository, getRepository } from 'typeorm';
 import { Proyecto } from '../proyectos/entities/proyecto.entity';
 import {
   ESTADO_RESPUESTA_PROYECTOS,
@@ -8,16 +8,16 @@ import {
 } from '../proyectos/constants';
 import { LessThan } from 'typeorm';
 import { AuthService } from '../auth/services/auth.service';
-import { Entregas } from '../entregas/entities/entregas.entity';
-import { ESTADO_ENTREGAS } from '../entregas/constants';
+//import { Entregas } from '../entregas/entities/entregas.entity';
+//import { ESTADO_ENTREGAS } from '../entregas/constants';
 
 @Injectable()
 export class EstadisticasService {
   constructor(
     @InjectRepository(Proyecto)
     private proyectoRepo: Repository<Proyecto>,
-    @InjectRepository(Entregas)
-    private entregasRepo: Repository<Entregas>,
+    // @InjectRepository(Entregas)
+    // private entregasRepo: Repository<Entregas>,
     private authService: AuthService,
   ) {}
 
@@ -42,33 +42,35 @@ export class EstadisticasService {
 
     return totalPorTipo;
   }
+  async contarProyectosFinalizados(): Promise<
+    { anio: number; cantidad: number }[]
+  > {
+    const proyectosFinalizados = await this.proyectoRepo.find({
+      where: {
+        estado: ESTADO_RESPUESTA_PROYECTOS.FINALIZADO,
+        createdAt: MoreThan(new Date(new Date().getFullYear() - 2, 0, 1)),
+      },
+    });
 
-  async getProyectosFinalizadosPorAno() {
-    const proyectosFinalizadosPorAno = [];
+    const proyectosPorAnio = proyectosFinalizados.reduce((acc, proyecto) => {
+      const anio = proyecto.createdAt.getFullYear();
 
-    const hoy = new Date();
+      if (!acc[anio]) {
+        acc[anio] = 1;
+      } else {
+        acc[anio]++;
+      }
 
-    for (let i = 0; i < 3; i++) {
-      const fechaLimite = new Date(
-        hoy.getFullYear() - i,
-        hoy.getMonth(),
-        hoy.getDate(),
-      );
+      return acc;
+    }, {});
 
-      const proyectosFinalizados = await this.proyectoRepo.count({
-        where: {
-          estado: ESTADO_RESPUESTA_PROYECTOS.FINALIZADO,
-          createdAt: LessThan(fechaLimite),
-        },
-      });
+    // Convertir el objeto a un arreglo
+    const resultado = Object.keys(proyectosPorAnio).map((anio) => ({
+      anio: parseInt(anio),
+      cantidad: proyectosPorAnio[anio],
+    }));
 
-      proyectosFinalizadosPorAno.push({
-        ano: hoy.getFullYear() - i,
-        proyectosFinalizados,
-      });
-    }
-
-    return proyectosFinalizadosPorAno;
+    return resultado;
   }
 
   async cuentaProyectosDocentes() {
@@ -142,13 +144,13 @@ export class EstadisticasService {
     const proyectosExcluyendoEstados = [];
 
     // Itera sobre los estados del enum ESTADO_ENTREGAS
-    for (const estado of Object.values(ESTADO_ENTREGAS)) {
+    for (const estado of Object.values(ESTADO_RESPUESTA_PROYECTOS)) {
       if (
-        estado !== ESTADO_ENTREGAS.CANCELADO &&
-        estado !== ESTADO_ENTREGAS.NO_APROBADO &&
-        estado !== ESTADO_ENTREGAS.FINALIZADO
+        estado !== ESTADO_RESPUESTA_PROYECTOS.CANCELADO &&
+        estado !== ESTADO_RESPUESTA_PROYECTOS.NO_APROBADO &&
+        estado !== ESTADO_RESPUESTA_PROYECTOS.FINALIZADO
       ) {
-        const proyectos = await this.entregasRepo.find({
+        const proyectos = await this.proyectoRepo.find({
           where: {
             estado,
           },

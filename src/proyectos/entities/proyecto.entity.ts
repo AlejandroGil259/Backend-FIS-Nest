@@ -28,7 +28,6 @@ export class Proyecto extends BaseEntity {
   @Column({
     type: 'varchar',
     enum: ESTADO_RESPUESTA_PROYECTOS,
-    nullable: true
   })
   estado?: ESTADO_RESPUESTA_PROYECTOS;
 

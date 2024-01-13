@@ -22,11 +22,16 @@ export class EstadisticasController {
     return this.estadisticasService.cuentaProyectosDocentes();
   }
 
-  @Get('proyectos-finalizados')
-  getProyectosFinalizadosPorAno() {
-    return this.estadisticasService.getProyectosFinalizadosPorAno();
+  // @Get('proyectos/finalizados')
+  // getProyectosFinalizadosPorAno() {
+  //   return this.estadisticasService.getProyectosFinalizadosPorAno();
+  // }
+  @Get('proyectos/finalizados')
+  async contarProyectosFinalizadosUltimosTresAnios(): Promise<
+    { anio: number; cantidad: number }[]
+  > {
+    return this.estadisticasService.contarProyectosFinalizados();
   }
-
   @Get('proyectos-activos')
   getProyectosExcluyendoEstados() {
     return this.estadisticasService.getProyectosExcluyendoEstados();
