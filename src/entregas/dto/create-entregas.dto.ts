@@ -7,21 +7,21 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { ESTADO_ENTREGAS, TIPO_ENTREGA } from '../constants';
+import { TIPO_ENTREGA } from '../constants';
 
 export class CreateEntregasDto {
   @ApiProperty({ enum: TIPO_ENTREGA })
   @IsEnum(TIPO_ENTREGA)
   tipoEntrega: TIPO_ENTREGA;
 
-  @ApiProperty({
-    enum: ESTADO_ENTREGAS,
-    description: 'Respuesta del estado de entregas',
-    default: ESTADO_ENTREGAS.ENVIADO,
-  })
-  @IsOptional()
-  @IsEnum(ESTADO_ENTREGAS)
-  estado: ESTADO_ENTREGAS;
+  // @ApiProperty({
+  //   enum: ESTADO_ENTREGAS,
+  //   description: 'Respuesta del estado de entregas',
+  //   default: ESTADO_ENTREGAS.ENVIADO,
+  // })
+  // @IsOptional()
+  // @IsEnum(ESTADO_ENTREGAS)
+  // estado: ESTADO_ENTREGAS;
 
   @ApiProperty({
     example:

@@ -46,18 +46,18 @@ export class EntregasController {
   findAll() {
     return this.entregasService.findAll();
   }
-  @ApiResponse({
-    status: 200,
-    description: 'Se encontraron los estados',
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'No hay estados de respuesta en la base de datos',
-  })
-  @Get('estados')
-  obtenerEstadosProyectos(): string[] {
-    return this.entregasService.obtenerEstadosEntregas();
-  }
+  // @ApiResponse({
+  //   status: 200,
+  //   description: 'Se encontraron los estados',
+  // })
+  // @ApiResponse({
+  //   status: 404,
+  //   description: 'No hay estados de respuesta en la base de datos',
+  // })
+  // @Get('estados')
+  // obtenerEstadosProyectos(): string[] {
+  //   return this.entregasService.obtenerEstadosEntregas();
+  // }
 
   @ApiResponse({
     status: 200,

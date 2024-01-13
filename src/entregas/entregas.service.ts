@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { CreateEntregasDto } from './dto/create-entregas.dto';
 import { UpdateEntregasDto } from './dto/update-entregas.dto';
-import { ESTADO_ENTREGAS, TIPO_ENTREGA } from './constants';
+import { TIPO_ENTREGA } from './constants';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Entregas } from './entities/entregas.entity';
 import { Repository } from 'typeorm';
@@ -46,9 +46,9 @@ export class EntregasService {
     }
   }
 
-  obtenerEstadosEntregas(): string[] {
-    return Object.values(ESTADO_ENTREGAS);
-  }
+  // obtenerEstadosEntregas(): string[] {
+  //   return Object.values(ESTADO_ENTREGAS);
+  // }
 
   async findAll() {
     const entregas = await this.entregasRepo.find();

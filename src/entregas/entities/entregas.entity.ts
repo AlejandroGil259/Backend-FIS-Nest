@@ -7,7 +7,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { ESTADO_ENTREGAS, TIPO_ENTREGA } from '../constants';
+import { TIPO_ENTREGA } from '../constants';
 import { Archivo } from '../../archivos/entities/archivo.entity';
 import { Proyecto } from '../../proyectos/entities/proyecto.entity';
 import { BaseEntity } from '../../commons/entities/base-entity.entity';
@@ -25,17 +25,17 @@ export class Entregas extends BaseEntity {
   })
   tipoEntrega: TIPO_ENTREGA;
 
-  @ApiProperty({
-    enum: ESTADO_ENTREGAS,
-    description: 'Respuesta del estado del proyecto',
-    default: ESTADO_ENTREGAS.ENVIADO,
-  })
-  @Column({
-    type: 'varchar',
-    enum: ESTADO_ENTREGAS,
-    default: ESTADO_ENTREGAS.ENVIADO,
-  })
-  estado: ESTADO_ENTREGAS;
+  // @ApiProperty({
+  //   enum: ESTADO_ENTREGAS,
+  //   description: 'Respuesta del estado del proyecto',
+  //   default: ESTADO_ENTREGAS.ENVIADO,
+  // })
+  // @Column({
+  //   type: 'varchar',
+  //   enum: ESTADO_ENTREGAS,
+  //   default: ESTADO_ENTREGAS.ENVIADO,
+  // })
+  // estado: ESTADO_ENTREGAS;
 
   @ApiProperty({ description: 'descripcion' })
   @Column({ nullable: true })
