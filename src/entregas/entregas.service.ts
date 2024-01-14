@@ -102,7 +102,7 @@ export class EntregasService {
         { ...infoEntrega, proyecto },
       );
 
-      return `La entrega con ID ${idEntrega} ha sido actualizada`;
+      return proyecto;
     } catch (error) {
       throw new NotFoundException(
         `No se encontró ningun proyecto con ID ${idProyecto}`,
