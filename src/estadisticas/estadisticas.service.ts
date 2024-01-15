@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, MoreThan, Not, Repository, getRepository } from 'typeorm';
+import { In, MoreThan, Not, Repository } from 'typeorm';
 import { Proyecto } from '../proyectos/entities/proyecto.entity';
 import {
   ESTADO_RESPUESTA_PROYECTOS,
   OPCION_GRADO,
 } from '../proyectos/constants';
-import { LessThan } from 'typeorm';
 import { AuthService } from '../auth/services/auth.service';
 //import { Entregas } from '../entregas/entities/entregas.entity';
 //import { ESTADO_ENTREGAS } from '../entregas/constants';
@@ -45,10 +44,20 @@ export class EstadisticasService {
   async contarProyectosFinalizados(): Promise<
     { anio: number; cantidad: number }[]
   > {
+    const fechaLimite = new Date(
+      new Date().getFullYear() - 2,
+      11,
+      31,
+      23,
+      59,
+      59,
+      999,
+    );
+
     const proyectosFinalizados = await this.proyectoRepo.find({
       where: {
         estado: ESTADO_RESPUESTA_PROYECTOS.FINALIZADO,
-        createdAt: MoreThan(new Date(new Date().getFullYear() - 2, 0, 1)),
+        createdAt: MoreThan(fechaLimite),
       },
     });
 
@@ -64,11 +73,24 @@ export class EstadisticasService {
       return acc;
     }, {});
 
-    // Convertir el objeto a un arreglo
-    const resultado = Object.keys(proyectosPorAnio).map((anio) => ({
-      anio: parseInt(anio),
-      cantidad: proyectosPorAnio[anio],
-    }));
+    // Garantizar resultados para los últimos tres años, incluso si no hay proyectos finalizados
+    const aniosActuales = Array.from(
+      { length: 3 },
+      (_, index) => new Date().getFullYear() - index,
+    );
+    aniosActuales.forEach((anio) => {
+      if (!proyectosPorAnio[anio]) {
+        proyectosPorAnio[anio] = 0;
+      }
+    });
+
+    // Convertir el objeto a un arreglo y ordenar por año de forma descendente
+    const resultado = Object.keys(proyectosPorAnio)
+      .map((anio) => ({
+        anio: parseInt(anio),
+        cantidad: proyectosPorAnio[anio],
+      }))
+      .sort((a, b) => b.anio - a.anio);
 
     return resultado;
   }
