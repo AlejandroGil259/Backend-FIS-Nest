@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Inject,
   Injectable,
   NotFoundException,
@@ -12,12 +13,15 @@ import { Entregas } from './entities/entregas.entity';
 import { Repository } from 'typeorm';
 import { DBExceptionService } from '../commons/services/db-exception.service';
 import { ProyectosService } from '../proyectos/proyectos.service';
+import { UsuariosProyectos } from 'src/auth/entities/usuarios-proyectos.entity';
 
 @Injectable()
 export class EntregasService {
   constructor(
     @InjectRepository(Entregas)
     private readonly entregasRepo: Repository<Entregas>,
+    @InjectRepository(UsuariosProyectos)
+    private readonly usuariosProyectosRepo: Repository<UsuariosProyectos>,
     @Inject(forwardRef(() => ProyectosService))
     private readonly proyectosService: ProyectosService,
   ) {}
@@ -87,7 +91,8 @@ export class EntregasService {
         `No se encontró ninguna entrega con ID ${idEntrega}`,
       );
 
-    const { idProyecto, ...infoEntrega } = updateEntregaDto;
+    const { idProyecto, evaluador1, evaluador2, ...infoEntrega } =
+      updateEntregaDto;
 
     try {
       // Asegurarnos de que el proyecto asociado exista
@@ -97,6 +102,38 @@ export class EntregasService {
           `No se encontró un proyecto con ID ${idProyecto} asociado a la entrega con ID ${idEntrega}`,
         );
 
+      // Obtener la relación UsuariosProyectos
+      const usuariosProyectos = await this.usuariosProyectosRepo.findOne({
+        where: { proyecto: { idProyecto } },
+      });
+
+      // Validar que evaluador1 no sea el mismo que evaluador2
+      if (evaluador1 === evaluador2) {
+        throw new BadRequestException(
+          'El evaluador1 y el evaluador2 no pueden ser la misma persona.',
+        );
+      }
+
+      // Validar que evaluador1 no sea el mismo que director o codirector
+      if (
+        evaluador1 === usuariosProyectos.director ||
+        evaluador1 === usuariosProyectos.codirector
+      ) {
+        throw new BadRequestException(
+          'El evaluador1 no puede ser el mismo que el director o el codirector del proyecto.',
+        );
+      }
+
+      // Validar que evaluador2 no sea el mismo que director o codirector
+      if (
+        evaluador2 === usuariosProyectos.director ||
+        evaluador2 === usuariosProyectos.codirector
+      ) {
+        throw new BadRequestException(
+          'El evaluador2 no puede ser el mismo que el director o el codirector del proyecto.',
+        );
+      }
+
       await this.entregasRepo.update(
         { idEntrega },
         { ...infoEntrega, proyecto },
@@ -104,9 +141,18 @@ export class EntregasService {
 
       return proyecto;
     } catch (error) {
-      throw new NotFoundException(
-        `No se encontró ningun proyecto con ID ${idProyecto}`,
-      );
+      if (
+        error instanceof NotFoundException ||
+        error instanceof BadRequestException
+      ) {
+        throw error;
+      } else {
+        const errorMessage = DBExceptionService.handleDBException(error);
+        throw {
+          success: false,
+          message: errorMessage || 'Error al actualizar la entrega',
+        };
+      }
     }
   }
 

@@ -20,7 +20,8 @@ export class CreateProyectoDto {
     example: 'Gestor Documentacion',
   })
   @IsString()
-  tituloVigente: string;
+  @IsOptional()
+  tituloVigente?: string;
 
   @ApiProperty({
     description: 'Documento del usuario que crea el proyecto',

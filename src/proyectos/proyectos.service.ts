@@ -58,6 +58,12 @@ export class ProyectosService {
         );
       }
 
+      if (createProyectoDto.director === createProyectoDto.codirector) {
+        throw new BadRequestException(
+          'El director y el codirector no pueden ser la misma persona.',
+        );
+      }
+
       const proyecto = this.proyectoRepo.create(infoProyecto);
       const nuevoProyecto = await this.proyectoRepo.save(proyecto);
 
@@ -76,7 +82,8 @@ export class ProyectosService {
     } catch (error) {
       if (
         error instanceof NotFoundException ||
-        error instanceof ForbiddenException
+        error instanceof ForbiddenException ||
+        error instanceof BadRequestException
       ) {
         throw error;
       } else {
@@ -201,12 +208,26 @@ export class ProyectosService {
     const { usuarioDocumento, ...infoProyecto } = updateProyectoDto;
 
     try {
-      // Actualizar propiedades en la entidad Proyecto
+      const director = await this.authService.findOne(
+        updateProyectoDto.director,
+      );
+      if (!director) {
+        throw new NotFoundException(
+          `No se encontró al director con el documento ${updateProyectoDto.director}`,
+        );
+      }
+
+      // Validar que el director no sea el mismo que el codirector
+      if (updateProyectoDto.director === updateProyectoDto.codirector) {
+        throw new BadRequestException(
+          'El director y el codirector no pueden ser la misma persona.',
+        );
+      }
+      //Actualizar
       proyecto.estado = updateProyectoDto.estado;
       proyecto.opcionGrado = updateProyectoDto.opcionGrado;
       proyecto.tituloVigente = updateProyectoDto.tituloVigente;
 
-      // Guardar la actualización de la entidad Proyecto
       await this.proyectoRepo.save(proyecto);
 
       // Obtener la relación usuariosProyectos
@@ -224,17 +245,16 @@ export class ProyectosService {
         );
       }
 
-      // Actualizar propiedades director, codirector y segundoAutor en UsuariosProyectos
       usuariosProyectos.director = updateProyectoDto.director;
       usuariosProyectos.codirector = updateProyectoDto.codirector;
       usuariosProyectos.segundoAutor = updateProyectoDto.segundoAutor;
 
-      // Guardar la actualización de usuariosProyectos
       await this.usuariosProyectosRepo.save(usuariosProyectos);
 
       return {
         success: true,
         message: `El proyecto con ID ${idProyecto} ha sido actualizado`,
+        infoProyecto,
       };
     } catch (error) {
       if (

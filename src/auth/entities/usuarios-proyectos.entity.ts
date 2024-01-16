@@ -20,11 +20,11 @@ export class UsuariosProyectos {
 
   @ApiProperty()
   @Column({ nullable: true })
-  director: number;
+  director?: number;
 
   @ApiProperty()
   @Column({ nullable: true })
-  codirector: number;
+  codirector?: number;
 
   @ApiProperty()
   @Column({ nullable: true })
