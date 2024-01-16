@@ -12,11 +12,6 @@ export class EstadisticasController {
     return this.estadisticasService.getTotalProyectosPorTipo();
   }
 
-  // @Get('proyectos-por-director')
-  // getProyectosPorDirector() {
-  //   return this.estadisticasService.getProyectosPorDirector();
-  // }
-
   @Get('proyectos-por-director')
   async cuentaProyectosDocentes() {
     return this.estadisticasService.cuentaProyectosDocentes();
@@ -26,6 +21,7 @@ export class EstadisticasController {
   // getProyectosFinalizadosPorAno() {
   //   return this.estadisticasService.getProyectosFinalizadosPorAno();
   // }
+
   @Get('proyectos/finalizados')
   async contarProyectosFinalizadosUltimosTresAnios(): Promise<
     { anio: number; cantidad: number }[]

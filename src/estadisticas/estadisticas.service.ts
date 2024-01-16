@@ -7,16 +7,12 @@ import {
   OPCION_GRADO,
 } from '../proyectos/constants';
 import { AuthService } from '../auth/services/auth.service';
-//import { Entregas } from '../entregas/entities/entregas.entity';
-//import { ESTADO_ENTREGAS } from '../entregas/constants';
 
 @Injectable()
 export class EstadisticasService {
   constructor(
     @InjectRepository(Proyecto)
     private proyectoRepo: Repository<Proyecto>,
-    // @InjectRepository(Entregas)
-    // private entregasRepo: Repository<Entregas>,
     private authService: AuthService,
   ) {}
 
@@ -25,18 +21,16 @@ export class EstadisticasService {
 
     // Filtramos por cada tipo de OPCION_GRADO
     for (const tipo of Object.values(OPCION_GRADO)) {
-      const count = await this.proyectoRepo.count({
-        where: {
-          opcionGrado: tipo,
-          estado: Not(
-            In([
-              ESTADO_RESPUESTA_PROYECTOS.CANCELADO,
-              ESTADO_RESPUESTA_PROYECTOS.NO_APROBADO,
-            ]),
-          ),
-        },
-      });
-      totalPorTipo.push({ tipo, count });
+      // Consulta para contar proyectos únicos por título y opción de grado
+      const proyectosUnicos = await this.proyectoRepo.query(`
+      SELECT COUNT(DISTINCT titulo_vigente) as count
+      FROM proyectos
+      WHERE opcion_grado = '${tipo}'
+        AND estado NOT IN ('${ESTADO_RESPUESTA_PROYECTOS.CANCELADO}', '${ESTADO_RESPUESTA_PROYECTOS.NO_APROBADO}')
+    `);
+
+      // Añadimos el resultado al arreglo totalPorTipo
+      totalPorTipo.push({ tipo, count: proyectosUnicos[0]?.count || 0 });
     }
 
     return totalPorTipo;
@@ -73,7 +67,7 @@ export class EstadisticasService {
       return acc;
     }, {});
 
-    // Garantizar resultados para los últimos tres años, incluso si no hay proyectos finalizados
+    // Ultimos 3 años, incluso si no hay proyectos finalizados
     const aniosActuales = Array.from(
       { length: 3 },
       (_, index) => new Date().getFullYear() - index,
@@ -84,7 +78,7 @@ export class EstadisticasService {
       }
     });
 
-    // Convertir el objeto a un arreglo y ordenar por año de forma descendente
+    // Convertir el objeto a un arreglo y ordenar por año
     const resultado = Object.keys(proyectosPorAnio)
       .map((anio) => ({
         anio: parseInt(anio),
@@ -97,34 +91,12 @@ export class EstadisticasService {
 
   async cuentaProyectosDocentes() {
     try {
-      // Obtener todos los proyectos con sus relaciones
       const proyectos = await this.proyectoRepo.find({
         relations: ['usuariosProyectos', 'usuariosProyectos.usuario'],
       });
 
-      // Obtener directores únicos asociados a proyectos
-      const directoresUnicos = new Set<number>();
-
-      proyectos.forEach((proyecto) => {
-        proyecto.usuariosProyectos.forEach((usuarioProyecto) => {
-          const directorDocumento = usuarioProyecto.director;
-
-          if (directorDocumento && directorDocumento !== 0) {
-            directoresUnicos.add(directorDocumento);
-          }
-        });
-      });
-
-      const directoresArray = Array.from(directoresUnicos);
-
-      // Filtrar directores que no están registrados en la base de datos
-      const directoresRegistrados = await Promise.all(
-        directoresArray.map(async (documento) => {
-          const directorRegistrado = await this.authService.findOne(documento);
-
-          return directorRegistrado ? documento : null;
-        }),
-      );
+      // Utilizar un conjunto para almacenar combinaciones únicas de título y director
+      const combinacionesUnicas = new Set<string>();
 
       // Contar los proyectos para cada director registrado
       const countProyectosPorDocente = {};
@@ -132,18 +104,29 @@ export class EstadisticasService {
       proyectos.forEach((proyecto) => {
         proyecto.usuariosProyectos.forEach((usuarioProyecto) => {
           const directorDocumento = usuarioProyecto.director;
+          const tituloProyecto = proyecto.tituloVigente;
+          const estadoProyecto = proyecto.estado;
 
-          if (directoresRegistrados.includes(directorDocumento)) {
-            countProyectosPorDocente[directorDocumento] =
-              (countProyectosPorDocente[directorDocumento] || 0) + 1;
+          if (
+            directorDocumento &&
+            directorDocumento !== 0 &&
+            tituloProyecto &&
+            estadoProyecto !== 'Finalizado'
+          ) {
+            const combinacionUnica = `${directorDocumento}_${tituloProyecto}`;
+
+            // Verificar si ya se ha contado esta combinación única
+            if (!combinacionesUnicas.has(combinacionUnica)) {
+              // Incrementar el contador para este director
+              countProyectosPorDocente[directorDocumento] =
+                (countProyectosPorDocente[directorDocumento] || 0) + 1;
+
+              // Agregar la combinación única al conjunto
+              combinacionesUnicas.add(combinacionUnica);
+            }
           }
         });
       });
-
-      // console.log(
-      //   'Conteo de proyectos por director:',
-      //   countProyectosPorDocente,
-      // );
 
       // Formatear el resultado como un arreglo de objetos
       const resultado = await Promise.all(
@@ -152,8 +135,6 @@ export class EstadisticasService {
           countProyectos: countProyectosPorDocente[documento],
         })),
       );
-
-      //console.log('Resultado final:', resultado);
 
       return resultado;
     } catch (error) {
@@ -165,20 +146,42 @@ export class EstadisticasService {
   async getProyectosExcluyendoEstados() {
     const proyectosExcluyendoEstados = [];
 
-    // Itera sobre los estados del enum ESTADO_ENTREGAS
-    for (const estado of Object.values(ESTADO_RESPUESTA_PROYECTOS)) {
-      if (
+    // Filtrar estados que no deben incluirse en la cuenta
+    const estadosFiltrados = Object.values(ESTADO_RESPUESTA_PROYECTOS).filter(
+      (estado) =>
         estado !== ESTADO_RESPUESTA_PROYECTOS.CANCELADO &&
         estado !== ESTADO_RESPUESTA_PROYECTOS.NO_APROBADO &&
-        estado !== ESTADO_RESPUESTA_PROYECTOS.FINALIZADO
-      ) {
-        const proyectos = await this.proyectoRepo.find({
-          where: {
-            estado,
-          },
-        });
-        proyectosExcluyendoEstados.push({ estado, proyectos });
-      }
+        estado !== ESTADO_RESPUESTA_PROYECTOS.FINALIZADO,
+    );
+
+    for (const estado of estadosFiltrados) {
+      const proyectos = await this.proyectoRepo.find({
+        where: {
+          estado,
+        },
+      });
+
+      const combinacionesUnicas = new Set<string>();
+      const proyectosFiltrados = [];
+
+      proyectos.forEach((proyecto) => {
+        const tituloProyecto = proyecto.tituloVigente;
+
+        if (tituloProyecto) {
+          const combinacionUnica = `${tituloProyecto}_${estado}`;
+
+          // Verificar si ya se ha contado esta combinación única
+          if (!combinacionesUnicas.has(combinacionUnica)) {
+            proyectosFiltrados.push(proyecto);
+            combinacionesUnicas.add(combinacionUnica);
+          }
+        }
+      });
+
+      proyectosExcluyendoEstados.push({
+        estado,
+        proyectos: proyectosFiltrados,
+      });
     }
 
     return proyectosExcluyendoEstados;
