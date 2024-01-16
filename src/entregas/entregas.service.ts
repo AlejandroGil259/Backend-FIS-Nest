@@ -37,7 +37,6 @@ export class EntregasService {
       );
     }
 
-    // Crear la entrega
     try {
       const entrega = this.entregasRepo.create({
         ...restoDto,
@@ -107,14 +106,12 @@ export class EntregasService {
         where: { proyecto: { idProyecto } },
       });
 
-      // Validar que evaluador1 no sea el mismo que evaluador2
       if (evaluador1 === evaluador2) {
         throw new BadRequestException(
           'El evaluador1 y el evaluador2 no pueden ser la misma persona.',
         );
       }
 
-      // Validar que evaluador1 no sea el mismo que director o codirector
       if (
         evaluador1 === usuariosProyectos.director ||
         evaluador1 === usuariosProyectos.codirector
@@ -124,7 +121,6 @@ export class EntregasService {
         );
       }
 
-      // Validar que evaluador2 no sea el mismo que director o codirector
       if (
         evaluador2 === usuariosProyectos.director ||
         evaluador2 === usuariosProyectos.codirector
@@ -136,7 +132,7 @@ export class EntregasService {
 
       await this.entregasRepo.update(
         { idEntrega },
-        { ...infoEntrega, proyecto },
+        { ...infoEntrega, evaluador1, evaluador2, proyecto },
       );
 
       return proyecto;

@@ -17,6 +17,8 @@ import { AuthService } from '../auth/services/auth.service';
 
 @Injectable()
 export class ProyectosService {
+  //private proyectos: Proyecto[] = [];
+  //private usuariosProyectos: UsuariosProyectos[] = [];
   constructor(
     @InjectRepository(Proyecto)
     private readonly proyectoRepo: Repository<Proyecto>,
@@ -78,11 +80,15 @@ export class ProyectosService {
 
       await this.usuariosProyectosRepo.save(usuariosProyectos);
 
-      return nuevoProyecto;
+      // Si todo fue exitoso, retornar la respuesta 201
+      return {
+        success: true,
+        message: `El proyecto ha sido creado`,
+        proyecto: nuevoProyecto,
+      };
     } catch (error) {
       if (
         error instanceof NotFoundException ||
-        error instanceof ForbiddenException ||
         error instanceof BadRequestException
       ) {
         throw error;
@@ -194,6 +200,31 @@ export class ProyectosService {
 
   obtenerEstadosProyectos(): string[] {
     return Object.values(ESTADO_RESPUESTA_PROYECTOS);
+  }
+
+  async obtenerProyectosPorDocente(director: number): Promise<Proyecto[]> {
+    try {
+      // Obtener la relación UsuariosProyectos para el director específico
+      const usuarioProyecto = await this.usuariosProyectosRepo.findOne({
+        where: { director: director },
+        relations: ['proyecto'],
+      });
+
+      if (!usuarioProyecto) {
+        throw new NotFoundException(
+          `No se encontró al director con ID ${director}`,
+        );
+      }
+
+      // Devolver los proyectos asociados al director
+      const proyectosDocente = [usuarioProyecto.proyecto];
+
+      return proyectosDocente;
+    } catch (error) {
+      throw new NotFoundException(
+        `No se encontraron proyectos para el director con ID ${director}`,
+      );
+    }
   }
 
   async update(idProyecto: string, updateProyectoDto: UpdateProyectoDto) {

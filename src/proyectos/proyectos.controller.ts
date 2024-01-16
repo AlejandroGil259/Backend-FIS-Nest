@@ -46,10 +46,7 @@ export class ProyectosController {
         proyecto: nuevoProyecto,
       };
     } catch (error) {
-      return {
-        message: 'Error al crear el proyecto',
-        error: error.message,
-      };
+      throw error;
     }
   }
 
@@ -129,6 +126,13 @@ export class ProyectosController {
       throw new NotFoundException('Proyecto no encontrado');
     }
     return proyecto;
+  }
+
+  @Get('director/:documentoDirector')
+  obtenerProyectosPorDocente(@Param('docenteId') docenteId: number) {
+    const proyectos =
+      this.proyectosService.obtenerProyectosPorDocente(docenteId);
+    return { proyectos };
   }
 
   @ApiResponse({
