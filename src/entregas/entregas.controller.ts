@@ -32,7 +32,7 @@ export class EntregasController {
   })
   @Post()
   async crearEntrega(@Body() createEntregaDto: CreateEntregasDto) {
-    return this.entregasService.crearEntrega(createEntregaDto);
+    return this.entregasService.createDelivery(createEntregaDto);
   }
   @ApiResponse({
     status: 200,
@@ -46,11 +46,13 @@ export class EntregasController {
   findAll() {
     return this.entregasService.findAll();
   }
-  
-  @Get('/proyectos-evaluador/:evaluadorId')
-  async getProyectosByEvaluador(@Param('evaluadorId') evaluadorId: number) {
+
+  @Get('proyectos-evaluador/:documentoEvaluador')
+  async getProyectosByEvaluador(
+    @Param('documentoEvaluador') documentoEvaluador: number,
+  ) {
     const proyectos = await this.entregasService.getProyectosByEvaluador(
-      evaluadorId,
+      documentoEvaluador,
     );
     return { proyectos };
   }
@@ -81,7 +83,7 @@ export class EntregasController {
   })
   @Get('tipo/:entrega')
   getTipoEntrega() {
-    return this.entregasService.getTipoEntrega();
+    return this.entregasService.getDeliveryType();
   }
   @ApiResponse({
     status: 200,

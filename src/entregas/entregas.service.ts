@@ -26,7 +26,7 @@ export class EntregasService {
     private readonly proyectosService: ProyectosService,
   ) {}
 
-  async crearEntrega(createEntregaDto: CreateEntregasDto): Promise<Entregas> {
+  async createDelivery(createEntregaDto: CreateEntregasDto): Promise<Entregas> {
     const { idProyecto, ...restoDto } = createEntregaDto;
 
     // Validar que el proyecto exista
@@ -89,7 +89,7 @@ export class EntregasService {
     return entrega;
   }
 
-  async getTipoEntrega() {
+  async getDeliveryType() {
     return Object.values(TIPO_ENTREGA);
   }
 
