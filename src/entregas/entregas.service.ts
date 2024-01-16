@@ -52,17 +52,35 @@ export class EntregasService {
     const entregas = await this.entregasRepo
       .createQueryBuilder('entregas')
       .leftJoinAndSelect('entregas.proyecto', 'proyecto')
+      .leftJoinAndSelect('proyecto.usuariosProyectos', 'usuariosProyectos')
+      .leftJoinAndSelect('usuariosProyectos.usuario', 'usuario')
       .where(
         'entregas.evaluador1 = :evaluadorId OR entregas.evaluador2 = :evaluadorId',
         { evaluadorId },
       )
       .getMany();
 
-    // Obtener solo los proyectos de las entregas
-    const proyectos = entregas.map((entrega) => entrega.proyecto);
-
-    return proyectos;
+    return entregas.map((entrega) => ({
+      proyecto: {
+        ...entrega.proyecto,
+        usuariosProyectos: [
+          {
+            ...entrega.proyecto.usuariosProyectos[0],
+            usuario: entrega.proyecto.usuariosProyectos[0].usuario,
+          },
+        ],
+      },
+      entrega: {
+        idEntrega: entrega.idEntrega,
+        tipoEntrega: entrega.tipoEntrega,
+        descripcion: entrega.descripcion,
+        numActa: entrega.numActa,
+        fechaActa: entrega.fechaActa,
+        archivoEntrega: entrega.archivoEntrega,
+      },
+    }));
   }
+
   async findAll() {
     const entregas = await this.entregasRepo.find();
 
