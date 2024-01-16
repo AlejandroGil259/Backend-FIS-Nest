@@ -50,7 +50,15 @@ export class ProyectosController {
     }
   }
 
-  @Get('/director/:documentoDirector')
+  @ApiResponse({
+    status: 200,
+    description: 'Se encontraron los siguientes proyectos',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'No hay proyectos en la base de datos para este director',
+  })
+  @Get('director/:documentoDirector')
   async obtenerProyectosPorDirector(
     @Param('documentoDirector', ParseIntPipe) documentoDirector: number,
   ) {
@@ -126,13 +134,6 @@ export class ProyectosController {
       throw new NotFoundException('Proyecto no encontrado');
     }
     return proyecto;
-  }
-
-  @Get('director/:documentoDirector')
-  obtenerProyectosPorDocente(@Param('docenteId') docenteId: number) {
-    const proyectos =
-      this.proyectosService.obtenerProyectosPorDocente(docenteId);
-    return { proyectos };
   }
 
   @ApiResponse({

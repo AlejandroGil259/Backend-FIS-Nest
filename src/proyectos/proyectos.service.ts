@@ -17,8 +17,6 @@ import { AuthService } from '../auth/services/auth.service';
 
 @Injectable()
 export class ProyectosService {
-  //private proyectos: Proyecto[] = [];
-  //private usuariosProyectos: UsuariosProyectos[] = [];
   constructor(
     @InjectRepository(Proyecto)
     private readonly proyectoRepo: Repository<Proyecto>,
@@ -102,24 +100,6 @@ export class ProyectosService {
     }
   }
 
-  async getProjectsByUserDocument(documento: number): Promise<Proyecto[]> {
-    const usuariosProyectos = await this.usuariosProyectosRepo.find({
-      where: { usuario: { documento: documento } },
-      relations: ['proyecto'],
-    });
-
-    if (usuariosProyectos && usuariosProyectos.length > 0) {
-      // Extraer la lista de proyectos desde los registros de UsuariosProyectos
-      const proyectos = usuariosProyectos.map((up) => up.proyecto);
-
-      return proyectos;
-    } else {
-      throw new NotFoundException(
-        `El usuario "${documento}" no existe en la base de datos o no tiene proyectos asociados.`,
-      );
-    }
-  }
-
   async obtenerProyectosYEntregasPorDirector(documentoDirector: number) {
     try {
       const proyectos = await this.proyectoRepo.find({
@@ -180,6 +160,32 @@ export class ProyectosService {
     }
   }
 
+  async getOpcionGrado() {
+    return Object.values(OPCION_GRADO);
+  }
+
+  obtenerEstadosProyectos(): string[] {
+    return Object.values(ESTADO_RESPUESTA_PROYECTOS);
+  }
+
+  async getProjectsByUserDocument(documento: number): Promise<Proyecto[]> {
+    const usuariosProyectos = await this.usuariosProyectosRepo.find({
+      where: { usuario: { documento: documento } },
+      relations: ['proyecto'],
+    });
+
+    if (usuariosProyectos && usuariosProyectos.length > 0) {
+      // Extraer la lista de proyectos desde los registros de UsuariosProyectos
+      const proyectos = usuariosProyectos.map((up) => up.proyecto);
+
+      return proyectos;
+    } else {
+      throw new NotFoundException(
+        `El usuario "${documento}" no existe en la base de datos o no tiene proyectos asociados.`,
+      );
+    }
+  }
+
   async findOne(idProyecto: string) {
     const proyecto = await this.proyectoRepo.findOne({
       where: { idProyecto },
@@ -193,40 +199,6 @@ export class ProyectosService {
 
     return proyecto;
   }
-
-  async getOpcionGrado() {
-    return Object.values(OPCION_GRADO);
-  }
-
-  obtenerEstadosProyectos(): string[] {
-    return Object.values(ESTADO_RESPUESTA_PROYECTOS);
-  }
-
-  async obtenerProyectosPorDocente(director: number): Promise<Proyecto[]> {
-    try {
-      // Obtener la relación UsuariosProyectos para el director específico
-      const usuarioProyecto = await this.usuariosProyectosRepo.findOne({
-        where: { director: director },
-        relations: ['proyecto'],
-      });
-
-      if (!usuarioProyecto) {
-        throw new NotFoundException(
-          `No se encontró al director con ID ${director}`,
-        );
-      }
-
-      // Devolver los proyectos asociados al director
-      const proyectosDocente = [usuarioProyecto.proyecto];
-
-      return proyectosDocente;
-    } catch (error) {
-      throw new NotFoundException(
-        `No se encontraron proyectos para el director con ID ${director}`,
-      );
-    }
-  }
-
   async update(idProyecto: string, updateProyectoDto: UpdateProyectoDto) {
     const proyecto = await this.proyectoRepo.findOneBy({ idProyecto });
 
@@ -248,7 +220,6 @@ export class ProyectosService {
         );
       }
 
-      // Validar que el director no sea el mismo que el codirector
       if (updateProyectoDto.director === updateProyectoDto.codirector) {
         throw new BadRequestException(
           'El director y el codirector no pueden ser la misma persona.',
