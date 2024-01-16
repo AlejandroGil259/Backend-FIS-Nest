@@ -46,19 +46,14 @@ export class EntregasController {
   findAll() {
     return this.entregasService.findAll();
   }
-  // @ApiResponse({
-  //   status: 200,
-  //   description: 'Se encontraron los estados',
-  // })
-  // @ApiResponse({
-  //   status: 404,
-  //   description: 'No hay estados de respuesta en la base de datos',
-  // })
-  // @Get('estados')
-  // obtenerEstadosProyectos(): string[] {
-  //   return this.entregasService.obtenerEstadosEntregas();
-  // }
-
+  
+  @Get('/proyectos-evaluador/:evaluadorId')
+  async getProyectosByEvaluador(@Param('evaluadorId') evaluadorId: number) {
+    const proyectos = await this.entregasService.getProyectosByEvaluador(
+      evaluadorId,
+    );
+    return { proyectos };
+  }
   @ApiResponse({
     status: 200,
     description: 'Se encontró una entrega con el id ingresado',

@@ -36,7 +36,6 @@ export class EntregasService {
         `No se encontró un proyecto con el ID ${idProyecto}`,
       );
     }
-
     try {
       const entrega = this.entregasRepo.create({
         ...restoDto,
@@ -49,10 +48,21 @@ export class EntregasService {
     }
   }
 
-  // obtenerEstadosEntregas(): string[] {
-  //   return Object.values(ESTADO_ENTREGAS);
-  // }
+  async getProyectosByEvaluador(evaluadorId: number) {
+    const entregas = await this.entregasRepo
+      .createQueryBuilder('entregas')
+      .leftJoinAndSelect('entregas.proyecto', 'proyecto')
+      .where(
+        'entregas.evaluador1 = :evaluadorId OR entregas.evaluador2 = :evaluadorId',
+        { evaluadorId },
+      )
+      .getMany();
 
+    // Obtener solo los proyectos de las entregas
+    const proyectos = entregas.map((entrega) => entrega.proyecto);
+
+    return proyectos;
+  }
   async findAll() {
     const entregas = await this.entregasRepo.find();
 
@@ -130,10 +140,17 @@ export class EntregasService {
         );
       }
 
-      await this.entregasRepo.update(
-        { idEntrega },
-        { ...infoEntrega, evaluador1, evaluador2, proyecto },
-      );
+      // Actualizar la entrega con los nuevos evaluadores y el proyecto
+      entrega.tipoEntrega = infoEntrega.tipoEntrega;
+      entrega.descripcion = infoEntrega.descripcion;
+      entrega.numActa = infoEntrega.numActa;
+      entrega.fechaActa = infoEntrega.fechaActa;
+      entrega.archivoEntrega = infoEntrega.archivoEntrega;
+      entrega.evaluador1 = evaluador1;
+      entrega.evaluador2 = evaluador2;
+      entrega.proyecto = proyecto;
+
+      await this.entregasRepo.save(entrega);
 
       return proyecto;
     } catch (error) {
