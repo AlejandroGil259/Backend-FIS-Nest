@@ -78,12 +78,7 @@ export class ProyectosService {
 
       await this.usuariosProyectosRepo.save(usuariosProyectos);
 
-      // Si todo fue exitoso, retornar la respuesta 201
-      return {
-        success: true,
-        message: `El proyecto ha sido creado`,
-        proyecto: nuevoProyecto,
-      };
+      return nuevoProyecto;
     } catch (error) {
       if (
         error instanceof NotFoundException ||

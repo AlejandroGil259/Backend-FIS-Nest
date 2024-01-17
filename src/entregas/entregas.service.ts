@@ -62,15 +62,13 @@ export class EntregasService {
       .getMany();
 
     return entregas.map((entrega) => ({
-      proyecto: {
-        ...entrega.proyecto,
-        usuariosProyectos: [
-          {
-            ...entrega.proyecto.usuariosProyectos[0],
-            usuario: entrega.proyecto.usuariosProyectos[0].usuario,
-          },
-        ],
-      },
+      ...entrega.proyecto,
+      usuariosProyectos: [
+        {
+          ...entrega.proyecto.usuariosProyectos[0],
+          usuario: entrega.proyecto.usuariosProyectos[0].usuario,
+        },
+      ],
       entrega: {
         idEntrega: entrega.idEntrega,
         tipoEntrega: entrega.tipoEntrega,
