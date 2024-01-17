@@ -153,9 +153,13 @@ export class EntregasService {
         evaluador2 === usuariosProyectos.director ||
         evaluador2 === usuariosProyectos.codirector
       ) {
-        throw new BadRequestException(
-          'El evaluador2 no puede ser el mismo que el director o el codirector del proyecto.',
-        );
+        if (evaluador2 === 0 && usuariosProyectos.codirector === 0) {
+          // Si evaluador2 y codirector son ambos 0, permitir la actualización
+        } else {
+          throw new BadRequestException(
+            'El evaluador2 no puede ser el mismo que el director o el codirector del proyecto.',
+          );
+        }
       }
 
       // Actualizar la entrega con los nuevos evaluadores y el proyecto
