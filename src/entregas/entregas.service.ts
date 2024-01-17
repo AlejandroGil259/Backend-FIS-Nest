@@ -54,6 +54,7 @@ export class EntregasService {
       .leftJoinAndSelect('entregas.proyecto', 'proyecto')
       .leftJoinAndSelect('proyecto.usuariosProyectos', 'usuariosProyectos')
       .leftJoinAndSelect('usuariosProyectos.usuario', 'usuario')
+      .leftJoinAndSelect('entregas.archivos', 'archivos')
       .where(
         'entregas.evaluador1 = :evaluadorId OR entregas.evaluador2 = :evaluadorId',
         { evaluadorId },
@@ -78,6 +79,7 @@ export class EntregasService {
         fechaActa: entrega.fechaActa,
         archivoEntrega: entrega.archivoEntrega,
       },
+      archivos: entrega.archivos,
     }));
   }
 
