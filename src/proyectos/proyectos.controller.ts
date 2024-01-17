@@ -41,7 +41,10 @@ export class ProyectosController {
         createProyectoDto,
         usuarioDocumento,
       );
-      return nuevoProyecto;
+      return {
+        message: 'Proyecto creado exitosamente',
+        proyecto: nuevoProyecto,
+      };
     } catch (error) {
       throw error;
     }

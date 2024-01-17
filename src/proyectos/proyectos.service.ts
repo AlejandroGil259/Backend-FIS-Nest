@@ -77,7 +77,6 @@ export class ProyectosService {
       });
 
       await this.usuariosProyectosRepo.save(usuariosProyectos);
-
       return nuevoProyecto;
     } catch (error) {
       if (
