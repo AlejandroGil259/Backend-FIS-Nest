@@ -13,7 +13,8 @@ import { Entregas } from './entities/entregas.entity';
 import { Repository } from 'typeorm';
 import { DBExceptionService } from '../commons/services/db-exception.service';
 import { ProyectosService } from '../proyectos/proyectos.service';
-import { UsuariosProyectos } from 'src/auth/entities/usuarios-proyectos.entity';
+import { UsuariosProyectos } from '../auth/entities/usuarios-proyectos.entity';
+import { ESTADO_RESPUESTA_PROYECTOS } from '../proyectos/constants';
 
 @Injectable()
 export class EntregasService {
@@ -36,6 +37,17 @@ export class EntregasService {
         `No se encontró un proyecto con el ID ${idProyecto}`,
       );
     }
+
+    // // Obtener el último estado del proyecto
+    // const ultimoEstado = proyecto.estado;
+
+    // // Verificar que el último estado esté aprobado
+    // if (ultimoEstado !== ESTADO_RESPUESTA_PROYECTOS.APROBADO) {
+    //   throw new BadRequestException(
+    //     'El último estado del proyecto debe estar aprobado para crear la nueva entrega.',
+    //   );
+    // }
+
     try {
       const entrega = this.entregasRepo.create({
         ...restoDto,
@@ -160,6 +172,16 @@ export class EntregasService {
             'El evaluador2 no puede ser el mismo que el director o el codirector del proyecto.',
           );
         }
+      }
+
+      // Validar la fechaActa si es posterior al día actual
+      const nuevaFechaActa = new Date(infoEntrega.fechaActa);
+      const fechaActual = new Date();
+
+      if (nuevaFechaActa > fechaActual) {
+        throw new BadRequestException(
+          'La fechaActa no puede ser posterior al día actual.',
+        );
       }
 
       // Actualizar la entrega con los nuevos evaluadores y el proyecto

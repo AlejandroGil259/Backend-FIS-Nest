@@ -7,12 +7,16 @@ import {
   OPCION_GRADO,
 } from '../proyectos/constants';
 import { AuthService } from '../auth/services/auth.service';
+import { TIPO_SOLICITUD } from '../solicitudes/constants';
+import { Solicitud } from '../solicitudes/entities/solicitud.entity';
 
 @Injectable()
 export class EstadisticasService {
   constructor(
     @InjectRepository(Proyecto)
     private proyectoRepo: Repository<Proyecto>,
+    @InjectRepository(Solicitud)
+    private solicitudRepo: Repository<Solicitud>,
     private authService: AuthService,
   ) {}
 
@@ -185,5 +189,21 @@ export class EstadisticasService {
     }
 
     return proyectosExcluyendoEstados;
+  }
+
+  async contarSolicitudesPorTipo(): Promise<
+    { tipo: TIPO_SOLICITUD; count: number }[]
+  > {
+    const tiposSolicitud = Object.values(TIPO_SOLICITUD);
+    const resultados: { tipo: TIPO_SOLICITUD; count: number }[] = [];
+
+    for (const tipo of tiposSolicitud) {
+      const count = await this.solicitudRepo.count({
+        where: { tipoSolicitud: tipo },
+      });
+      resultados.push({ tipo, count });
+    }
+
+    return resultados;
   }
 }

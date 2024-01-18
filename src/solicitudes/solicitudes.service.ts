@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ForbiddenException,
   Injectable,
   NotFoundException,
@@ -101,6 +102,16 @@ export class SolicitudesService {
         `No se encontró ninguna solicitud con el Id ${idSolicitud}`,
       );
 
+    // Validar si la nueva fechaActa es posterior al día actual
+    const nuevaFechaActa = new Date(updateSolicitudesDto.fechaActa);
+    const fechaActual = new Date();
+
+    if (nuevaFechaActa > fechaActual) {
+      throw new BadRequestException(
+        'La fechaActa no puede ser posterior al día actual.',
+      );
+    }
+    
     try {
       await this.solicitudRepo.update(
         { idSolicitud },

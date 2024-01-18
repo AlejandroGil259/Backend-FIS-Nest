@@ -39,7 +39,7 @@ export class Proyecto extends BaseEntity {
   opcionGrado: OPCION_GRADO;
 
   @ApiProperty({ description: 'Titulo del proyecto' })
-  @Column()
+  @Column({ unique: true })
   tituloVigente?: string;
 
   @OneToOne(() => Pasantia, (pasantia) => pasantia.proyecto)

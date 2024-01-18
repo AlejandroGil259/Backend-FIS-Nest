@@ -27,7 +27,7 @@ export class Solicitud extends BaseEntity {
   apellidos: string;
 
   @ApiProperty({ example: 'Número de Acta' })
-  @Column({ nullable: true })
+  @Column({ nullable: true, unique: true })
   numActa?: string;
 
   @ApiProperty({ example: new Date().toISOString() })

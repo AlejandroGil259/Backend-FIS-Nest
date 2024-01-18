@@ -32,4 +32,11 @@ export class EstadisticasController {
   getProyectosExcluyendoEstados() {
     return this.estadisticasService.getProyectosExcluyendoEstados();
   }
+  @Get('solicitudes')
+  async obtenerEstadisticasSolicitudesPorTipo() {
+    const estadisticas =
+      await this.estadisticasService.contarSolicitudesPorTipo();
+    return estadisticas;
+    //return { success: true, data: estadisticas };
+  }
 }
